@@ -1199,7 +1199,7 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 DG Downloader — All rights reserved.</p>
+        <p>&copy; 2028 DG Downloader — All rights reserved.</p>
     </footer>
 
     <script>
@@ -1361,6 +1361,8 @@
                 url: 'https://dg-tiktok-api.onrender.com/api/tiktok',
                 proxy: 'https://dg-tiktok-api.onrender.com/api/download-proxy',
                 parse: (data) => {
+                    // Log the raw data to help debug
+                    console.log('TikTok API response:', data);
                     if (data.status && data.result) {
                         const items = [];
                         if (data.result.noWatermark) {
@@ -1369,7 +1371,12 @@
                         if (data.result.watermark) {
                             items.push({ label: 'HD Download', url: data.result.watermark });
                         }
-                        return items;
+                        // If both exist, we return two identical labels but different URLs.
+                        return items.length > 0 ? items : null;
+                    }
+                    // If status is false but we have a message, we can still try to extract something
+                    if (data.message) {
+                        console.warn('TikTok API error:', data.message);
                     }
                     return null;
                 },
@@ -1380,6 +1387,7 @@
                 url: 'https://dg-facebook-downloder-api.onrender.com/api/facebook',
                 proxy: 'https://dg-facebook-downloder-api.onrender.com/api/download-proxy',
                 parse: (data) => {
+                    console.log('Facebook API response:', data);
                     if (data.status && data.result) {
                         const items = [];
                         if (data.result.hd) {
@@ -1388,8 +1396,9 @@
                         if (data.result.sd) {
                             items.push({ label: 'HD Download', url: data.result.sd });
                         }
-                        return items;
+                        return items.length > 0 ? items : null;
                     }
+                    if (data.message) console.warn('Facebook API error:', data.message);
                     return null;
                 },
                 errorMsg: (data) => data.message || 'Could not fetch Facebook video. Make sure the post is Public.',
@@ -1399,13 +1408,15 @@
                 url: 'https://dg-pinterest-api.onrender.com/api/pinterest',
                 proxy: 'https://dg-pinterest-api.onrender.com/api/download-proxy',
                 parse: (data) => {
+                    console.log('Pinterest API response:', data);
                     if (data.status && data.qualities) {
                         const items = [];
                         for (const [quality, url] of Object.entries(data.qualities)) {
                             items.push({ label: 'HD Download', url });
                         }
-                        return items;
+                        return items.length > 0 ? items : null;
                     }
+                    if (data.message) console.warn('Pinterest API error:', data.message);
                     return null;
                 },
                 errorMsg: (data) => data.message || 'Could not fetch Pinterest video.',
@@ -1461,10 +1472,12 @@
                 const fetchPromises = urls.map(async (url) => {
                     try {
                         const apiURL = `${config.url}?url=${encodeURIComponent(url)}`;
+                        console.log(`Fetching ${platform} from:`, apiURL);
                         const response = await fetch(apiURL);
                         const data = await response.json();
                         return { url, data, success: true };
                     } catch (err) {
+                        console.error(`Fetch error for ${url}:`, err);
                         return { url, data: null, success: false, error: err.message };
                     }
                 });
@@ -1488,6 +1501,7 @@
                             html +=
                                 `<div class="url-label"><i class="${iconClass}"></i> Video ${index + 1}</div>`;
                             html += `<div class="quality-options">`;
+                            // Show each quality as a separate download button, but all labelled "HD Download"
                             for (const item of parsed) {
                                 const proxyUrl =
                                     `${config.proxy}?url=${encodeURIComponent(item.url)}`;
@@ -1501,7 +1515,8 @@
                             }
                             html += `</div></div>`;
                         } else {
-                            const msg = config.errorMsg(data) || 'No video found.';
+                            // Parsing failed or no items
+                            const msg = data.message || config.errorMsg(data) || 'No video found.';
                             html += `
                                     <div class="result-item">
                                         <div class="url-label"><i class="fas fa-exclamation-triangle" style="color:var(--error-color);"></i> Video ${index + 1} — failed</div>
@@ -1521,7 +1536,14 @@
                 });
 
                 if (allFailed || !hasResults) {
-                    errorMsg.innerText = 'All videos failed. Please check your links and try again.';
+                    // Show more descriptive error: maybe show the first error message
+                    let combinedMsg = 'All videos failed. Please check your links and try again.';
+                    // Try to get the first error message from the result items if any
+                    const firstError = results.find(r => r.success && r.data && r.data.message);
+                    if (firstError) {
+                        combinedMsg = firstError.data.message;
+                    }
+                    errorMsg.innerText = combinedMsg;
                     errorMsg.style.display = 'block';
                     return;
                 }
@@ -1531,6 +1553,7 @@
                 showToast(`✅ ${platform.charAt(0).toUpperCase() + platform.slice(1)} videos ready!`, 'success');
 
             } catch (error) {
+                console.error('Download function error:', error);
                 loading.style.display = 'none';
                 errorMsg.innerText = 'Connection error. Please try again! (Free Render may take 30–40s to wake up.)';
                 errorMsg.style.display = 'block';
@@ -1609,6 +1632,7 @@
         console.log('📌 Platforms: TikTok · Facebook · Pinterest');
         console.log('💡 Tip: Press Enter to download.');
         console.log('📱 Report issues via WhatsApp button.');
+        console.log('🔍 Debug: Check the console for API responses.');
     </script>
 
 </body>
