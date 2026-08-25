@@ -53,9 +53,11 @@
             --toggle-bg: rgba(255, 255, 255, 0.08);
             --toggle-dot: #f0edff;
             --input-border: rgba(255, 255, 255, 0.08);
-            --select-bg: rgba(255, 255, 255, 0.06);
-            --select-color: #fff;
-            --select-option-bg: #1a1a2e;
+            --stepper-bg: rgba(255, 255, 255, 0.05);
+            --stepper-border: rgba(255, 255, 255, 0.08);
+            --stepper-color: #fff;
+            --whatsapp-bg: #25d366;
+            --whatsapp-hover: #1ebe5c;
         }
 
         [data-theme="light"] {
@@ -90,9 +92,11 @@
             --toggle-bg: rgba(0, 0, 0, 0.12);
             --toggle-dot: #fff;
             --input-border: rgba(0, 0, 0, 0.08);
-            --select-bg: rgba(0, 0, 0, 0.04);
-            --select-color: #1a1a2e;
-            --select-option-bg: #ffffff;
+            --stepper-bg: rgba(0, 0, 0, 0.04);
+            --stepper-border: rgba(0, 0, 0, 0.08);
+            --stepper-color: #1a1a2e;
+            --whatsapp-bg: #25d366;
+            --whatsapp-hover: #1ebe5c;
         }
 
         /* ─── RESET ─── */
@@ -348,6 +352,7 @@
             justify-content: center;
             gap: 10px;
             white-space: nowrap;
+            position: relative;
         }
 
         .tab-btn i {
@@ -380,35 +385,43 @@
             display: inline;
         }
 
-        /* ─── TAB CONTENT ─── */
+        /* ─── TAB CONTENT (with smooth animation) ─── */
         .tab-content {
             display: none;
-            animation: fadeUp 0.45s ease;
+            opacity: 0;
+            transform: translateY(12px) scale(0.97);
+            animation: none;
         }
 
         .tab-content.active {
             display: block;
+            animation: tabPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
-        @keyframes fadeUp {
+        @keyframes tabPop {
             0% {
                 opacity: 0;
-                transform: translateY(14px);
+                transform: translateY(20px) scale(0.95);
             }
             100% {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
-        /* ─── COUNT SELECTOR ─── */
+        /* ─── COUNT SELECTOR (Stepper) ─── */
         .count-selector {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
             flex-wrap: wrap;
-            justify-content: center;
+            background: var(--bg-input);
+            padding: 8px 18px 8px 22px;
+            border-radius: 60px;
+            border: 1px solid var(--border-color);
+            transition: background 0.3s, border-color 0.3s;
         }
 
         .count-selector label {
@@ -416,38 +429,57 @@
             font-size: 0.85rem;
             font-weight: 500;
             letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             transition: color 0.3s ease;
         }
 
-        .count-selector select {
-            background: var(--select-bg);
-            border: 1px solid var(--input-border);
-            border-radius: 40px;
-            padding: 10px 22px;
-            color: var(--select-color);
-            font-size: 0.9rem;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            outline: none;
+        .count-selector label i {
+            opacity: 0.6;
+        }
+
+        .stepper-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .step-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1px solid var(--stepper-border);
+            background: var(--stepper-bg);
+            color: var(--stepper-color);
+            font-size: 1.2rem;
+            font-weight: 300;
             cursor: pointer;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-            padding-right: 44px;
-            min-width: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, transform 0.2s, border-color 0.2s;
+            user-select: none;
+            line-height: 1;
         }
 
-        .count-selector select:focus {
-            border-color: var(--border-focus);
-            box-shadow: 0 0 0 4px rgba(249, 65, 107, 0.06);
+        .step-btn:hover {
+            background: var(--tab-hover);
+            transform: scale(1.08);
+            border-color: var(--text-secondary);
         }
 
-        .count-selector select option {
-            background: var(--select-option-bg);
-            color: var(--select-color);
+        .step-btn:active {
+            transform: scale(0.92);
+        }
+
+        .count-num {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            min-width: 28px;
+            text-align: center;
+            transition: color 0.3s;
         }
 
         /* ─── URL FIELDS ─── */
@@ -750,9 +782,46 @@
             transition: color 0.3s ease;
         }
 
+        /* ─── WHATSAPP REPORT BUTTON ─── */
+        .report-section {
+            text-align: center;
+            margin-top: 28px;
+            width: 100%;
+            max-width: 860px;
+            padding: 0 10px;
+        }
+
+        .report-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 32px;
+            background: var(--whatsapp-bg);
+            color: #fff;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: transform 0.25s ease, box-shadow 0.3s ease, background 0.3s ease;
+            border: none;
+            box-shadow: 0 8px 28px rgba(37, 211, 102, 0.25);
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+        }
+
+        .report-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            background: var(--whatsapp-hover);
+            box-shadow: 0 14px 40px rgba(37, 211, 102, 0.40);
+        }
+
+        .report-btn i {
+            font-size: 1.3rem;
+        }
+
         /* ─── FOOTER ─── */
         footer {
-            margin-top: 32px;
+            margin-top: 24px;
             text-align: center;
             color: var(--footer-color);
             font-size: 0.7rem;
@@ -819,12 +888,14 @@
 
             .count-selector {
                 flex-direction: column;
-                gap: 10px;
                 align-items: stretch;
+                gap: 12px;
+                padding: 14px 16px;
+                border-radius: 28px;
             }
 
-            .count-selector select {
-                width: 100%;
+            .stepper-wrapper {
+                justify-content: center;
             }
 
             .url-field {
@@ -885,6 +956,13 @@
             .top-bar .brand-tag {
                 font-size: 0.6rem;
             }
+
+            .report-btn {
+                padding: 12px 24px;
+                font-size: 0.85rem;
+                width: 100%;
+                justify-content: center;
+            }
         }
 
         @media (max-width: 400px) {
@@ -935,23 +1013,7 @@
             box-shadow: 0 14px 40px rgba(230, 0, 35, 0.50);
         }
 
-        /* ─── LOADING SHIMMER ─── */
-        .shimmer {
-            background: linear-gradient(90deg, var(--bg-input) 25%, var(--tab-hover) 50%, var(--bg-input) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.8s infinite;
-        }
-
-        @keyframes shimmer {
-            0% {
-                background-position: -200% 0;
-            }
-            100% {
-                background-position: 200% 0;
-            }
-        }
-
-        /* ─── TOAST NOTIFICATION ─── */
+        /* ─── TOAST ─── */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -1033,7 +1095,7 @@
                 <span class="social-icon pinterest"><i class="fab fa-pinterest"></i></span>
                 <span style="font-weight:700; -webkit-text-fill-color:initial; color:var(--text-primary);">Downloader</span>
             </h1>
-            <p><i class="fas fa-download" style="margin-right:6px;"></i> Choose platform, paste links &amp; download videos</p>
+            <p><i class="fas fa-download" style="margin-right:6px;"></i> Select platform, paste links &amp; download instantly</p>
         </div>
 
         <!-- TABS -->
@@ -1055,12 +1117,12 @@
         <!-- ─── TIKTOK TAB ─── -->
         <div class="tab-content active tiktok-tab" id="tab-tiktok">
             <div class="count-selector">
-                <label for="videoCountTiktok"><i class="fas fa-hashtag"></i> Number of videos</label>
-                <select id="videoCountTiktok" onchange="updateUrlFields('tiktok')">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3" selected>3</option>
-                </select>
+                <label><i class="fas fa-layer-group"></i> Videos to download</label>
+                <div class="stepper-wrapper">
+                    <button class="step-btn" onclick="updateCount('tiktok', -1)">−</button>
+                    <span class="count-num" id="countDisplayTiktok">3</span>
+                    <button class="step-btn" onclick="updateCount('tiktok', 1)">+</button>
+                </div>
             </div>
             <div class="url-fields" id="urlFieldsTiktok"></div>
             <button class="download-btn-main" onclick="downloadVideos('tiktok')">
@@ -1080,12 +1142,12 @@
         <!-- ─── FACEBOOK TAB ─── -->
         <div class="tab-content facebook-tab" id="tab-facebook">
             <div class="count-selector">
-                <label for="videoCountFacebook"><i class="fas fa-hashtag"></i> Number of videos</label>
-                <select id="videoCountFacebook" onchange="updateUrlFields('facebook')">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3" selected>3</option>
-                </select>
+                <label><i class="fas fa-layer-group"></i> Videos to download</label>
+                <div class="stepper-wrapper">
+                    <button class="step-btn" onclick="updateCount('facebook', -1)">−</button>
+                    <span class="count-num" id="countDisplayFacebook">3</span>
+                    <button class="step-btn" onclick="updateCount('facebook', 1)">+</button>
+                </div>
             </div>
             <div class="url-fields" id="urlFieldsFacebook"></div>
             <button class="download-btn-main" onclick="downloadVideos('facebook')">
@@ -1105,12 +1167,12 @@
         <!-- ─── PINTEREST TAB ─── -->
         <div class="tab-content pinterest-tab" id="tab-pinterest">
             <div class="count-selector">
-                <label for="videoCountPinterest"><i class="fas fa-hashtag"></i> Number of videos</label>
-                <select id="videoCountPinterest" onchange="updateUrlFields('pinterest')">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3" selected>3</option>
-                </select>
+                <label><i class="fas fa-layer-group"></i> Videos to download</label>
+                <div class="stepper-wrapper">
+                    <button class="step-btn" onclick="updateCount('pinterest', -1)">−</button>
+                    <span class="count-num" id="countDisplayPinterest">3</span>
+                    <button class="step-btn" onclick="updateCount('pinterest', 1)">+</button>
+                </div>
             </div>
             <div class="url-fields" id="urlFieldsPinterest"></div>
             <button class="download-btn-main" onclick="downloadVideos('pinterest')">
@@ -1127,6 +1189,13 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- ─── WHATSAPP REPORT BUTTON ─── -->
+    <div class="report-section">
+        <a href="https://wa.me/94743277981?text=Hello%20DG%2C%20I%20have%20an%20issue%20with%20the%20video%20downloader.%20Please%20help%20me%20resolve%20it." target="_blank" class="report-btn">
+            <i class="fab fa-whatsapp"></i> Report an Issue
+        </a>
     </div>
 
     <footer>
@@ -1166,7 +1235,7 @@
         setTheme(savedTheme);
 
         // ════════════════════════════════════════════════════════════════
-        // 2. TAB SWITCHING
+        // 2. TAB SWITCHING (with reflow for animation)
         // ════════════════════════════════════════════════════════════════
 
         const tabBtns = document.querySelectorAll('.tab-btn');
@@ -1181,9 +1250,20 @@
                 tabBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 const tab = btn.dataset.tab;
+
+                // Hide all, then show selected with animation
                 Object.keys(tabContents).forEach(key => {
-                    tabContents[key].classList.toggle('active', key === tab);
+                    const el = tabContents[key];
+                    el.classList.remove('active');
+                    el.style.display = 'none';
                 });
+
+                const activeEl = tabContents[tab];
+                activeEl.style.display = 'block';
+                // Force reflow to restart animation
+                void activeEl.offsetWidth;
+                activeEl.classList.add('active');
+
                 // Refresh URL fields for the active tab
                 updateUrlFields(tab);
                 // Hide any stale results
@@ -1199,7 +1279,7 @@
         }
 
         // ════════════════════════════════════════════════════════════════
-        // 3. DYNAMIC URL FIELDS
+        // 3. DYNAMIC URL FIELDS & STEPPER
         // ════════════════════════════════════════════════════════════════
 
         const platformIconMap = {
@@ -1214,10 +1294,21 @@
             pinterest: 'Paste Pinterest video link …',
         };
 
+        function getCount(platform) {
+            const display = document.getElementById(`countDisplay${capitalize(platform)}`);
+            return parseInt(display.innerText) || 3;
+        }
+
+        function updateCount(platform, delta) {
+            const display = document.getElementById(`countDisplay${capitalize(platform)}`);
+            let val = parseInt(display.innerText) || 3;
+            val = Math.min(10, Math.max(1, val + delta));
+            display.innerText = val;
+            updateUrlFields(platform);
+        }
+
         function updateUrlFields(platform) {
-            const countSelect = document.getElementById(`videoCount${capitalize(platform)}`);
-            if (!countSelect) return;
-            const count = parseInt(countSelect.value);
+            const count = getCount(platform);
             const container = document.getElementById(`urlFields${capitalize(platform)}`);
             if (!container) return;
             container.innerHTML = '';
@@ -1273,10 +1364,10 @@
                     if (data.status && data.result) {
                         const items = [];
                         if (data.result.noWatermark) {
-                            items.push({ label: 'No Watermark', url: data.result.noWatermark, quality: 'No WM' });
+                            items.push({ label: 'HD Download', url: data.result.noWatermark });
                         }
                         if (data.result.watermark) {
-                            items.push({ label: 'With Watermark', url: data.result.watermark, quality: 'WM' });
+                            items.push({ label: 'HD Download', url: data.result.watermark });
                         }
                         return items;
                     }
@@ -1292,10 +1383,10 @@
                     if (data.status && data.result) {
                         const items = [];
                         if (data.result.hd) {
-                            items.push({ label: 'HD Quality', url: data.result.hd, quality: 'HD' });
+                            items.push({ label: 'HD Download', url: data.result.hd });
                         }
                         if (data.result.sd) {
-                            items.push({ label: 'SD Quality', url: data.result.sd, quality: 'SD' });
+                            items.push({ label: 'HD Download', url: data.result.sd });
                         }
                         return items;
                     }
@@ -1311,7 +1402,7 @@
                     if (data.status && data.qualities) {
                         const items = [];
                         for (const [quality, url] of Object.entries(data.qualities)) {
-                            items.push({ label: quality, url, quality: quality });
+                            items.push({ label: 'HD Download', url });
                         }
                         return items;
                     }
@@ -1328,9 +1419,7 @@
 
         async function downloadVideos(platform) {
             const cap = capitalize(platform);
-            const countSelect = document.getElementById(`videoCount${cap}`);
-            if (!countSelect) return;
-            const count = parseInt(countSelect.value);
+            const count = getCount(platform);
 
             const loading = document.getElementById(`loading${cap}`);
             const resultBox = document.getElementById(`result${cap}`);
@@ -1402,10 +1491,10 @@
                             for (const item of parsed) {
                                 const proxyUrl =
                                     `${config.proxy}?url=${encodeURIComponent(item.url)}`;
-                                const filename = `${platform}-${index+1}-${item.quality || 'video'}.mp4`;
+                                const filename = `${platform}-${index+1}-hd.mp4`;
                                 html += `
                                         <a href="${proxyUrl}" class="download-btn" download="${filename}">
-                                            <span><i class="fas fa-video"></i> ${item.label}</span>
+                                            <span><i class="fas fa-video"></i> HD Download</span>
                                             <span class="quality-badge"><i class="fas fa-download"></i> Download</span>
                                         </a>
                                     `;
@@ -1503,8 +1592,10 @@
             btn.addEventListener('click', () => {
                 const tab = btn.dataset.tab;
                 const cap = capitalize(tab);
-                const firstInput = document.getElementById(`urlInput${cap}1`);
-                if (firstInput) setTimeout(() => firstInput.focus(), 100);
+                setTimeout(() => {
+                    const firstInput = document.getElementById(`urlInput${cap}1`);
+                    if (firstInput) firstInput.focus();
+                }, 150);
             });
         });
 
@@ -1512,11 +1603,12 @@
         setTimeout(() => {
             const firstInput = document.getElementById('urlInputTiktok1');
             if (firstInput) firstInput.focus();
-        }, 200);
+        }, 300);
 
-        console.log('🚀 DG Social Downloader loaded successfully!');
+        console.log('🚀 DG Social Downloader v2 loaded successfully!');
         console.log('📌 Platforms: TikTok · Facebook · Pinterest');
         console.log('💡 Tip: Press Enter to download.');
+        console.log('📱 Report issues via WhatsApp button.');
     </script>
 
 </body>
