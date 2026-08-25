@@ -200,7 +200,6 @@
             const encodedUrl = encodeURIComponent(urlInput);
             let targetUrl = "";
 
-            // අදාළ ප්ලැට්ෆෝම් එකට අදාළ ඩවුන්ලෝඩ් പേජ් එකට ලින්ක් එක සමඟ යොමු කිරීම
             if (currentPlatform === 'tiktok') {
                 targetUrl = `https://snaptik.app/en?url=${encodedUrl}`;
             } else if (currentPlatform === 'pinterest') {
@@ -213,11 +212,11 @@
                 spinner.style.display = "none";
                 downloadBtn.disabled = false;
                 statusDiv.style.color = "#51cf66";
-                statusDiv.innerText = "ඩවුන්ලෝඩ් පිටුව වෙත යොමු කරමින් පවතී...";
+                statusDiv.innerText = "සාර්ථකයි! ඩවුන්ලෝඩ් පිටුව විවෘත වේ...";
 
-                // අදාළ ඩවුන්ලෝඩ් පිටුවට යැවීම
-                window.location.href = targetUrl;
-            }, 1000);
+                // බ්ලොක් වීම වැළැක්වීමට අලුත් ටැබ් එකකින් විවෘත කිරීම
+                window.open(targetUrl, '_blank');
+            }, 800);
         }
     </script>
 </body>
