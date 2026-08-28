@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DG Social Downloader — TikTok · Pinterest · Facebook</title>
 
-    <script>(function(s){s.dataset.zone='11650532',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-    <meta name="monetag" content="9f4c6ed04831a5ea22adaf53db44d2e3">
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    
 
     <!-- Google Font: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -33,9 +30,6 @@
             --accent-tiktok: #fe2c55;
             --accent-facebook: #1877f2;
             --accent-pinterest: #e60023;
-            --glow-tiktok: rgba(254, 44, 85, 0.3);
-            --glow-facebook: rgba(24, 119, 242, 0.3);
-            --glow-pinterest: rgba(230, 0, 35, 0.3);
             --btn-gradient: linear-gradient(135deg, #f9416b, #d61a4e);
             --btn-shadow: rgba(249, 65, 107, 0.35);
             --result-bg: rgba(0, 0, 0, 0.3);
@@ -58,6 +52,11 @@
             --input-border: rgba(255, 255, 255, 0.08);
             --whatsapp-bg: #25d366;
             --whatsapp-hover: #1ebe5c;
+            --audio-bg: rgba(37, 244, 238, 0.08);
+            --audio-border: rgba(37, 244, 238, 0.15);
+            --audio-color: #25f4ee;
+            --hd-color: #22c55e;
+            --sd-color: #eab308;
         }
 
         [data-theme="light"] {
@@ -94,6 +93,9 @@
             --input-border: rgba(0, 0, 0, 0.08);
             --whatsapp-bg: #25d366;
             --whatsapp-hover: #1ebe5c;
+            --audio-bg: rgba(37, 244, 238, 0.06);
+            --audio-border: rgba(37, 244, 238, 0.12);
+            --audio-color: #0ea5e9;
         }
 
         /* ─── RESET ─── */
@@ -382,7 +384,7 @@
             display: inline;
         }
 
-        /* ─── TAB CONTENT (with smooth animation) ─── */
+        /* ─── TAB CONTENT ─── */
         .tab-content {
             display: none;
             opacity: 0;
@@ -406,7 +408,7 @@
             }
         }
 
-        /* ─── URL FIELD (Single) ─── */
+        /* ─── URL FIELD ─── */
         .url-field {
             display: flex;
             align-items: center;
@@ -415,7 +417,7 @@
             border: 1px solid var(--input-border);
             border-radius: 16px;
             padding: 4px 6px 4px 16px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
             box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04);
         }
@@ -475,6 +477,73 @@
 
         .url-field .clear-btn:hover {
             color: var(--text-secondary);
+        }
+
+        /* ─── TIKTOK OPTIONS ─── */
+        .tiktok-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            background: var(--bg-input);
+            padding: 8px 14px;
+            border-radius: 60px;
+            border: 1px solid var(--border-color);
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .tiktok-options .option-label {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .tiktok-options .option-label i {
+            opacity: 0.6;
+        }
+
+        .tiktok-options .radio-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .tiktok-options .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 40px;
+            background: var(--option-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.2s;
+        }
+
+        .tiktok-options .radio-group label:hover {
+            background: var(--tab-hover);
+            transform: scale(1.02);
+        }
+
+        .tiktok-options .radio-group label.active-option {
+            background: var(--audio-bg);
+            border-color: var(--audio-border);
+            color: var(--audio-color);
+        }
+
+        .tiktok-options .radio-group label i {
+            font-size: 0.8rem;
+        }
+
+        .tiktok-options .radio-group input[type="radio"] {
+            display: none;
         }
 
         /* ─── DOWNLOAD BUTTON ─── */
@@ -654,7 +723,6 @@
         }
 
         .download-btn span:first-child i {
-            color: #f9416b;
             font-size: 1rem;
             width: 20px;
             text-align: center;
@@ -674,6 +742,43 @@
         .download-btn:hover .quality-badge {
             background: rgba(249, 65, 107, 0.18);
             color: var(--badge-color);
+        }
+
+        /* ─── SPECIFIC DOWNLOAD BUTTON STYLES ─── */
+        .download-btn.hd-download {
+            border-color: rgba(34, 197, 94, 0.2);
+            background: rgba(34, 197, 94, 0.05);
+        }
+        .download-btn.hd-download:hover {
+            border-color: rgba(34, 197, 94, 0.4);
+            background: rgba(34, 197, 94, 0.08);
+        }
+        .download-btn.hd-download span:first-child i {
+            color: #22c55e;
+        }
+
+        .download-btn.sd-download {
+            border-color: rgba(234, 179, 8, 0.2);
+            background: rgba(234, 179, 8, 0.05);
+        }
+        .download-btn.sd-download:hover {
+            border-color: rgba(234, 179, 8, 0.4);
+            background: rgba(234, 179, 8, 0.08);
+        }
+        .download-btn.sd-download span:first-child i {
+            color: #eab308;
+        }
+
+        .download-btn.audio-download {
+            border-color: rgba(236, 72, 153, 0.2);
+            background: rgba(236, 72, 153, 0.05);
+        }
+        .download-btn.audio-download:hover {
+            border-color: rgba(236, 72, 153, 0.4);
+            background: rgba(236, 72, 153, 0.08);
+        }
+        .download-btn.audio-download span:first-child i {
+            color: #ec4899;
         }
 
         .no-quality {
@@ -797,6 +902,18 @@
                 padding: 11px 4px;
             }
 
+            .tiktok-options {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                padding: 12px 14px;
+                border-radius: 28px;
+            }
+
+            .tiktok-options .radio-group {
+                justify-content: center;
+            }
+
             .download-btn-main {
                 padding: 14px;
                 font-size: 0.9rem;
@@ -869,6 +986,10 @@
             }
             .url-field input {
                 font-size: 0.8rem;
+            }
+            .tiktok-options .radio-group label {
+                font-size: 0.7rem;
+                padding: 4px 10px;
             }
         }
 
@@ -1007,8 +1128,28 @@
                     <i class="fas fa-times-circle"></i>
                 </button>
             </div>
-            <button class="download-btn-main" onclick="downloadVideos('tiktok')">
-                <i class="fab fa-tiktok"></i> Download TikTok Video
+
+            <!-- TikTok Download Options -->
+            <div class="tiktok-options" id="tiktokOptions">
+                <span class="option-label"><i class="fas fa-sliders-h"></i> Download mode</span>
+                <div class="radio-group">
+                    <label class="active-option" id="optVideoAudio">
+                        <input type="radio" name="tiktokMode" value="video_audio" checked />
+                        <i class="fas fa-film"></i> Video + Audio
+                    </label>
+                    <label id="optVideoOnly">
+                        <input type="radio" name="tiktokMode" value="video_only" />
+                        <i class="fas fa-video"></i> Video only
+                    </label>
+                    <label id="optAudioOnly">
+                        <input type="radio" name="tiktokMode" value="audio_only" />
+                        <i class="fas fa-music"></i> Audio only
+                    </label>
+                </div>
+            </div>
+
+            <button class="download-btn-main" onclick="downloadTikTok()">
+                <i class="fab fa-tiktok"></i> Download TikTok
             </button>
             <div class="loading" id="loadingTiktok">
                 <div class="spinner"></div>
@@ -1108,12 +1249,11 @@
             setTheme(currentTheme === 'dark' ? 'light' : 'dark');
         });
 
-        // Load saved theme
         const savedTheme = localStorage.getItem('dg-theme') || 'dark';
         setTheme(savedTheme);
 
         // ════════════════════════════════════════════════════════════════
-        // 2. TAB SWITCHING (with reflow for animation)
+        // 2. TAB SWITCHING
         // ════════════════════════════════════════════════════════════════
 
         const tabBtns = document.querySelectorAll('.tab-btn');
@@ -1129,7 +1269,6 @@
                 btn.classList.add('active');
                 const tab = btn.dataset.tab;
 
-                // Hide all, then show selected with animation
                 Object.keys(tabContents).forEach(key => {
                     const el = tabContents[key];
                     el.classList.remove('active');
@@ -1138,17 +1277,14 @@
 
                 const activeEl = tabContents[tab];
                 activeEl.style.display = 'block';
-                // Force reflow to restart animation
                 void activeEl.offsetWidth;
                 activeEl.classList.add('active');
 
-                // Hide any stale results/errors for this tab
                 const resultBox = document.getElementById(`result${capitalize(tab)}`);
                 if (resultBox) resultBox.style.display = 'none';
                 const errorMsg = document.getElementById(`error${capitalize(tab)}`);
                 if (errorMsg) errorMsg.style.display = 'none';
-                
-                // Focus the input
+
                 const input = document.getElementById(`urlInput${capitalize(tab)}`);
                 if (input) setTimeout(() => input.focus(), 150);
             });
@@ -1159,31 +1295,29 @@
         }
 
         // ════════════════════════════════════════════════════════════════
-        // 3. API CONFIG
+        // 3. TIKTOK OPTIONS UI
+        // ════════════════════════════════════════════════════════════════
+
+        document.querySelectorAll('#tiktokOptions .radio-group label').forEach(label => {
+            label.addEventListener('click', function() {
+                const parent = this.closest('.radio-group');
+                parent.querySelectorAll('label').forEach(l => l.classList.remove('active-option'));
+                this.classList.add('active-option');
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) radio.checked = true;
+            });
+        });
+
+        function getTikTokMode() {
+            const selected = document.querySelector('#tiktokOptions input[name="tiktokMode"]:checked');
+            return selected ? selected.value : 'video_audio';
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 4. API CONFIG (Facebook & Pinterest)
         // ════════════════════════════════════════════════════════════════
 
         const API_CONFIG = {
-            tiktok: {
-                url: 'https://dg-tiktok-api.onrender.com/api/tiktok',
-                proxy: 'https://dg-tiktok-api.onrender.com/api/download-proxy',
-                parse: (data) => {
-                    console.log('TikTok API response:', data);
-                    if (data.status && data.result) {
-                        const items = [];
-                        if (data.result.noWatermark) {
-                            items.push({ label: 'HD Download', url: data.result.noWatermark });
-                        }
-                        if (data.result.watermark) {
-                            items.push({ label: 'HD Download', url: data.result.watermark });
-                        }
-                        return items.length > 0 ? items : null;
-                    }
-                    if (data.message) console.warn('TikTok API error:', data.message);
-                    return null;
-                },
-                errorMsg: (data) => data.message || 'Could not fetch TikTok video.',
-                icon: 'fab fa-tiktok tiktok-label',
-            },
             facebook: {
                 url: 'https://dg-facebook-downloder-api.onrender.com/api/facebook',
                 proxy: 'https://dg-facebook-downloder-api.onrender.com/api/download-proxy',
@@ -1192,10 +1326,10 @@
                     if (data.status && data.result) {
                         const items = [];
                         if (data.result.hd) {
-                            items.push({ label: 'HD Download', url: data.result.hd });
+                            items.push({ label: 'HD Download', url: data.result.hd, cssClass: 'hd-download' });
                         }
                         if (data.result.sd) {
-                            items.push({ label: 'HD Download', url: data.result.sd });
+                            items.push({ label: 'SD Download', url: data.result.sd, cssClass: 'sd-download' });
                         }
                         return items.length > 0 ? items : null;
                     }
@@ -1213,7 +1347,7 @@
                     if (data.status && data.qualities) {
                         const items = [];
                         for (const [quality, url] of Object.entries(data.qualities)) {
-                            items.push({ label: 'HD Download', url });
+                            items.push({ label: quality + ' Download', url, cssClass: 'hd-download' });
                         }
                         return items.length > 0 ? items : null;
                     }
@@ -1226,7 +1360,134 @@
         };
 
         // ════════════════════════════════════════════════════════════════
-        // 4. MAIN DOWNLOAD FUNCTION (Single URL)
+        // 5. TIKTOK DOWNLOAD — FIXED WITH WORKING POST API
+        // ════════════════════════════════════════════════════════════════
+
+        const TIKTOK_AUDIO_API = 'https://dg-tiktok-audio-download-api.vercel.app';
+
+        async function downloadTikTok() {
+            const input = document.getElementById('urlInputTiktok');
+            const url = input.value.trim();
+            const mode = getTikTokMode();
+
+            const loading = document.getElementById('loadingTiktok');
+            const resultBox = document.getElementById('resultTiktok');
+            const errorMsg = document.getElementById('errorTiktok');
+            const qualityContainer = document.getElementById('qualityOptionsTiktok');
+
+            // Reset UI
+            resultBox.style.display = 'none';
+            errorMsg.style.display = 'none';
+            qualityContainer.innerHTML = '';
+            loading.style.display = 'block';
+
+            if (!url) {
+                loading.style.display = 'none';
+                errorMsg.innerText = 'Please paste a TikTok video URL!';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            try {
+                // Use the working POST API from your working example
+                const apiUrl = `${TIKTOK_AUDIO_API}/api/download/tiktok`;
+                console.log('TikTok API request (POST):', apiUrl);
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+                console.log('TikTok API response:', data);
+
+                loading.style.display = 'none';
+
+                if (data.success && data.data) {
+                    const videoData = data.data;
+                    const items = [];
+
+                    // Build download options based on mode
+                    if (mode === 'video_audio' || mode === 'video_only') {
+                        if (videoData.videoHD) {
+                            items.push({
+                                label: 'HD Video',
+                                url: videoData.videoHD,
+                                filename: 'tiktok-hd.mp4',
+                                cssClass: 'hd-download',
+                                icon: 'fa-video'
+                            });
+                        }
+                        if (videoData.videoNormal) {
+                            items.push({
+                                label: 'SD Video',
+                                url: videoData.videoNormal,
+                                filename: 'tiktok-sd.mp4',
+                                cssClass: 'sd-download',
+                                icon: 'fa-video'
+                            });
+                        }
+                    }
+
+                    if (mode === 'video_audio' || mode === 'audio_only') {
+                        if (videoData.audioUrl) {
+                            items.push({
+                                label: 'Audio Only (MP3)',
+                                url: videoData.audioUrl,
+                                filename: 'tiktok-audio.mp3',
+                                cssClass: 'audio-download',
+                                icon: 'fa-music'
+                            });
+                        }
+                    }
+
+                    if (items.length === 0) {
+                        errorMsg.innerText = 'No download options available for this video.';
+                        errorMsg.style.display = 'block';
+                        return;
+                    }
+
+                    // Build the result HTML with proxy URLs
+                    let html = `<div class="result-item">`;
+                    html += `<div class="url-label"><i class="fab fa-tiktok tiktok-label"></i> TikTok ready</div>`;
+                    html += `<div class="quality-options">`;
+
+                    for (const item of items) {
+                        // Use the proxy endpoint for actual download
+                        const proxyUrl = `${TIKTOK_AUDIO_API}/api/proxy-download?url=${encodeURIComponent(item.url)}&type=${item.icon === 'fa-music' ? 'audio' : 'video'}`;
+                        html += `
+                                <a href="${proxyUrl}" class="download-btn ${item.cssClass}" download="${item.filename}">
+                                    <span><i class="fas ${item.icon}"></i> ${item.label}</span>
+                                    <span class="quality-badge"><i class="fas fa-download"></i> Download</span>
+                                </a>
+                            `;
+                    }
+
+                    html += `</div></div>`;
+                    qualityContainer.innerHTML = html;
+                    resultBox.style.display = 'block';
+                    showToast('✅ TikTok video ready!', 'success');
+
+                } else {
+                    const msg = data.error || data.message || 'Could not fetch TikTok video.';
+                    errorMsg.innerText = msg;
+                    errorMsg.style.display = 'block';
+                }
+
+            } catch (error) {
+                console.error('TikTok download error:', error);
+                loading.style.display = 'none';
+                errorMsg.innerText = 'Connection error. Please try again! (Free servers may take 30–40s to wake up.)';
+                errorMsg.style.display = 'block';
+                showToast('⚠️ Connection error. Retry in a moment.', 'error');
+            }
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 6. FACEBOOK & PINTEREST DOWNLOAD
         // ════════════════════════════════════════════════════════════════
 
         async function downloadVideos(platform) {
@@ -1239,7 +1500,6 @@
             const errorMsg = document.getElementById(`error${cap}`);
             const qualityContainer = document.getElementById(`qualityOptions${cap}`);
 
-            // Reset UI
             resultBox.style.display = 'none';
             errorMsg.style.display = 'none';
             qualityContainer.innerHTML = '';
@@ -1268,7 +1528,6 @@
 
                 loading.style.display = 'none';
 
-                // Parse the data
                 const parsed = config.parse(data);
                 if (parsed && parsed.length > 0) {
                     const iconClass = config.icon || 'fas fa-link';
@@ -1277,10 +1536,11 @@
                     html += `<div class="quality-options">`;
                     for (const item of parsed) {
                         const proxyUrl = `${config.proxy}?url=${encodeURIComponent(item.url)}`;
-                        const filename = `${platform}-video-hd.mp4`;
+                        const filename = `${platform}-${item.label.toLowerCase().replace(/\s+/g, '-')}.mp4`;
+                        const cssClass = item.cssClass || 'hd-download';
                         html += `
-                                <a href="${proxyUrl}" class="download-btn" download="${filename}">
-                                    <span><i class="fas fa-video"></i> HD Download</span>
+                                <a href="${proxyUrl}" class="download-btn ${cssClass}" download="${filename}">
+                                    <span><i class="fas fa-video"></i> ${item.label}</span>
                                     <span class="quality-badge"><i class="fas fa-download"></i> Download</span>
                                 </a>
                             `;
@@ -1290,7 +1550,6 @@
                     resultBox.style.display = 'block';
                     showToast(`✅ ${cap} video ready!`, 'success');
                 } else {
-                    // Failed to parse
                     const msg = data.message || config.errorMsg(data) || 'No video found.';
                     errorMsg.innerText = msg;
                     errorMsg.style.display = 'block';
@@ -1299,14 +1558,14 @@
             } catch (error) {
                 console.error('Download function error:', error);
                 loading.style.display = 'none';
-                errorMsg.innerText = 'Connection error. Please try again! (Free Render may take 30–40s to wake up.)';
+                errorMsg.innerText = 'Connection error. Please try again! (Free servers may take 30–40s to wake up.)';
                 errorMsg.style.display = 'block';
                 showToast('⚠️ Connection error. Retry in a moment.', 'error');
             }
         }
 
         // ════════════════════════════════════════════════════════════════
-        // 5. TOAST
+        // 7. TOAST
         // ════════════════════════════════════════════════════════════════
 
         let toastTimeout = null;
@@ -1338,7 +1597,7 @@
         }
 
         // ════════════════════════════════════════════════════════════════
-        // 6. KEYBOARD SHORTCUT: Enter to download
+        // 8. KEYBOARD SHORTCUT: Enter to download
         // ════════════════════════════════════════════════════════════════
 
         document.addEventListener('keydown', (e) => {
@@ -1346,13 +1605,17 @@
                 const activeTab = document.querySelector('.tab-btn.active');
                 if (activeTab) {
                     const platform = activeTab.dataset.tab;
-                    downloadVideos(platform);
+                    if (platform === 'tiktok') {
+                        downloadTikTok();
+                    } else {
+                        downloadVideos(platform);
+                    }
                 }
             }
         });
 
         // ════════════════════════════════════════════════════════════════
-        // 7. INITIAL FOCUS
+        // 9. INITIAL FOCUS
         // ════════════════════════════════════════════════════════════════
 
         setTimeout(() => {
@@ -1360,11 +1623,11 @@
             if (firstInput) firstInput.focus();
         }, 300);
 
-        console.log('🚀 DG Social Downloader v3 loaded successfully!');
-        console.log('📌 Platforms: TikTok · Facebook · Pinterest (1 video at a time)');
+        console.log('🚀 DG Social Downloader v5 — TikTok fixed with working POST API');
+        console.log('📌 Platforms: TikTok (Audio/Video) · Facebook · Pinterest');
+        console.log('🎵 TikTok uses: POST /api/download/tiktok + /api/proxy-download');
         console.log('💡 Tip: Press Enter to download.');
         console.log('📱 Report issues via WhatsApp button.');
-        console.log('🔍 Debug: Check the console for API responses.');
     </script>
 
 </body>
