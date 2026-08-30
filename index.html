@@ -964,6 +964,12 @@
                 width: 100%;
                 justify-content: center;
             }
+
+            .play-btn {
+                height: 44px !important;
+                padding: 0 14px !important;
+                font-size: 1rem !important;
+            }
         }
 
         @media (max-width: 400px) {
@@ -1060,6 +1066,32 @@
         }
         .toast.info i {
             color: #60a5fa;
+        }
+
+        /* ─── PLAY BUTTON ─── */
+        .play-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 14px;
+            padding: 0 18px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            height: 52px;
+            transition: background 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            min-width: 52px;
+        }
+
+        .play-btn:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.05);
+        }
+        .play-btn:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
@@ -1314,7 +1346,81 @@
         }
 
         // ════════════════════════════════════════════════════════════════
-        // 4. API CONFIG (Facebook & Pinterest)
+        // 4. PLAY FUNCTIONS (Video & Audio Popups with 60s auto-close)
+        // ════════════════════════════════════════════════════════════════
+
+        window.playVideo = function(url) {
+            const win = window.open('', '_blank', 'width=720,height=500');
+            if (!win) {
+                showToast('Please allow popups for this site', 'error');
+                return;
+            }
+            win.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>DG Video Player</title>
+                    <style>
+                        body{margin:0;background:#0a0a0c;display:flex;justify-content:center;align-items:center;height:100vh;flex-direction:column;color:#fff;font-family:sans-serif;padding:10px;box-sizing:border-box;}
+                        video{max-width:100%;max-height:85vh;background:#000;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+                        .timer{position:fixed;bottom:20px;right:20px;background:rgba(0,0,0,0.7);padding:8px 18px;border-radius:30px;font-size:13px;color:#aaa;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.05);}
+                        .brand{position:fixed;top:20px;left:20px;color:rgba(255,255,255,0.2);font-size:12px;letter-spacing:1px;}
+                    </style>
+                </head>
+                <body>
+                    <div class="brand">DG PLAYER</div>
+                    <video controls autoplay src="${url}"></video>
+                    <div class="timer">⏳ Auto-closes in 60s</div>
+                    <script>
+                        setTimeout(() => { window.close(); }, 60000);
+                    <\/script>
+                </body>
+                </html>
+            `);
+            win.document.close();
+        };
+
+        window.playAudio = function(url) {
+            const imgUrl = 'https://res.cloudinary.com/divxgmr1g/image/upload/v1788061660/nytc7hnwcwimusfffj0r.png';
+            const win = window.open('', '_blank', 'width=500,height=600');
+            if (!win) {
+                showToast('Please allow popups for this site', 'error');
+                return;
+            }
+            win.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>DG Audio Player</title>
+                    <style>
+                        body{margin:0;height:100vh;background-image:url('${imgUrl}');background-size:cover;background-position:center;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:sans-serif;position:relative;padding:20px;box-sizing:border-box;}
+                        .overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.25);backdrop-filter:blur(2px);}
+                        .wrapper{position:relative;z-index:2;background:rgba(0,0,0,0.65);backdrop-filter:blur(12px);padding:35px 40px;border-radius:28px;max-width:90%;text-align:center;border:1px solid rgba(255,255,255,0.08);box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+                        .wrapper .icon{font-size:48px;margin-bottom:12px;display:block;}
+                        audio{width:300px;max-width:100%;margin-top:15px;border-radius:30px;}
+                        .timer{position:fixed;bottom:20px;right:20px;z-index:3;background:rgba(0,0,0,0.7);padding:8px 18px;border-radius:30px;font-size:13px;color:#aaa;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.05);}
+                        .brand{position:fixed;top:20px;left:20px;z-index:3;color:rgba(255,255,255,0.3);font-size:12px;letter-spacing:1px;}
+                    </style>
+                </head>
+                <body>
+                    <div class="brand">DG AUDIO</div>
+                    <div class="overlay"></div>
+                    <div class="wrapper">
+                        <span class="icon">🎵</span>
+                        <audio controls autoplay src="${url}"></audio>
+                    </div>
+                    <div class="timer">⏳ Auto-closes in 60s</div>
+                    <script>
+                        setTimeout(() => { window.close(); }, 60000);
+                    <\/script>
+                </body>
+                </html>
+            `);
+            win.document.close();
+        };
+
+        // ════════════════════════════════════════════════════════════════
+        // 5. API CONFIG (Facebook & Pinterest)
         // ════════════════════════════════════════════════════════════════
 
         const API_CONFIG = {
@@ -1360,7 +1466,7 @@
         };
 
         // ════════════════════════════════════════════════════════════════
-        // 5. TIKTOK DOWNLOAD — FIXED WITH WORKING POST API
+        // 6. TIKTOK DOWNLOAD (with Play buttons)
         // ════════════════════════════════════════════════════════════════
 
         const TIKTOK_AUDIO_API = 'https://dg-tiktok-audio-download-api.vercel.app';
@@ -1375,7 +1481,6 @@
             const errorMsg = document.getElementById('errorTiktok');
             const qualityContainer = document.getElementById('qualityOptionsTiktok');
 
-            // Reset UI
             resultBox.style.display = 'none';
             errorMsg.style.display = 'none';
             qualityContainer.innerHTML = '';
@@ -1389,15 +1494,12 @@
             }
 
             try {
-                // Use the working POST API from your working example
                 const apiUrl = `${TIKTOK_AUDIO_API}/api/download/tiktok`;
                 console.log('TikTok API request (POST):', apiUrl);
 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ url: url })
                 });
 
@@ -1410,7 +1512,6 @@
                     const videoData = data.data;
                     const items = [];
 
-                    // Build download options based on mode
                     if (mode === 'video_audio' || mode === 'video_only') {
                         if (videoData.videoHD) {
                             items.push({
@@ -1418,7 +1519,8 @@
                                 url: videoData.videoHD,
                                 filename: 'tiktok-hd.mp4',
                                 cssClass: 'hd-download',
-                                icon: 'fa-video'
+                                icon: 'fa-video',
+                                type: 'video'
                             });
                         }
                         if (videoData.videoNormal) {
@@ -1427,7 +1529,8 @@
                                 url: videoData.videoNormal,
                                 filename: 'tiktok-sd.mp4',
                                 cssClass: 'sd-download',
-                                icon: 'fa-video'
+                                icon: 'fa-video',
+                                type: 'video'
                             });
                         }
                     }
@@ -1439,7 +1542,8 @@
                                 url: videoData.audioUrl,
                                 filename: 'tiktok-audio.mp3',
                                 cssClass: 'audio-download',
-                                icon: 'fa-music'
+                                icon: 'fa-music',
+                                type: 'audio'
                             });
                         }
                     }
@@ -1450,20 +1554,25 @@
                         return;
                     }
 
-                    // Build the result HTML with proxy URLs
                     let html = `<div class="result-item">`;
                     html += `<div class="url-label"><i class="fab fa-tiktok tiktok-label"></i> TikTok ready</div>`;
                     html += `<div class="quality-options">`;
 
                     for (const item of items) {
-                        // Use the proxy endpoint for actual download
-                        const proxyUrl = `${TIKTOK_AUDIO_API}/api/proxy-download?url=${encodeURIComponent(item.url)}&type=${item.icon === 'fa-music' ? 'audio' : 'video'}`;
+                        const proxyUrl = `${TIKTOK_AUDIO_API}/api/proxy-download?url=${encodeURIComponent(item.url)}&type=${item.type === 'audio' ? 'audio' : 'video'}`;
+                        const isAudio = item.type === 'audio';
+
                         html += `
-                                <a href="${proxyUrl}" class="download-btn ${item.cssClass}" download="${item.filename}">
+                            <div style="display:flex; gap:8px; align-items:center; width:100%;">
+                                <a href="${proxyUrl}" class="download-btn ${item.cssClass}" download="${item.filename}" style="flex:1;">
                                     <span><i class="fas ${item.icon}"></i> ${item.label}</span>
                                     <span class="quality-badge"><i class="fas fa-download"></i> Download</span>
                                 </a>
-                            `;
+                                <button class="play-btn" onclick="${isAudio ? `playAudio('${proxyUrl}')` : `playVideo('${proxyUrl}')`}" title="Play in popup">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        `;
                     }
 
                     html += `</div></div>`;
@@ -1487,7 +1596,7 @@
         }
 
         // ════════════════════════════════════════════════════════════════
-        // 6. FACEBOOK & PINTEREST DOWNLOAD
+        // 7. FACEBOOK & PINTEREST DOWNLOAD (with Play buttons)
         // ════════════════════════════════════════════════════════════════
 
         async function downloadVideos(platform) {
@@ -1538,12 +1647,18 @@
                         const proxyUrl = `${config.proxy}?url=${encodeURIComponent(item.url)}`;
                         const filename = `${platform}-${item.label.toLowerCase().replace(/\s+/g, '-')}.mp4`;
                         const cssClass = item.cssClass || 'hd-download';
+
                         html += `
-                                <a href="${proxyUrl}" class="download-btn ${cssClass}" download="${filename}">
+                            <div style="display:flex; gap:8px; align-items:center; width:100%;">
+                                <a href="${proxyUrl}" class="download-btn ${cssClass}" download="${filename}" style="flex:1;">
                                     <span><i class="fas fa-video"></i> ${item.label}</span>
                                     <span class="quality-badge"><i class="fas fa-download"></i> Download</span>
                                 </a>
-                            `;
+                                <button class="play-btn" onclick="playVideo('${proxyUrl}')" title="Play in popup">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        `;
                     }
                     html += `</div></div>`;
                     qualityContainer.innerHTML = html;
@@ -1565,7 +1680,7 @@
         }
 
         // ════════════════════════════════════════════════════════════════
-        // 7. TOAST
+        // 8. TOAST
         // ════════════════════════════════════════════════════════════════
 
         let toastTimeout = null;
@@ -1597,7 +1712,7 @@
         }
 
         // ════════════════════════════════════════════════════════════════
-        // 8. KEYBOARD SHORTCUT: Enter to download
+        // 9. KEYBOARD SHORTCUT: Enter to download
         // ════════════════════════════════════════════════════════════════
 
         document.addEventListener('keydown', (e) => {
@@ -1615,7 +1730,7 @@
         });
 
         // ════════════════════════════════════════════════════════════════
-        // 9. INITIAL FOCUS
+        // 10. INITIAL FOCUS
         // ════════════════════════════════════════════════════════════════
 
         setTimeout(() => {
@@ -1623,11 +1738,9 @@
             if (firstInput) firstInput.focus();
         }, 300);
 
-        console.log('🚀 DG Social Downloader v5 — TikTok fixed with working POST API');
-        console.log('📌 Platforms: TikTok (Audio/Video) · Facebook · Pinterest');
-        console.log('🎵 TikTok uses: POST /api/download/tiktok + /api/proxy-download');
-        console.log('💡 Tip: Press Enter to download.');
-        console.log('📱 Report issues via WhatsApp button.');
+        console.log('🚀 DG Social Downloader v6 — with Play Popups');
+        console.log('📌 Video & Audio popups auto-close in 60 seconds.');
+        console.log('🎨 Audio player uses custom background image.');
     </script>
 
 </body>
