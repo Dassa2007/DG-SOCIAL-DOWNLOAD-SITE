@@ -3,147 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pinterest Video Downloader</title>
-    <!-- Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>YouTube Downloader</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f0c1b;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #1a1528;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #a855f7;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #332952;
+            background: #110d1d;
+            color: #fff;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        input:focus, select:focus {
+            border-color: #a855f7;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        #result {
+            margin-top: 20px;
+            background: #110d1d;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #332952;
+            word-break: break-all;
+            display: none;
+        }
+        .loading {
+            text-align: center;
+            color: #a855f7;
+            display: none;
+            margin-top: 15px;
+        }
+    </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between font-sans">
+<body>
 
-    <!-- Header -->
-    <header class="py-6 text-center">
-        <h1 class="text-3xl font-bold text-red-600 flex items-center justify-center gap-2">
-            <i class="fa-brands fa-pinterest"></i> Pinterest Downloader
-        </h1>
-        <p class="text-slate-400 text-sm mt-1">Paste your Pinterest link below to download videos easily</p>
-    </header>
+<div class="container">
+    <h2>YouTube Downloader</h2>
+    <div class="form-group">
+        <label for="videoUrl">YouTube Video URL</label>
+        <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
+    </div>
+    
+    <div class="form-group">
+        <label for="quality">Quality</label>
+        <select id="quality">
+            <option value="1080p">1080p FHD</option>
+            <option value="720p">720p HD</option>
+        </select>
+    </div>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 max-w-lg mb-auto">
-        <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
-            
-            <!-- Input Form -->
-            <div class="space-y-4">
-                <div>
-                    <label for="pinUrl" class="block text-sm font-medium text-slate-300 mb-1">Pinterest Video URL</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                            <i class="fa-solid fa-link"></i>
-                        </span>
-                        <input type="text" id="pinUrl" placeholder="https://pin.it/xxxxxxx" 
-                            class="w-full pl-10 pr-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-red-500 text-sm text-white placeholder-slate-500">
-                    </div>
-                </div>
+    <button onclick="downloadVideo()">Send Request</button>
 
-                <button onclick="downloadVideo()" id="downloadBtn" 
-                    class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-red-600/30">
-                    <i class="fa-solid fa-download"></i> Get Video Details
-                </button>
-            </div>
+    <div class="loading" id="loadingText">Processing, please wait...</div>
+    <div id="result"></div>
+</div>
 
-            <!-- Loading Spinner -->
-            <div id="loading" class="hidden text-center py-6">
-                <i class="fa-solid fa-spinner fa-spin text-3xl text-red-500"></i>
-                <p class="text-sm text-slate-400 mt-2">Fetching video details...</p>
-            </div>
+<script>
+    async function downloadVideo() {
+        const url = document.getElementById('videoUrl').value.trim();
+        const quality = document.getElementById('quality').value;
+        const resultDiv = document.getElementById('result');
+        const loadingText = document.getElementById('loadingText');
 
-            <!-- Result Section -->
-            <div id="result" class="hidden mt-6 pt-6 border-t border-slate-700 text-center">
-                <h3 id="videoTitle" class="text-sm font-medium text-slate-200 mb-4">Pinterest Video Ready!</h3>
-                
-                <!-- Download Action Button -->
-                <a id="downloadLinkBtn" href="#" target="_blank" 
-                    class="inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 text-sm w-full shadow-lg shadow-green-600/30">
-                    <i class="fa-solid fa-cloud-arrow-down"></i> Download Video Now
-                </a>
-            </div>
-
-            <!-- Error Message -->
-            <div id="errorMsg" class="hidden mt-4 p-3 bg-red-900/50 border border-red-700 text-red-200 rounded-xl text-xs text-center"></div>
-
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="py-4 text-center text-xs text-slate-500">
-        Powered by Supun API &bull; Created for You
-    </footer>
-
-    <!-- JavaScript Logic -->
-    <script>
-        const apiKey = "supun-6senhznz07sw1zzfkn8yf768";
-
-        async function downloadVideo() {
-            const urlInput = document.getElementById('pinUrl').value.trim();
-            const loading = document.getElementById('loading');
-            const result = document.getElementById('result');
-            const errorMsg = document.getElementById('errorMsg');
-            const downloadBtn = document.getElementById('downloadBtn');
-
-            result.classList.add('hidden');
-            errorMsg.classList.add('hidden');
-
-            if (!urlInput) {
-                showError("කරුණාකර Pinterest ලින්ක් එකක් ඇතුළත් කරන්න!");
-                return;
-            }
-
-            loading.classList.remove('hidden');
-            downloadBtn.disabled = true;
-
-            try {
-                const apiEndpoint = `https://supunofc.site/api/download/down/pin/dl?url=${encodeURIComponent(urlInput)}&apikey=${apiKey}`;
-                
-                const response = await fetch(apiEndpoint);
-                const data = await response.json();
-
-                console.log("API Response:", data);
-
-                loading.classList.add('hidden');
-                downloadBtn.disabled = false;
-
-                let downloadUrl = "";
-
-                // විවිධ ක්‍රම වලට ලින්ක් එක පරීක්ෂා කිරීම
-                if (Array.isArray(data) && data.length > 0) {
-                    downloadUrl = data[0].url || data[0].download || data[0].link;
-                } else if (data.url) {
-                    downloadUrl = data.url;
-                } else if (data.data) {
-                    if (Array.isArray(data.data) && data.data.length > 0) {
-                        downloadUrl = data.data[0].url || data.data[0];
-                    } else {
-                        downloadUrl = data.data.url || data.data;
-                    }
-                } else if (data.result) {
-                    if (Array.isArray(data.result) && data.result.length > 0) {
-                        downloadUrl = data.result[0].url || data.result[0];
-                    } else {
-                        downloadUrl = data.result.url || data.result;
-                    }
-                }
-
-                if (downloadUrl) {
-                    document.getElementById('downloadLinkBtn').href = downloadUrl;
-                    result.classList.remove('hidden');
-                } else {
-                    showError("API එකෙන් නිවැරදි ඩවුන්ලෝඩ් ලින්ක් එකක් හමු නොවීය.");
-                }
-
-            } catch (err) {
-                loading.classList.add('hidden');
-                downloadBtn.disabled = false;
-                showError("සමාවන්න, API එකට සම්බන්ධ වීමේ දෝෂයක් සිදු විය.");
-                console.error(err);
-            }
+        if (!url) {
+            alert('කරුණාකර YouTube Link එකක් ඇතුළත් කරන්න!');
+            return;
         }
 
-        function showError(message) {
-            const errorMsg = document.getElementById('errorMsg');
-            errorMsg.innerText = message;
-            errorMsg.classList.remove('hidden');
+        // ඔබේ API Key එක මෙහි ඇතුළත් කර ඇත
+        const apiKey = "chama_api_5a41a37af1494e56bc697d3122bd519a"; 
+        
+        const apiUrl = `https://api.chamindu.site/api/v1/youtube/mp4?url=${encodeURIComponent(url)}&quality=${quality}&api_key=${apiKey}`;
+
+        resultDiv.style.display = 'none';
+        loadingText.style.display = 'block';
+
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            loadingText.style.display = 'none';
+            resultDiv.style.display = 'block';
+
+            if (response.ok) {
+                resultDiv.innerHTML = `<strong>Success!</strong><br><a href="${data.url || data.download_url || '#'}" target="_blank" style="color: #38bdf8;">Download Link Click Here</a>`;
+            } else {
+                resultDiv.innerHTML = `<span style="color: #f87171;">Error: ${data.message || 'Something went wrong!'}</span>`;
+            }
+        } catch (error) {
+            loadingText.style.display = 'none';
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `<span style="color: #f87171;">Connection Error: ${error.message}</span>`;
         }
-    </script>
+    }
+</script>
+
 </body>
 </html>
