@@ -98,20 +98,30 @@
                 const response = await fetch(apiEndpoint);
                 const data = await response.json();
 
+                console.log("API Response:", data);
+
                 loading.classList.add('hidden');
                 downloadBtn.disabled = false;
 
-                // API එකෙන් එන Array එකෙන් සහ අනෙකුත් ක්‍රම වලින් නිවැරදි ලින්ක් එක ලබා ගැනීම
                 let downloadUrl = "";
-                
-                if (Array.isArray(data) && data.length > 0 && data[0].url) {
-                    downloadUrl = data[0].url; // ඔයාගේ ස්ක්‍රීන්ෂොට් එකේ ඇති ආකාරයට
+
+                // විවිධ ක්‍රම වලට ලින්ක් එක පරීක්ෂා කිරීම
+                if (Array.isArray(data) && data.length > 0) {
+                    downloadUrl = data[0].url || data[0].download || data[0].link;
                 } else if (data.url) {
                     downloadUrl = data.url;
-                } else if (data.data && Array.isArray(data.data) && data.data.length > 0) {
-                    downloadUrl = data.data[0].url;
-                } else if (data.result && Array.isArray(data.result) && data.result.length > 0) {
-                    downloadUrl = data.result[0].url;
+                } else if (data.data) {
+                    if (Array.isArray(data.data) && data.data.length > 0) {
+                        downloadUrl = data.data[0].url || data.data[0];
+                    } else {
+                        downloadUrl = data.data.url || data.data;
+                    }
+                } else if (data.result) {
+                    if (Array.isArray(data.result) && data.result.length > 0) {
+                        downloadUrl = data.result[0].url || data.result[0];
+                    } else {
+                        downloadUrl = data.result.url || data.result;
+                    }
                 }
 
                 if (downloadUrl) {
