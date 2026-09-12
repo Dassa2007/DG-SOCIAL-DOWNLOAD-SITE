@@ -100,22 +100,22 @@
                 const response = await fetch(apiEndpoint);
                 const data = await response.json();
 
+                // මෙය බ්‍රව්සර් එකේ F12 Console එකේ පෙන්වනු ඇත
+                console.log("API Response Data:", data);
+
                 loading.classList.add('hidden');
                 downloadBtn.disabled = false;
 
-                // ඔයාගේ API එකේ ඩේටා റിട്ടേൺ වන විදිහ අනුව මෙතැන වෙනස් වෙන්න පුළුවන් (සාමාන්‍යයෙන් data.data හෝ data.url වගේ වෙයි)
-                // පහත දැක්වෙන්නේ සාර්ථක ප්‍රතිචාරයක් හැසිරෙන ආකාරයයි:
-                if (data && (data.url || data.download || data.data)) {
-                    // API එකෙන් එන ලින්ක් එක ලබාගැනීම (වෙනස්කම් තිබේ නම් මෙතැන බලන්න)
-                    const downloadUrl = data.url || data.download || data.data.url || data.data;
-                    const title = data.title || data.note || "Pinterest Video";
+                // API එකෙන් එන විවිධ format පරීක්ෂා කිරීම
+                const downloadUrl = data.url || data.download || data.result || (data.data && data.data.url) || (data.result && data.result.url);
+                const title = data.title || data.caption || data.note || "Pinterest Video";
 
+                if (downloadUrl) {
                     document.getElementById('videoTitle').innerText = title;
                     document.getElementById('downloadLink').href = downloadUrl;
-                    
                     result.classList.remove('hidden');
                 } else {
-                    showError("වීඩියෝව ලබාගැනීමට නොහැකි විය. කරුණාකර නිවැරදි ලින්ක් එකක් ලබාදෙන්න.");
+                    showError("වීඩියෝ ලින්ක් එක ලබාගැනීමට නොහැකි විය. (API Response Format Error)");
                 }
 
             } catch (err) {
