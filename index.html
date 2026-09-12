@@ -51,13 +51,12 @@
             <!-- Result Section -->
             <div id="result" class="hidden mt-6 pt-6 border-t border-slate-700 text-center">
                 <h3 id="videoTitle" class="text-sm font-medium text-slate-200 mb-4 line-clamp-2"></h3>
-                <div id="videoContainer" class="mb-4">
-                    <!-- Video preview or download button will appear here -->
-                </div>
-                <a id="downloadLink" href="#" target="_blank" 
-                    class="inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-6 rounded-xl transition duration-200 text-sm w-full">
+                
+                <!-- Download Action Button -->
+                <button id="downloadActionBtn" onclick="triggerDownload()" 
+                    class="inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 text-sm w-full shadow-lg shadow-green-600/30">
                     <i class="fa-solid fa-cloud-arrow-down"></i> Download File
-                </a>
+                </button>
             </div>
 
             <!-- Error Message -->
@@ -74,6 +73,7 @@
     <!-- JavaScript Logic -->
     <script>
         const apiKey = "supun-6senhznz07sw1zzfkn8yf768";
+        let finalVideoUrl = "";
 
         async function downloadVideo() {
             const urlInput = document.getElementById('pinUrl').value.trim();
@@ -82,7 +82,6 @@
             const errorMsg = document.getElementById('errorMsg');
             const downloadBtn = document.getElementById('downloadBtn');
 
-            // Reset UI
             result.classList.add('hidden');
             errorMsg.classList.add('hidden');
 
@@ -100,22 +99,20 @@
                 const response = await fetch(apiEndpoint);
                 const data = await response.json();
 
-                // මෙය බ්‍රව්සර් එකේ F12 Console එකේ පෙන්වනු ඇත
-                console.log("API Response Data:", data);
+                console.log("Full API Response:", data); // F12 එකේ කන්සෝල් එකේ ඩේටා බලාගන්න
 
                 loading.classList.add('hidden');
                 downloadBtn.disabled = false;
 
-                // API එකෙන් එන විවිධ format පරීක්ෂා කිරීම
-                const downloadUrl = data.url || data.download || data.result || (data.data && data.data.url) || (data.result && data.result.url);
+                // API එකෙන් ලින්ක් එක එන විදිහ පරීක්ෂා කිරීම (විවිධ යතුරු මඟින් සෙවීම)
+                finalVideoUrl = data.url || data.download || data.result || (data.data && data.data.url) || (data.result && data.result.url);
                 const title = data.title || data.caption || data.note || "Pinterest Video";
 
-                if (downloadUrl) {
+                if (finalVideoUrl) {
                     document.getElementById('videoTitle').innerText = title;
-                    document.getElementById('downloadLink').href = downloadUrl;
                     result.classList.remove('hidden');
                 } else {
-                    showError("වීඩියෝ ලින්ක් එක ලබාගැනීමට නොහැකි විය. (API Response Format Error)");
+                    showError("වීඩියෝ ලින්ක් එක ලබාගැනීමට නොහැකි විය. (API Response හි ලින්ක් එක හමු නොවීය)");
                 }
 
             } catch (err) {
@@ -123,6 +120,15 @@
                 downloadBtn.disabled = false;
                 showError("සමාවන්න, දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.");
                 console.error(err);
+            }
+        }
+
+        function triggerDownload() {
+            if (finalVideoUrl) {
+                // අලුත් ටැබ් එකක ලින්ක් එක ඕපන් කිරීම (404 ඒච වැළැක්වීමට)
+                window.open(finalVideoUrl, '_blank');
+            } else {
+                showError("ඩවුන්ලෝඩ් ලින්ක් එකක් හමු නොවීය!");
             }
         }
 
