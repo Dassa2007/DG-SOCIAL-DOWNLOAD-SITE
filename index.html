@@ -50,14 +50,8 @@
 
             <!-- Result Section -->
             <div id="result" class="hidden mt-6 pt-6 border-t border-slate-700 text-center">
-                <h3 id="videoTitle" class="text-sm font-medium text-slate-200 mb-2"></h3>
+                <h3 id="videoTitle" class="text-sm font-medium text-slate-200 mb-4">Pinterest Video Ready!</h3>
                 
-                <!-- API එකෙන් එන මුළු ඩේටා එක මෙතන පෙන්වයි (Debugging සඳහා) -->
-                <div class="mb-4 text-left">
-                    <p class="text-xs text-slate-400 mb-1">API Response Data:</p>
-                    <pre id="apiRawData" class="bg-slate-950 p-3 rounded-lg text-xs text-green-400 overflow-x-auto max-h-32"></pre>
-                </div>
-
                 <!-- Download Action Button -->
                 <a id="downloadLinkBtn" href="#" target="_blank" 
                     class="inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 text-sm w-full shadow-lg shadow-green-600/30">
@@ -107,20 +101,24 @@
                 loading.classList.add('hidden');
                 downloadBtn.disabled = false;
 
-                // API එකෙන් එන ඩේටා Screen එකේ Raw විදිහට පෙන්වීම
-                document.getElementById('apiRawData').innerText = JSON.stringify(data, null, 2);
-
-                // විවිධ යතුරු (keys) හරහා ලින්ක් එක සෙවීම
-                const downloadUrl = data.url || data.download || data.result || data.link || (data.data && data.data.url) || (data.result && data.result.url);
-                const title = data.title || data.caption || data.note || "Pinterest Video";
+                // API එකෙන් එන Array එකෙන් සහ අනෙකුත් ක්‍රම වලින් නිවැරදි ලින්ක් එක ලබා ගැනීම
+                let downloadUrl = "";
+                
+                if (Array.isArray(data) && data.length > 0 && data[0].url) {
+                    downloadUrl = data[0].url; // ඔයාගේ ස්ක්‍රීන්ෂොට් එකේ ඇති ආකාරයට
+                } else if (data.url) {
+                    downloadUrl = data.url;
+                } else if (data.data && Array.isArray(data.data) && data.data.length > 0) {
+                    downloadUrl = data.data[0].url;
+                } else if (data.result && Array.isArray(data.result) && data.result.length > 0) {
+                    downloadUrl = data.result[0].url;
+                }
 
                 if (downloadUrl) {
-                    document.getElementById('videoTitle').innerText = title;
                     document.getElementById('downloadLinkBtn').href = downloadUrl;
                     result.classList.remove('hidden');
                 } else {
                     showError("API එකෙන් නිවැරදි ඩවුන්ලෝඩ් ලින්ක් එකක් හමු නොවීය.");
-                    result.classList.remove('hidden'); // Raw data එක බලාගැනීමට result box එක පෙන්වයි
                 }
 
             } catch (err) {
