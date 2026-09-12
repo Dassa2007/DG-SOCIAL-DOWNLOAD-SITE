@@ -110,7 +110,7 @@
 
 <script>
     async function downloadVideo() {
-        const url = document.getElementById('videoUrl').value.trim();
+        let url = document.getElementById('videoUrl').value.trim();
         const quality = document.getElementById('quality').value;
         const resultDiv = document.getElementById('result');
         const loadingText = document.getElementById('loadingText');
@@ -120,25 +120,33 @@
             return;
         }
 
-        // ඔබේ API Key එක මෙහි ඇතුළත් කර ඇත
+        // Link එකේ මුලට https:// නැත්නම් එකතු කිරීම
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'https://' + url;
+        }
+
         const apiKey = "chama_api_5a41a37af1494e56bc697d3122bd519a"; 
+        const targetApiUrl = `https://api.chamindu.site/api/v1/youtube/mp4?url=${encodeURIComponent(url)}&quality=${quality}&api_key=${apiKey}`;
         
-        const apiUrl = `https://api.chamindu.site/api/v1/youtube/mp4?url=${encodeURIComponent(url)}&quality=${quality}&api_key=${apiKey}`;
+        // CORS ප්‍රශ්න මඟහරවා ගැනීමට Proxy එකක් හරහා යැවීම
+        const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetApiUrl)}`;
 
         resultDiv.style.display = 'none';
         loadingText.style.display = 'block';
 
         try {
             const response = await fetch(apiUrl);
-            const data = await response.json();
+            const proxyData = await response.json();
+            const data = JSON.parse(proxyData.contents);
 
             loadingText.style.display = 'none';
             resultDiv.style.display = 'block';
 
-            if (response.ok) {
-                resultDiv.innerHTML = `<strong>Success!</strong><br><a href="${data.url || data.download_url || '#'}" target="_blank" style="color: #38bdf8;">Download Link Click Here</a>`;
+            if (data && (data.url || data.download_url)) {
+                const downloadLink = data.url || data.download_url;
+                resultDiv.innerHTML = `<strong>Success!</strong><br><a href="${downloadLink}" target="_blank" style="color: #38bdf8;">Download Link Click Here</a>`;
             } else {
-                resultDiv.innerHTML = `<span style="color: #f87171;">Error: ${data.message || 'Something went wrong!'}</span>`;
+                resultDiv.innerHTML = `<span style="color: #f87171;">Error: ${data.message || 'Invalid response from API!'}</span>`;
             }
         } catch (error) {
             loadingText.style.display = 'none';
