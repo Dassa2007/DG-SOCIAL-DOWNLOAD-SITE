@@ -38,7 +38,7 @@
 
                 <button onclick="downloadVideo()" id="downloadBtn" 
                     class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-red-600/30">
-                    <i class="fa-solid fa-download"></i> Download Now
+                    <i class="fa-solid fa-download"></i> Get Video Details
                 </button>
             </div>
 
@@ -50,13 +50,19 @@
 
             <!-- Result Section -->
             <div id="result" class="hidden mt-6 pt-6 border-t border-slate-700 text-center">
-                <h3 id="videoTitle" class="text-sm font-medium text-slate-200 mb-4 line-clamp-2"></h3>
+                <h3 id="videoTitle" class="text-sm font-medium text-slate-200 mb-2"></h3>
                 
+                <!-- API එකෙන් එන මුළු ඩේටා එක මෙතන පෙන්වයි (Debugging සඳහා) -->
+                <div class="mb-4 text-left">
+                    <p class="text-xs text-slate-400 mb-1">API Response Data:</p>
+                    <pre id="apiRawData" class="bg-slate-950 p-3 rounded-lg text-xs text-green-400 overflow-x-auto max-h-32"></pre>
+                </div>
+
                 <!-- Download Action Button -->
-                <button id="downloadActionBtn" onclick="triggerDownload()" 
+                <a id="downloadLinkBtn" href="#" target="_blank" 
                     class="inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 text-sm w-full shadow-lg shadow-green-600/30">
-                    <i class="fa-solid fa-cloud-arrow-down"></i> Download File
-                </button>
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Download Video Now
+                </a>
             </div>
 
             <!-- Error Message -->
@@ -73,7 +79,6 @@
     <!-- JavaScript Logic -->
     <script>
         const apiKey = "supun-6senhznz07sw1zzfkn8yf768";
-        let finalVideoUrl = "";
 
         async function downloadVideo() {
             const urlInput = document.getElementById('pinUrl').value.trim();
@@ -99,36 +104,30 @@
                 const response = await fetch(apiEndpoint);
                 const data = await response.json();
 
-                console.log("Full API Response:", data); // F12 එකේ කන්සෝල් එකේ ඩේටා බලාගන්න
-
                 loading.classList.add('hidden');
                 downloadBtn.disabled = false;
 
-                // API එකෙන් ලින්ක් එක එන විදිහ පරීක්ෂා කිරීම (විවිධ යතුරු මඟින් සෙවීම)
-                finalVideoUrl = data.url || data.download || data.result || (data.data && data.data.url) || (data.result && data.result.url);
+                // API එකෙන් එන ඩේටා Screen එකේ Raw විදිහට පෙන්වීම
+                document.getElementById('apiRawData').innerText = JSON.stringify(data, null, 2);
+
+                // විවිධ යතුරු (keys) හරහා ලින්ක් එක සෙවීම
+                const downloadUrl = data.url || data.download || data.result || data.link || (data.data && data.data.url) || (data.result && data.result.url);
                 const title = data.title || data.caption || data.note || "Pinterest Video";
 
-                if (finalVideoUrl) {
+                if (downloadUrl) {
                     document.getElementById('videoTitle').innerText = title;
+                    document.getElementById('downloadLinkBtn').href = downloadUrl;
                     result.classList.remove('hidden');
                 } else {
-                    showError("වීඩියෝ ලින්ක් එක ලබාගැනීමට නොහැකි විය. (API Response හි ලින්ක් එක හමු නොවීය)");
+                    showError("API එකෙන් නිවැරදි ඩවුන්ලෝඩ් ලින්ක් එකක් හමු නොවීය.");
+                    result.classList.remove('hidden'); // Raw data එක බලාගැනීමට result box එක පෙන්වයි
                 }
 
             } catch (err) {
                 loading.classList.add('hidden');
                 downloadBtn.disabled = false;
-                showError("සමාවන්න, දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.");
+                showError("සමාවන්න, API එකට සම්බන්ධ වීමේ දෝෂයක් සිදු විය.");
                 console.error(err);
-            }
-        }
-
-        function triggerDownload() {
-            if (finalVideoUrl) {
-                // අලුත් ටැබ් එකක ලින්ක් එක ඕපන් කිරීම (404 ඒච වැළැක්වීමට)
-                window.open(finalVideoUrl, '_blank');
-            } else {
-                showError("ඩවුන්ලෝඩ් ලින්ක් එකක් හමු නොවීය!");
             }
         }
 
