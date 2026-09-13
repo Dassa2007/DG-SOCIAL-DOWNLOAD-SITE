@@ -17,8 +17,7 @@
     background: rgba(255,255,255,0.05);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 24px;
-    padding: 32px 24px;
+    border-radius: 24px; padding: 32px 24px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   }
   .logo { text-align: center; margin-bottom: 8px; font-size: 42px; }
@@ -47,23 +46,13 @@
     border: none; border-radius: 14px;
     color: #fff; font-size: 15px; font-weight: 700;
     cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
-    letter-spacing: 0.5px;
   }
-  button:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(131,56,236,0.4);
-  }
+  button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(131,56,236,0.4); }
   button:disabled { opacity: 0.6; cursor: not-allowed; }
-
-  .status {
-    margin-top: 20px; padding: 14px;
-    border-radius: 12px; font-size: 13px;
-    text-align: center; display: none;
-  }
+  .status { margin-top: 20px; padding: 14px; border-radius: 12px; font-size: 13px; text-align: center; display: none; }
   .status.loading { display: block; background: rgba(58,134,255,0.15); color: #3a86ff; }
   .status.error { display: block; background: rgba(255,0,110,0.15); color: #ff006e; }
   .status.success { display: block; background: rgba(0,200,100,0.15); color: #00c864; }
-
   .loader {
     display: inline-block; width: 14px; height: 14px;
     border: 2px solid rgba(255,255,255,0.3);
@@ -72,30 +61,20 @@
     vertical-align: middle; margin-right: 8px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
   .result {
     margin-top: 20px; padding: 18px;
-    background: rgba(0,0,0,0.3);
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.1);
-    display: none;
+    background: rgba(0,0,0,0.3); border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.1); display: none;
   }
   .result.show { display: block; animation: slideIn 0.3s; }
   @keyframes slideIn { from { opacity:0; transform: translateY(10px);} to {opacity:1; transform: translateY(0);} }
   .result img { width: 100%; border-radius: 10px; margin-bottom: 12px; }
   .result .title { font-size: 14px; font-weight: 600; margin-bottom: 12px; line-height: 1.4; }
   .download-btn {
-    display: block; text-align: center;
-    padding: 14px;
+    display: block; text-align: center; padding: 14px;
     background: linear-gradient(90deg, #00c864, #00a854);
     color: #fff; text-decoration: none;
-    border-radius: 12px; font-weight: 700; font-size: 14px;
-    margin-bottom: 8px;
-  }
-  .download-btn:hover { opacity: 0.9; }
-  .download-btn.secondary {
-    background: linear-gradient(90deg, #3a86ff, #2b6ed9);
-    font-size: 13px; padding: 10px;
+    border-radius: 12px; font-weight: 700; font-size: 14px; margin-bottom: 8px;
   }
   .footer { text-align: center; margin-top: 20px; font-size: 11px; color: #555; }
 </style>
@@ -115,17 +94,14 @@
       <img id="thumb" src="" alt="thumbnail" />
       <div class="title" id="videoTitle"></div>
       <a id="downloadLink" class="download-btn" href="#" target="_blank">⬇️ Download MP3</a>
-      <a id="streamLink" class="download-btn secondary" href="#" target="_blank">▶️ Play / Stream</a>
     </div>
 
     <div class="footer">Powered by Dark Shans API</div>
   </div>
 
 <script>
-  // ============ CONFIG ============
-  const API_URL = "https://api-dark-shan-yt.koyeb.app/download/ytmp3";
-  const API_KEY = "7ef68a8f38185a67";
-  // =================================
+  // ✅ දැන් local proxy එකට call කරනවා (CORS ප්‍රශ්නය නැහැ)
+  const API_URL = "/api/ytmp3";
 
   const urlInput = document.getElementById('urlInput');
   const downloadBtn = document.getElementById('downloadBtn');
@@ -134,151 +110,85 @@
   const thumbEl = document.getElementById('thumb');
   const videoTitleEl = document.getElementById('videoTitle');
   const downloadLinkEl = document.getElementById('downloadLink');
-  const streamLinkEl = document.getElementById('streamLink');
 
   function setStatus(type, message, showLoader = false) {
     statusEl.className = 'status ' + type;
-    statusEl.innerHTML = showLoader
-      ? `<span class="loader"></span>${message}`
-      : message;
-  }
-
-  function clearStatus() {
-    statusEl.className = 'status';
-    statusEl.innerHTML = '';
+    statusEl.innerHTML = showLoader ? `<span class="loader"></span>${message}` : message;
   }
 
   function extractVideoId(url) {
-    const patterns = [
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
-    ];
-    for (const p of patterns) {
-      const m = url.match(p);
-      if (m) return m[1];
-    }
+    const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
+    if (m) return m[1];
     if (/^[a-zA-Z0-9_-]{11}$/.test(url.trim())) return url.trim();
     return null;
   }
 
-  // Recursively search for the first string that looks like an http URL
   function findUrl(obj, depth = 0) {
-    if (depth > 5 || !obj) return null;
-    if (typeof obj === 'string') {
-      if (/^https?:\/\//i.test(obj)) return obj;
-      return null;
-    }
+    if (depth > 6 || !obj) return null;
+    if (typeof obj === 'string') return /^https?:\/\//i.test(obj) ? obj : null;
     if (Array.isArray(obj)) {
-      for (const item of obj) {
-        const r = findUrl(item, depth + 1);
-        if (r) return r;
-      }
+      for (const item of obj) { const r = findUrl(item, depth + 1); if (r) return r; }
       return null;
     }
     if (typeof obj === 'object') {
-      // Priority keys first
-      const priorityKeys = ['download_url','downloadUrl','url','link','audio','mp3','file'];
-      for (const key of priorityKeys) {
-        if (obj[key] && typeof obj[key] === 'string' && /^https?:\/\//i.test(obj[key])) {
-          return obj[key];
-        }
+      const keys = ['download_url','downloadUrl','url','link','audio','mp3','file'];
+      for (const k of keys) {
+        if (typeof obj[k] === 'string' && /^https?:\/\//i.test(obj[k])) return obj[k];
       }
-      for (const key of Object.keys(obj)) {
-        const r = findUrl(obj[key], depth + 1);
-        if (r) return r;
-      }
+      for (const k of Object.keys(obj)) { const r = findUrl(obj[k], depth + 1); if (r) return r; }
     }
     return null;
   }
 
   function findField(obj, keys, depth = 0) {
-    if (depth > 5 || !obj) return null;
-    if (typeof obj === 'object') {
-      for (const key of keys) {
-        if (obj[key]) return obj[key];
-      }
-      for (const key of Object.keys(obj)) {
-        const r = findField(obj[key], keys, depth + 1);
-        if (r) return r;
-      }
+    if (depth > 6 || !obj || typeof obj !== 'object') return null;
+    for (const k of keys) if (obj[k]) return obj[k];
+    for (const k of Object.keys(obj)) {
+      const r = findField(obj[k], keys, depth + 1); if (r) return r;
     }
     return null;
   }
 
   async function downloadMp3() {
     const rawUrl = urlInput.value.trim();
-
-    if (!rawUrl) {
-      setStatus('error', '❌ YouTube link එකක් දාන්න');
-      return;
-    }
+    if (!rawUrl) { setStatus('error', '❌ YouTube link එකක් දාන්න'); return; }
 
     const videoId = extractVideoId(rawUrl);
-    if (!videoId) {
-      setStatus('error', '❌ වලංගු YouTube link එකක් නෙවෙයි');
-      return;
-    }
+    if (!videoId) { setStatus('error', '❌ වලංගු YouTube link එකක් නෙවෙයි'); return; }
 
     resultEl.classList.remove('show');
     downloadBtn.disabled = true;
     setStatus('loading', 'MP3 එක හදනවා... ටිකක් ඉන්න', true);
 
     try {
-      // ⚠️ IMPORTANT: parameter name is "apikey" (not api_key)
-      const requestUrl = `${API_URL}?url=${encodeURIComponent(rawUrl)}&apikey=${API_KEY}`;
-      console.log('Request:', requestUrl);
+      const res = await fetch(`${API_URL}?url=${encodeURIComponent(rawUrl)}`);
+      const data = await res.json();
+      console.log('Response:', data);
 
-      const response = await fetch(requestUrl, {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' },
-      });
+      if (data.error) throw new Error(data.error);
 
-      const text = await response.text();
-      console.log('Raw response:', text);
-
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (e) {
-        throw new Error('API එක JSON response එකක් දුන්නේ නැහැ. Response: ' + text.slice(0, 200));
-      }
-
-      console.log('Parsed:', data);
-
-      // Try to find download URL anywhere in the response
       const dlUrl = findUrl(data);
-      const title = findField(data, ['title', 'video_title', 'name', 'fileName']) || 'YouTube Audio';
-      const thumb = findField(data, ['thumbnail', 'thumb', 'image', 'cover']) ||
+      const title = findField(data, ['title','video_title','name','fileName']) || 'YouTube Audio';
+      const thumb = findField(data, ['thumbnail','thumb','image','cover']) ||
                     `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 
-      if (!dlUrl) {
-        throw new Error('Download link එක හම්බුනේ නැහැ. Console log එක බලන්න.');
-      }
+      if (!dlUrl) throw new Error('Download link එක හම්බුනේ නැහැ');
 
-      // Show result
       thumbEl.src = thumb;
       videoTitleEl.textContent = title;
       downloadLinkEl.href = dlUrl;
-      streamLinkEl.href = dlUrl;
       resultEl.classList.add('show');
-
-      setStatus('success', '✅ සාර්ථක! පහල button එක ඔබන්න');
+      setStatus('success', '✅ සාර්ථක! පහල Download button එක ඔබන්න');
     } catch (err) {
       console.error(err);
-      let msg = '❌ ' + err.message;
-
-      if (err.message.includes('Failed to fetch')) {
-        msg = '❌ CORS / Network ප්‍රශ්නයක්. API එකට browser එකෙන් call කරන්න බැහැ. Backend proxy එකක් ඕන.';
-      }
-      setStatus('error', msg);
+      setStatus('error', '❌ ' + err.message);
     } finally {
       downloadBtn.disabled = false;
     }
   }
 
   downloadBtn.addEventListener('click', downloadMp3);
-  urlInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') downloadMp3();
-  });
+  urlInput.addEventListener('keypress', e => { if (e.key === 'Enter') downloadMp3(); });
 </script>
 </body>
 </html>
