@@ -3,334 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DG Downloader - YouTube & Facebook</title>
+    <title>Tech With Dasun - YouTube Downloader</title>
     <style>
-        /* --- CSS කේතය මෙතැනින් ආරම්භ වේ --- */
-        :root {
-            --primary-color: #ff0000;
-            --secondary-color: #1a1a1a;
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-color: #ffffff;
-            --text-muted: #aaaaaa;
-            --border-color: #333333;
-        }
-
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background: #0f172a;
+            color: #f8fafc;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
         }
-
         .container {
             width: 100%;
-            max-width: 600px;
-            background-color: var(--card-bg);
-            border-radius: 16px;
+            max-width: 500px;
+            background: #1e293b;
             padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border-color);
-        }
-
-        h1 {
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             text-align: center;
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: var(--text-color);
+            border: 1px solid #334155;
         }
-
-        h1 span {
-            color: var(--primary-color);
+        h2 {
+            color: #38bdf8;
+            margin-bottom: 8px;
+            font-size: 24px;
         }
-
-        .subtitle {
-            text-align: center;
-            color: var(--text-muted);
-            margin-bottom: 30px;
-            font-size: 0.9rem;
+        .brand {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 24px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
-
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 20px;
         }
-
         input[type="text"] {
             width: 100%;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-size: 1rem;
+            padding: 14px 16px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 15px;
             outline: none;
             transition: border-color 0.3s;
         }
-
         input[type="text"]:focus {
-            border-color: var(--primary-color);
+            border-color: #38bdf8;
         }
-
         button {
-            padding: 15px;
-            border-radius: 10px;
-            border: none;
-            background-color: var(--primary-color);
+            background: #e11d48;
             color: white;
-            font-size: 1rem;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
+            transition: background 0.3s, transform 0.1s;
         }
-
         button:hover {
-            background-color: #cc0000;
+            background: #be123c;
         }
-
         button:active {
             transform: scale(0.98);
         }
-
-        button:disabled {
-            background-color: #555;
-            cursor: not-allowed;
-        }
-
-        .format-options {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .format-options button {
-            flex: 1;
-            background-color: var(--secondary-color);
-            border: 1px solid var(--border-color);
-        }
-
-        .format-options button.active {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .result-area {
-            margin-top: 20px;
-            display: none; /* Initially hidden */
-        }
-
-        .result-card {
-            background-color: var(--bg-color);
-            border-radius: 10px;
-            padding: 15px;
-            border: 1px solid var(--border-color);
-        }
-
-        .result-card h3 {
-            margin-bottom: 10px;
-            font-size: 1rem;
-            color: var(--text-muted);
-        }
-
-        .download-link {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            text-align: center;
-            background-color: #28a745;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        .download-link:hover {
-            background-color: #218838;
-        }
-
-        .error-message {
-            color: #ff6b6b;
-            text-align: center;
-            margin-top: 10px;
-            font-size: 0.9rem;
-        }
-
         .loading {
-            text-align: center;
             margin-top: 20px;
-            color: var(--text-muted);
+            color: #fbbf24;
+            font-size: 14px;
         }
-
-        .loading::after {
-            content: '...';
-            animation: dots 1.5s steps(4, end) infinite;
+        .result {
+            margin-top: 20px;
+            text-align: left;
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            display: none;
         }
-
-        @keyframes dots {
-            0%, 20% { content: ''; }
-            40% { content: '.'; }
-            60% { content: '..'; }
-            80%, 100% { content: '...'; }
+        .result img {
+            width: 100%;
+            border-radius: 6px;
+            margin-bottom: 12px;
         }
-        /* --- CSS කේතය මෙතැනින් අවසන් වේ --- */
+        .result h3 {
+            font-size: 15px;
+            margin-bottom: 15px;
+            color: #f1f5f9;
+            line-height: 1.4;
+        }
+        .dl-btn {
+            display: block;
+            background: #10b981;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 8px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .dl-btn:hover {
+            background: #059669;
+        }
+        .error {
+            color: #f87171;
+            margin-top: 15px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>DG <span>Downloader</span></h1>
-        <p class="subtitle">YouTube සහ Facebook වීඩියෝ සහ ශ්‍රව්‍ය බාගත කරන්න</p>
-
+        <h2>YouTube Downloader</h2>
+        <div class="brand">Tech With Dasun & DG STORE</div>
+        
         <div class="input-group">
-            <input type="text" id="urlInput" placeholder="වීඩියෝ URL එක මෙතැනට අලවන්න (YouTube හෝ Facebook)">
-            <div class="format-options">
-                <button id="videoBtn" class="active">වීඩියෝ</button>
-                <button id="audioBtn">ශ්‍රව්‍ය (MP3)</button>
-            </div>
-            <button id="downloadBtn">බාගත කරන්න</button>
+            <input type="text" id="urlInput" placeholder="YouTube Link එක මෙතනට Paste කරන්න...">
+            <button onclick="getDownloadLinks()">Download ගන්න</button>
         </div>
 
-        <div id="loading" class="loading" style="display: none;">සකසමින්</div>
-        <div id="error" class="error-message"></div>
+        <div id="loadingArea" class="loading" style="display: none;">වීඩියෝ විස්තර ලබාගනිමින් පවතී, රැඳී සිටින්න...</div>
+        <div id="errorArea" class="error"></div>
 
-        <div id="resultArea" class="result-area">
-            <div class="result-card">
-                <h3>බාගැනීමට සූදානම්:</h3>
-                <div id="resultLinks"></div>
-            </div>
+        <div class="result" id="resultArea">
+            <img id="thumb" src="" alt="Thumbnail">
+            <h3 id="videoTitle"></h3>
+            <div id="linksContainer"></div>
         </div>
     </div>
 
     <script>
-        // --- JavaScript කේතය මෙතැනින් ආරම්භ වේ ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlInput = document.getElementById('urlInput');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const videoBtn = document.getElementById('videoBtn');
-            const audioBtn = document.getElementById('audioBtn');
-            const loadingDiv = document.getElementById('loading');
-            const errorDiv = document.getElementById('error');
+        async function getDownloadLinks() {
+            const url = document.getElementById('urlInput').value.trim();
+            const loadingArea = document.getElementById('loadingArea');
+            const errorArea = document.getElementById('errorArea');
             const resultArea = document.getElementById('resultArea');
-            const resultLinks = document.getElementById('resultLinks');
+            
+            errorArea.innerHTML = "";
+            resultArea.style.display = "none";
 
-            let currentFormat = 'video'; // 'video' හෝ 'audio'
+            if(!url) {
+                errorArea.innerHTML = "කරුණාකර YouTube Link එකක් ඇතුළත් කරන්න!";
+                return;
+            }
 
-            // ආකෘති තේරීම් අතර මාරු වීම
-            videoBtn.addEventListener('click', () => {
-                currentFormat = 'video';
-                videoBtn.classList.add('active');
-                audioBtn.classList.remove('active');
-            });
+            loadingArea.style.display = "block";
 
-            audioBtn.addEventListener('click', () => {
-                currentFormat = 'audio';
-                audioBtn.classList.add('active');
-                videoBtn.classList.remove('active');
-            });
+            // ඔබේ Render Backend URL එක මෙහි ඇත
+            const backendURL = `https://youtube-downloader-api-render.onrender.com/download?url=${encodeURIComponent(url)}`;
 
-            // බාගැනීමේ බොත්තම ක්ලික් කිරීම
-            downloadBtn.addEventListener('click', async () => {
-                const url = urlInput.value.trim();
-                if (!url) {
-                    showError('කරුණාකර වීඩියෝ URL එකක් ඇතුළත් කරන්න.');
-                    return;
-                }
+            try {
+                const response = await fetch(backendURL);
+                const data = await response.json();
 
-                // UI යාවත්කාලීන කිරීම
-                downloadBtn.disabled = true;
-                loadingDiv.style.display = 'block';
-                errorDiv.textContent = '';
-                resultArea.style.display = 'none';
-                resultLinks.innerHTML = '';
+                loadingArea.style.display = "none";
 
-                try {
-                    // Cobalt API වෙත ඉල්ලීම යැවීම
-                    // අපි පොදු Cobalt API එකක් භාවිතා කරමු. ඔබට ඔබේම එකක් host කළ හැක.
-                    const cobaltApiUrl = 'https://api.cobalt.tools/api/json'; 
+                if(data.success) {
+                    document.getElementById('thumb').src = data.thumbnail;
+                    document.getElementById('videoTitle').innerText = data.title;
                     
-                    const requestBody = {
-                        url: url,
-                        downloadMode: currentFormat === 'audio' ? 'audio' : 'auto',
-                        audioFormat: 'mp3', // ශ්‍රව්‍ය සඳහා පමණි
-                        videoQuality: '720', // වීඩියෝ සඳහා පමණි (720p)
-                        // Cobalt වෙතින් ඍජු බාගැනීමේ සබැඳියක් ලබා ගැනීමට උත්සාහ කරන්න
-                        filenameStyle: 'basic' 
-                    };
-
-                    const response = await fetch(cobaltApiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify(requestBody)
+                    let linksHtml = "<strong>ලබා ගත හැකි තත්ත්වයන් (Qualities):</strong><br>";
+                    
+                    data.formats.forEach(f => {
+                        if(f.quality) {
+                            linksHtml += `<a class="dl-btn" href="${f.url}" target="_blank">Download (${f.quality} - ${f.container})</a>`;
+                        }
                     });
 
-                    if (!response.ok) {
-                        throw new Error(`API දෝෂය: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
-                    // Cobalt ප්‍රතිචාරය පරීක්ෂා කිරීම
-                    if (data.status === 'error') {
-                        throw new Error(data.error?.code || 'නොදන්නා දෝෂයක්');
-                    }
-
-                    // ප්‍රතිචාරයේ විවිධ ආකාර සැකසීම
-                    let downloadUrl = '';
-                    if (data.url) {
-                        downloadUrl = data.url;
-                    } else if (data.picker && data.picker.length > 0) {
-                        // තේරීමක් අවශ්‍ය නම්, පළමු එක ගන්න
-                        downloadUrl = data.picker[0].url;
-                    } else if (data.audio) {
-                        downloadUrl = data.audio;
-                    }
-
-                    if (!downloadUrl) {
-                        throw new Error('බාගැනීමේ සබැඳියක් සොයාගත නොහැක.');
-                    }
-
-                    // ප්‍රතිඵලය පෙන්වන්න
-                    const linkElement = document.createElement('a');
-                    linkElement.href = downloadUrl;
-                    linkElement.className = 'download-link';
-                    linkElement.textContent = 'බාගත කිරීම ආරම්භ කරන්න';
-                    linkElement.target = '_blank'; // නව ටැබයක විවෘත කරන්න
-                    linkElement.setAttribute('download', ''); // බාගැනීමට උත්සාහ කරන්න
-
-                    resultLinks.appendChild(linkElement);
-                    resultArea.style.display = 'block';
-
-                } catch (error) {
-                    console.error('දෝෂය:', error);
-                    showError('දෝෂයක් සිදුවිය: ' + error.message);
-                } finally {
-                    downloadBtn.disabled = false;
-                    loadingDiv.style.display = 'none';
+                    document.getElementById('linksContainer').innerHTML = linksHtml;
+                    resultArea.style.display = "block";
+                } else {
+                    errorArea.innerHTML = data.error || "වීඩියෝව ලබාගැනීමේදී දෝෂයක් සිදු විය.";
                 }
-            });
-
-            function showError(message) {
-                errorDiv.textContent = message;
+            } catchn(err) {
+                loadingArea.style.display = "none";
+                errorArea.innerHTML = "සර්වර් එක සමඟ සම්බන්ධ වීමට නොහැකි විය. කරුණාකර නැවත උත්සාහ කරන්න.";
             }
-        });
-        // --- JavaScript කේතය මෙතැනින් අවසන් වේ ---
+        }
     </script>
 </body>
 </html>
