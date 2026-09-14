@@ -150,10 +150,12 @@
 
     <script>
         async function getDownloadLinks() {
-            const url = document.getElementById('urlInput').value.trim();
+            const urlInput = document.getElementById('urlInput');
             const loadingArea = document.getElementById('loadingArea');
             const errorArea = document.getElementById('errorArea');
             const resultArea = document.getElementById('resultArea');
+            
+            const url = urlInput ? urlInput.value.trim() : '';
             
             errorArea.innerHTML = "";
             resultArea.style.display = "none";
@@ -165,7 +167,6 @@
 
             loadingArea.style.display = "block";
 
-            // ඔබේ Render Backend URL එක මෙහි ඇත
             const backendURL = `https://youtube-downloader-api-render.onrender.com/download?url=${encodeURIComponent(url)}`;
 
             try {
@@ -191,7 +192,7 @@
                 } else {
                     errorArea.innerHTML = data.error || "වීඩියෝව ලබාගැනීමේදී දෝෂයක් සිදු විය.";
                 }
-            } catchn(err) {
+            } catch (err) {
                 loadingArea.style.display = "none";
                 errorArea.innerHTML = "සර්වර් එක සමඟ සම්බන්ධ වීමට නොහැකි විය. කරුණාකර නැවත උත්සාහ කරන්න.";
             }
