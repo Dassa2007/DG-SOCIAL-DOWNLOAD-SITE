@@ -98,25 +98,25 @@
   .video-meta span { font-size:12px; color:#9ca3af; display:block; margin-top:4px; }
   .download-btn {
     display:flex; align-items:center; justify-content:center; gap:8px;
-    width:100%; padding:14px;
+    width:100%; padding:14px; border:none; cursor:pointer;
     background: linear-gradient(135deg,#10b981,#059669);
     color:#fff; text-decoration:none; border-radius:12px;
     font-weight:700; font-size:14px; transition:0.25s;
+    font-family:inherit;
   }
-  .download-btn:hover { transform:translateY(-2px); box-shadow:0 10px 22px rgba(16,185,129,0.45); }
+  .download-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 10px 22px rgba(16,185,129,0.45); }
+  .download-btn:disabled { opacity:0.7; cursor:wait; }
   .error {
     background: rgba(239,68,68,0.15);
     border:1px solid rgba(239,68,68,0.4);
     color:#fca5a5; padding:14px; border-radius:12px;
     font-size:13px; text-align:center; margin-top:16px;
   }
-  .debug {
-    background: rgba(0,0,0,0.4);
-    border:1px solid rgba(255,255,255,0.1);
-    color:#9ca3af; padding:12px; border-radius:12px;
-    font-size:11px; margin-top:12px; font-family:monospace;
-    max-height:250px; overflow:auto; white-space:pre-wrap;
-    word-break:break-all; line-height:1.5;
+  .info {
+    background: rgba(59,130,246,0.15);
+    border:1px solid rgba(59,130,246,0.4);
+    color:#93c5fd; padding:12px; border-radius:12px;
+    font-size:12px; text-align:center; margin-top:12px;
   }
   .footer { text-align:center; margin-top:24px; font-size:11px; color:#6b7280; }
   .footer a { color:#a78bfa; text-decoration:none; }
@@ -180,12 +180,9 @@
     return null;
   }
 
-  function showError(msg, debug) {
+  function showError(msg) {
     resultBox.style.display = "block";
-    resultBox.innerHTML = `
-      <div class="error">⚠️ ${msg}</div>
-      ${debug ? `<div class="debug">${debug}</div>` : ''}
-    `;
+    resultBox.innerHTML = `<div class="error">⚠️ ${msg}</div>`;
   }
 
   function setLoading(loading) {
@@ -198,36 +195,75 @@
     }
   }
 
-  // response එකෙන් download URL එක හොයන function එක
-  function extractDownloadUrl(obj, type) {
+  function extractDownloadUrl(obj) {
     if (!obj || typeof obj !== 'object') return null;
-
-    // Direct fields
     const directFields = [
-      'url', 'download', 'link', 'downloadUrl', 'download_url',
-      'audio', 'audioUrl', 'audio_url', 'video', 'videoUrl', 'video_url',
-      'mp3', 'mp4', 'result', 'file', 'src', 'media'
+      'url','download','link','downloadUrl','download_url',
+      'audio','audioUrl','audio_url','video','videoUrl','video_url',
+      'mp3','mp4','result','file','src','media'
     ];
     for (const f of directFields) {
-      if (typeof obj[f] === 'string' && obj[f].startsWith('http')) {
-        return obj[f];
-      }
+      if (typeof obj[f] === 'string' && obj[f].startsWith('http')) return obj[f];
     }
-
-    // Nested objects/arrays
     for (const key of Object.keys(obj)) {
       const val = obj[key];
-      if (Array.isArray(val) && val.length > 0) {
+      if (Array.isArray(val)) {
         for (const item of val) {
-          const found = extractDownloadUrl(item, type);
+          const found = extractDownloadUrl(item);
           if (found) return found;
         }
       } else if (val && typeof val === 'object') {
-        const found = extractDownloadUrl(val, type);
+        const found = extractDownloadUrl(val);
         if (found) return found;
       }
     }
     return null;
+  }
+
+  function sanitizeFilename(name, ext) {
+    let n = (name || "video").replace(/[\\/:*?"<>|]/g, "_").trim();
+    if (n.length > 60) n = n.slice(0, 60);
+    return `${n}.${ext}`;
+  }
+
+  // ⭐ Blob එකක් විදියට download කරන function එක
+  async function downloadAsBlob(url, filename, btn) {
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span> Download වෙමින්...';
+
+    try {
+      const res = await fetch(url, { mode: 'cors' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+      
+      btn.innerHTML = '✅ සාර්ථකව බාගත කළා!';
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }, 2000);
+    } catch (e) {
+      console.error(e);
+      // Blob fail වුණොත් direct link එක open කරනවා
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+      
+      resultBox.insertAdjacentHTML("beforeend",
+        `<div class="info">⚠️ Direct download එකට CORS block එකක්. Link එක new tab එකක open වෙනවා — එතනින් "Save" කරන්න.</div>`
+      );
+      window.open(url, "_blank");
+    }
   }
 
   async function handleDownload() {
@@ -235,73 +271,36 @@
     resultBox.style.display = "none";
     resultBox.innerHTML = "";
 
-    if (!url) {
-      showError("කරුණාකර YouTube link එකක් paste කරන්න.");
-      return;
-    }
-
+    if (!url) return showError("කරුණාකර YouTube link එකක් paste කරන්න.");
     const videoId = getVideoId(url);
-    if (!videoId) {
-      showError("වලංගු YouTube link එකක් නෙවෙයි. කරුණාකර නැවත උත්සාහ කරන්න.");
-      return;
-    }
+    if (!videoId) return showError("වලංගු YouTube link එකක් නෙවෙයි.");
 
     setLoading(true);
 
     const cleanUrl = `https://www.youtube.com/watch?v=${videoId}`;
-    
-    // API එකට match වෙන endpoint patterns
     const endpoints = [
-      `${API_BASE}/?url=${encodeURIComponent(cleanUrl)}`,
       `${API_BASE}/?url=${encodeURIComponent(cleanUrl)}&type=${selectedType}`,
       `${API_BASE}/?url=${encodeURIComponent(cleanUrl)}&format=${selectedType}`,
+      `${API_BASE}/?url=${encodeURIComponent(cleanUrl)}`
     ];
 
     let data = null;
-    let debugLog = [];
 
     for (const endpoint of endpoints) {
       try {
-        debugLog.push(`\n➡️ ${endpoint}`);
-        const res = await fetch(endpoint, {
-          method: "GET",
-          headers: { "Accept": "application/json" }
-        });
-        debugLog.push(`   Status: ${res.status} ${res.statusText}`);
-        
-        const text = await res.text();
-        debugLog.push(`   Body (first 300): ${text.slice(0, 300)}`);
-
-        if (!res.ok) {
-          debugLog.push(`   ❌ HTTP error`);
-          continue;
-        }
-
-        let json;
-        try {
-          json = JSON.parse(text);
-        } catch (e) {
-          debugLog.push(`   ⚠️ Not JSON`);
-          continue;
-        }
-
-        const foundUrl = extractDownloadUrl(json, selectedType);
+        const res = await fetch(endpoint);
+        if (!res.ok) continue;
+        const json = await res.json();
+        const foundUrl = extractDownloadUrl(json);
         if (foundUrl) {
           data = { json, foundUrl };
-          debugLog.push(`   ✅ FOUND: ${foundUrl}`);
           break;
-        } else {
-          debugLog.push(`   ⚠️ No download URL found in JSON`);
         }
-      } catch (e) {
-        debugLog.push(`   💥 ${e.message}`);
-      }
+      } catch (e) { /* continue */ }
     }
 
     try {
-      if (!data) {
-        throw new Error("API එකෙන් valid download link එකක් ලැබුණේ නැහැ. පහළ debug info එක බලන්න.");
-      }
+      if (!data) throw new Error("API එකෙන් download link එකක් ලැබුණේ නැහැ.");
 
       const { json, foundUrl } = data;
       const payload = json.data || json.result || json;
@@ -309,28 +308,33 @@
       const thumb = payload.thumbnail || payload.thumb || payload.cover || `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`;
       const author = payload.author || payload.channel || payload.uploader || "";
 
+      const ext = selectedType === "mp3" ? "mp3" : "mp4";
+      const filename = sanitizeFilename(title, ext);
+
       resultBox.style.display = "block";
       resultBox.innerHTML = `
         <div class="card">
           <div class="video-info">
-            <img src="${thumb}" alt="thumbnail" onerror="this.src='https://i.ytimg.com/vi/${videoId}/mqdefault.jpg'"/>
+            <img src="${thumb}" alt="thumb" onerror="this.src='https://i.ytimg.com/vi/${videoId}/mqdefault.jpg'"/>
             <div class="video-meta">
               <h3>${escapeHtml(title)}</h3>
               <span>${escapeHtml(author)} • ${selectedType.toUpperCase()}</span>
             </div>
           </div>
-          <a class="download-btn" href="${foundUrl}" target="_blank" rel="noopener" download>
+          <button class="download-btn" id="realDownloadBtn">
             ⬇ ${selectedType.toUpperCase()} බාගන්න
-          </a>
+          </button>
         </div>
       `;
 
+      // ⭐ Download button එකට event listener එක
+      const realBtn = document.getElementById("realDownloadBtn");
+      realBtn.addEventListener("click", () => {
+        downloadAsBlob(foundUrl, filename, realBtn);
+      });
+
     } catch (err) {
-      console.error(err);
-      showError(
-        err.message || "Download කිරීමේ දෝෂයක්.",
-        debugLog.join("\n")
-      );
+      showError(err.message);
     } finally {
       setLoading(false);
     }
@@ -338,10 +342,8 @@
 
   function escapeHtml(str) {
     return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
 
   downloadBtn.addEventListener("click", handleDownload);
