@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YT Downloader - MP3 / MP4</title>
+<title>YT MP4 Downloader</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,sans-serif; }
   body {
@@ -46,20 +46,6 @@
     border-color:#8b5cf6;
     box-shadow:0 0 0 4px rgba(139,92,246,0.15);
   }
-  .tabs {
-    display:flex; gap:8px;
-    background: rgba(0,0,0,0.25);
-    padding:6px; border-radius:14px; margin-bottom:16px;
-  }
-  .tab {
-    flex:1; padding:12px; text-align:center; border-radius:10px;
-    cursor:pointer; font-weight:600; font-size:14px; color:#9ca3af;
-    transition:0.25s; user-select:none;
-  }
-  .tab.active {
-    background: linear-gradient(135deg,#8b5cf6,#6366f1);
-    color:#fff; box-shadow:0 6px 16px rgba(139,92,246,0.4);
-  }
   .btn {
     width:100%; padding:16px; border:none; border-radius:14px;
     font-size:15px; font-weight:700; cursor:pointer; color:#fff;
@@ -98,28 +84,19 @@
   .video-meta span { font-size:12px; color:#9ca3af; display:block; margin-top:4px; }
   .download-btn {
     display:flex; align-items:center; justify-content:center; gap:8px;
-    width:100%; padding:14px; border:none; cursor:pointer;
+    width:100%; padding:14px;
     background: linear-gradient(135deg,#10b981,#059669);
     color:#fff; text-decoration:none; border-radius:12px;
     font-weight:700; font-size:14px; transition:0.25s;
-    font-family:inherit;
   }
-  .download-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 10px 22px rgba(16,185,129,0.45); }
-  .download-btn:disabled { opacity:0.7; cursor:wait; }
+  .download-btn:hover { transform:translateY(-2px); box-shadow:0 10px 22px rgba(16,185,129,0.45); }
   .error {
     background: rgba(239,68,68,0.15);
     border:1px solid rgba(239,68,68,0.4);
     color:#fca5a5; padding:14px; border-radius:12px;
     font-size:13px; text-align:center; margin-top:16px;
   }
-  .info {
-    background: rgba(59,130,246,0.15);
-    border:1px solid rgba(59,130,246,0.4);
-    color:#93c5fd; padding:12px; border-radius:12px;
-    font-size:12px; text-align:center; margin-top:12px;
-  }
   .footer { text-align:center; margin-top:24px; font-size:11px; color:#6b7280; }
-  .footer a { color:#a78bfa; text-decoration:none; }
 </style>
 </head>
 <body>
@@ -128,18 +105,13 @@
   <div class="header">
     <div class="logo">
       <div class="logo-icon">▶</div>
-      <h1>YT Downloader</h1>
+      <h1>YT MP4 Downloader</h1>
     </div>
-    <p>YouTube videos ලේසියෙන්ම MP3 / MP4 බාගන්න</p>
+    <p>YouTube videos ලේසියෙන්ම බාගන්න</p>
   </div>
 
   <div class="input-group">
     <input type="text" id="urlInput" placeholder="YouTube video link මෙතන paste කරන්න..." />
-  </div>
-
-  <div class="tabs">
-    <div class="tab active" data-type="mp3">🎵 MP3</div>
-    <div class="tab" data-type="mp4">🎬 MP4</div>
   </div>
 
   <button class="btn" id="downloadBtn">
@@ -149,25 +121,17 @@
   <div class="result" id="result"></div>
 
   <div class="footer">
-    Powered by <a href="https://multidl.kcey.workers.dev" target="_blank">Multi Downloader API</a>
+    Powered by YT API
   </div>
 </div>
 
 <script>
-  const API_BASE = "https://multidl.kcey.workers.dev";
+  const API_BASE = "https://yt-proxy-worker.gimahandasun.workers.dev";
+
   const urlInput = document.getElementById("urlInput");
   const downloadBtn = document.getElementById("downloadBtn");
   const btnText = document.getElementById("btnText");
   const resultBox = document.getElementById("result");
-  let selectedType = "mp3";
-
-  document.querySelectorAll(".tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      selectedType = tab.dataset.type;
-    });
-  });
 
   function getVideoId(url) {
     const patterns = [
@@ -197,12 +161,8 @@
 
   function extractDownloadUrl(obj) {
     if (!obj || typeof obj !== 'object') return null;
-    const directFields = [
-      'url','download','link','downloadUrl','download_url',
-      'audio','audioUrl','audio_url','video','videoUrl','video_url',
-      'mp3','mp4','result','file','src','media'
-    ];
-    for (const f of directFields) {
+    const fields = ['url','download','link','downloadUrl','download_url','video','videoUrl','video_url','mp4','result','file','src','media'];
+    for (const f of fields) {
       if (typeof obj[f] === 'string' && obj[f].startsWith('http')) return obj[f];
     }
     for (const key of Object.keys(obj)) {
@@ -220,50 +180,18 @@
     return null;
   }
 
-  function sanitizeFilename(name, ext) {
+  function sanitizeFilename(name) {
     let n = (name || "video").replace(/[\\/:*?"<>|]/g, "_").trim();
     if (n.length > 60) n = n.slice(0, 60);
-    return `${n}.${ext}`;
+    return `${n}.mp4`;
   }
 
-  // ⭐ Blob එකක් විදියට download කරන function එක
-  async function downloadAsBlob(url, filename, btn) {
-    const originalText = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<span class="loader"></span> Download වෙමින්...';
-
-    try {
-      const res = await fetch(url, { mode: 'cors' });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      
-      const blob = await res.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-      
-      btn.innerHTML = '✅ සාර්ථකව බාගත කළා!';
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-      }, 2000);
-    } catch (e) {
-      console.error(e);
-      // Blob fail වුණොත් direct link එක open කරනවා
-      btn.disabled = false;
-      btn.innerHTML = originalText;
-      
-      resultBox.insertAdjacentHTML("beforeend",
-        `<div class="info">⚠️ Direct download එකට CORS block එකක්. Link එක new tab එකක open වෙනවා — එතනින් "Save" කරන්න.</div>`
-      );
-      window.open(url, "_blank");
-    }
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
   }
 
   async function handleDownload() {
@@ -271,79 +199,66 @@
     resultBox.style.display = "none";
     resultBox.innerHTML = "";
 
-    if (!url) return showError("කරුණාකර YouTube link එකක් paste කරන්න.");
+    if (!url) {
+      showError("කරුණාකර YouTube link එකක් paste කරන්න.");
+      return;
+    }
+
     const videoId = getVideoId(url);
-    if (!videoId) return showError("වලංගු YouTube link එකක් නෙවෙයි.");
+    if (!videoId) {
+      showError("වලංගු YouTube link එකක් නෙවෙයි.");
+      return;
+    }
 
     setLoading(true);
 
     const cleanUrl = `https://www.youtube.com/watch?v=${videoId}`;
-    const endpoints = [
-      `${API_BASE}/?url=${encodeURIComponent(cleanUrl)}&type=${selectedType}`,
-      `${API_BASE}/?url=${encodeURIComponent(cleanUrl)}&format=${selectedType}`,
-      `${API_BASE}/?url=${encodeURIComponent(cleanUrl)}`
-    ];
-
-    let data = null;
-
-    for (const endpoint of endpoints) {
-      try {
-        const res = await fetch(endpoint);
-        if (!res.ok) continue;
-        const json = await res.json();
-        const foundUrl = extractDownloadUrl(json);
-        if (foundUrl) {
-          data = { json, foundUrl };
-          break;
-        }
-      } catch (e) { /* continue */ }
-    }
+    const apiUrl = `${API_BASE}/?url=${encodeURIComponent(cleanUrl)}`;
 
     try {
-      if (!data) throw new Error("API එකෙන් download link එකක් ලැබුණේ නැහැ.");
+      const res = await fetch(apiUrl);
+      
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
 
-      const { json, foundUrl } = data;
+      const json = await res.json();
+      const foundUrl = extractDownloadUrl(json);
+
+      if (!foundUrl) {
+        throw new Error("Download link එකක් හමු නොවුණා.");
+      }
+
       const payload = json.data || json.result || json;
       const title = payload.title || payload.name || "YouTube Video";
       const thumb = payload.thumbnail || payload.thumb || payload.cover || `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`;
       const author = payload.author || payload.channel || payload.uploader || "";
 
-      const ext = selectedType === "mp3" ? "mp3" : "mp4";
-      const filename = sanitizeFilename(title, ext);
+      const filename = sanitizeFilename(title);
+      const proxyUrl = `${API_BASE}/proxy?url=${encodeURIComponent(foundUrl)}&filename=${encodeURIComponent(filename)}`;
 
       resultBox.style.display = "block";
       resultBox.innerHTML = `
         <div class="card">
           <div class="video-info">
-            <img src="${thumb}" alt="thumb" onerror="this.src='https://i.ytimg.com/vi/${videoId}/mqdefault.jpg'"/>
+            <img src="${thumb}" alt="thumbnail" onerror="this.src='https://i.ytimg.com/vi/${videoId}/mqdefault.jpg'"/>
             <div class="video-meta">
               <h3>${escapeHtml(title)}</h3>
-              <span>${escapeHtml(author)} • ${selectedType.toUpperCase()}</span>
+              <span>${escapeHtml(author)} • MP4</span>
             </div>
           </div>
-          <button class="download-btn" id="realDownloadBtn">
-            ⬇ ${selectedType.toUpperCase()} බාගන්න
-          </button>
+          <a class="download-btn" href="${proxyUrl}" download="${filename}">
+            ⬇ MP4 බාගන්න
+          </a>
         </div>
       `;
 
-      // ⭐ Download button එකට event listener එක
-      const realBtn = document.getElementById("realDownloadBtn");
-      realBtn.addEventListener("click", () => {
-        downloadAsBlob(foundUrl, filename, realBtn);
-      });
-
     } catch (err) {
-      showError(err.message);
+      console.error(err);
+      showError(err.message || "Download කිරීමේ දෝෂයක්.");
     } finally {
       setLoading(false);
     }
-  }
-
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
 
   downloadBtn.addEventListener("click", handleDownload);
