@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All-in-One Video Downloader</title>
+    <title>All-in-One Downloader</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #0f172a; color: #f8fafc; text-align: center; padding: 20px; }
@@ -39,24 +39,21 @@
         <div id="youtube" class="tab-content active">
             <input type="text" id="yt-url" placeholder="Paste YouTube Link here...">
             <div class="action-btns">
-                <button class="dl-btn" onclick="startDownload('youtube', 'video')">📥 Video</button>
-                <button class="dl-btn audio" onclick="startDownload('youtube', 'audio')">🎵 Audio (MP3)</button>
+                <button class="dl-btn" onclick="startDownload('youtube')">📥 Download</button>
             </div>
         </div>
 
         <div id="facebook" class="tab-content">
             <input type="text" id="fb-url" placeholder="Paste Facebook Link here...">
             <div class="action-btns">
-                <button class="dl-btn" onclick="startDownload('facebook', 'video')">📥 Video</button>
-                <button class="dl-btn audio" onclick="startDownload('facebook', 'audio')">🎵 Audio (MP3)</button>
+                <button class="dl-btn" onclick="startDownload('facebook')">📥 Download</button>
             </div>
         </div>
 
         <div id="pinterest" class="tab-content">
             <input type="text" id="pin-url" placeholder="Paste Pinterest Link here...">
             <div class="action-btns">
-                <button class="dl-btn" onclick="startDownload('pinterest', 'video')">📥 Video</button>
-                <button class="dl-btn audio" onclick="startDownload('pinterest', 'audio')">🎵 Audio (MP3)</button>
+                <button class="dl-btn" onclick="startDownload('pinterest')">📥 Download</button>
             </div>
         </div>
 
@@ -72,40 +69,46 @@
             document.getElementById('result').innerHTML = '';
         }
 
-        async function startDownload(platform, type) {
+        async function startDownload(platform) {
             const inputId = platform === 'youtube' ? 'yt-url' : (platform === 'facebook' ? 'fb-url' : 'pin-url');
             const url = document.getElementById(inputId).value.trim();
             const resultDiv = document.getElementById('result');
 
             if (!url) {
-                alert("කරුණාකර ලින්ක් එකක් ඇතුළත් කරන්න!");
+                alert("කරුණාකර වලංගු ලින්ක් එකක් ඇතුළත් කරන්න!");
                 return;
             }
 
-            resultDiv.innerHTML = `<p style="color: #38bdf8; text-align: center;">⏳ සකස් වෙමින් පවතී...</p>`;
-
-            const apiKey = "d623f0a2c2mshc3c6d5149674bdp102243jsnf957f6131ff6";
-            const apiHost = "auto-download-all-in-one.p.rapidapi.com";
-
-            const settings = {
-                method: 'POST',
-                headers: {
-                    'content-type': 'application/json',
-                    'X-RapidAPI-Key': apiKey,
-                    'X-RapidAPI-Host': apiHost
-                },
-                body: JSON.stringify({ "url": url })
-            };
+            resultDiv.innerHTML = `<p style="color: #38bdf8; text-align: center;">⏳ සකස් වෙමින් පවතී, රැඳී සිටින්න...</p>`;
 
             try {
-                const response = await fetch(`https://${apiHost}/v1/social/autodown`, settings);
-                const data = await response.json();
-                console.log("API Response:", data);
+                // Cobal API (නිදහස් සහ වේගවත් සේවාවක්) හරහා ලබා ගැනීම
+                const response = await fetch('https://api.cobalt.tools/api/json', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        url: url,
+                        vQuality: '720'
+                    })
+                });
 
-                if (data && data.links && data.links.length > 0) {
+                const data = await response.json();
+                console.log("Response:", data);
+
+                if (data && (data.url || data.picker)) {
+                    let downloadLink = data.url;
+                    
+                    // එකකට වඩා වැඩි ලින්ක් තිබේ නම් පළමුවැන්න ගන්න
+                    if(data.picker && data.picker.length > 0) {
+                        downloadLink = data.picker[0].url;
+                    }
+
                     let downloadHtml = `<div class="result-box">`;
-                    downloadHtml += `<p><strong>ശീර්ෂකය:</strong> ${data.title || 'Media File'}</p>`;
-                    downloadHtml += `<a href="${data.links[0].url}" target="_blank">Download File Now</a>`;
+                    downloadHtml += `<p><strong>အောင်မြင်යි!</strong> බාගත කරගැනීමට සූදානම්.</p>`;
+                    downloadHtml += `<a href="${downloadLink}" target="_blank">Download File Now</a>`;
                     downloadHtml += `</div>`;
                     resultDiv.innerHTML = downloadHtml;
                 } else {
