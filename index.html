@@ -4,15 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JERRY ID TOP-UP CENTER | Premium</title>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     
     <style>
-        /* --- CORE VARIABLES & THEMES --- */
         :root {
             --bg-color: #0a0612;
             --bg-soft: #120a20;
@@ -134,8 +130,16 @@
             70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
             100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
 
-        /* --- LOADING SCREEN --- */
+        /* --- LOADING --- */
         #loader {
             position: fixed;
             inset: 0;
@@ -147,14 +151,10 @@
             z-index: 9999;
             transition: opacity 0.6s ease, visibility 0.6s;
         }
-        #loader.hide {
-            opacity: 0;
-            visibility: hidden;
-        }
+        #loader.hide { opacity: 0; visibility: hidden; }
         .loader-container {
             position: relative;
-            width: 140px;
-            height: 140px;
+            width: 140px; height: 140px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -168,8 +168,7 @@
             animation: glowPulse 2s ease-in-out infinite;
         }
         .loader-ring {
-            position: absolute;
-            inset: 0;
+            position: absolute; inset: 0;
             border-radius: 50%;
             border: 3px solid transparent;
             border-top-color: #a855f7;
@@ -177,8 +176,7 @@
             animation: spin 1.2s linear infinite;
         }
         .loader-ring2 {
-            position: absolute;
-            inset: 14px;
+            position: absolute; inset: 14px;
             border-radius: 50%;
             border: 3px solid transparent;
             border-bottom-color: #c084fc;
@@ -186,8 +184,7 @@
             animation: spinReverse 1.8s linear infinite;
         }
         .loader-ring3 {
-            position: absolute;
-            inset: 28px;
+            position: absolute; inset: 28px;
             border-radius: 50%;
             border: 2px solid transparent;
             border-top-color: #e9d5ff;
@@ -263,7 +260,6 @@
             box-shadow: 0 6px 20px rgba(168, 85, 247, 0.3);
         }
 
-        /* Navbar user chip */
         .nav-user {
             display: none;
             align-items: center;
@@ -358,7 +354,6 @@
         }
         .side-menu a i { width: 20px; text-align: center; font-size: 1.05rem; }
 
-        /* Side menu user card */
         .side-menu-user {
             display: none;
             padding: 14px;
@@ -693,7 +688,7 @@
             box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);
         }
 
-        /* --- PAYMENT DETAILS --- */
+        /* --- PAYMENT --- */
         .payment-container { max-width: 900px; margin: 0 auto; }
         .payment-intro {
             text-align: center;
@@ -1109,6 +1104,107 @@
             opacity: 0; cursor: pointer;
         }
 
+        /* File upload preview */
+        .file-preview {
+            display: none;
+            margin-top: 12px;
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+        }
+        .file-preview.active { display: block; }
+        .file-preview img {
+            width: 100%;
+            max-height: 220px;
+            object-fit: contain;
+            background: #000;
+            display: block;
+        }
+        .file-preview .remove-file {
+            position: absolute;
+            top: 8px; right: 8px;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.9);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+        .file-preview .remove-file:hover {
+            background: var(--danger);
+            transform: scale(1.1);
+        }
+        .file-info {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            padding: 8px 12px;
+            background: var(--card-bg-2);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .file-info i { color: var(--success); }
+
+        /* Send options info */
+        .send-info {
+            background: linear-gradient(135deg, rgba(37, 211, 102, 0.08), rgba(168, 85, 247, 0.08));
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .send-info > i {
+            color: var(--accent-light);
+            font-size: 1.15rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        .send-info div {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+        .send-info div strong {
+            color: var(--text-color);
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.88rem;
+        }
+        .send-info .channels {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .send-info .channel-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border: 1px solid;
+        }
+        .send-info .channel-pill.wa {
+            color: var(--whatsapp);
+            border-color: rgba(37, 211, 102, 0.4);
+            background: rgba(37, 211, 102, 0.08);
+        }
+        .send-info .channel-pill.em {
+            color: var(--accent-light);
+            border-color: rgba(168, 85, 247, 0.4);
+            background: rgba(168, 85, 247, 0.08);
+        }
+
         /* --- MODALS --- */
         .modal {
             display: none;
@@ -1189,7 +1285,7 @@
         .step-text h4 { font-size: 0.98rem; margin-bottom: 4px; }
         .step-text p { font-size: 0.84rem; color: var(--text-muted); line-height: 1.5; }
 
-        /* --- LOGIN MODAL GOOGLE --- */
+        /* --- LOGIN MODAL --- */
         .google-btn-wrapper {
             display: flex;
             justify-content: center;
@@ -1463,6 +1559,94 @@
         }
         footer a:hover { color: var(--accent-color); }
 
+        /* --- TOAST NOTIFICATIONS --- */
+        #toast-container {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            width: 90%;
+            max-width: 380px;
+            pointer-events: none;
+        }
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-color);
+            animation: toastIn 0.4s ease;
+            pointer-events: all;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .toast::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+        }
+        .toast.success::before { background: var(--success); }
+        .toast.error::before { background: var(--danger); }
+        .toast.info::before { background: var(--accent-color); }
+        .toast i.toast-icon {
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+        .toast.success i.toast-icon { color: var(--success); }
+        .toast.error i.toast-icon { color: var(--danger); }
+        .toast.info i.toast-icon { color: var(--accent-color); }
+        .toast.out {
+            animation: toastOut 0.4s ease forwards;
+        }
+
+        /* --- PROCESSING OVERLAY --- */
+        #processing-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 6, 18, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9998;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+        #processing-overlay.active { display: flex; }
+        .processing-spinner {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-top-color: var(--accent-color);
+            border-right-color: var(--accent-light);
+            animation: spin 1s linear infinite;
+            position: relative;
+        }
+        .processing-text {
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--accent-light);
+            letter-spacing: 1px;
+        }
+        .processing-sub {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
         /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
             section { padding: 90px 5% 50px; }
@@ -1510,6 +1694,16 @@
         </div>
         <div class="loader-text">JERRY ID TOP-UP</div>
         <div class="loader-percent" id="loader-percent">0%</div>
+    </div>
+
+    <!-- TOASTS -->
+    <div id="toast-container"></div>
+
+    <!-- PROCESSING OVERLAY -->
+    <div id="processing-overlay">
+        <div class="processing-spinner"></div>
+        <div class="processing-text">SENDING YOUR ORDER...</div>
+        <div class="processing-sub" id="processing-sub">Please wait, this may take a few seconds</div>
     </div>
 
     <!-- NAVBAR -->
@@ -1841,16 +2035,37 @@
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-receipt"></i> Upload Receipt (Optional)</label>
-                    <div class="file-upload-wrapper">
+                    <label><i class="fas fa-receipt"></i> Upload Receipt (Recommended for auto email)</label>
+                    <div class="file-upload-wrapper" id="file-upload-wrapper">
                         <i class="fas fa-cloud-upload-alt" style="font-size: 1.6rem;"></i>
-                        <p>Click to upload receipt</p>
+                        <p id="file-upload-text">Click to upload receipt image</p>
                         <input type="file" id="receipt" accept="image/*">
+                    </div>
+                    <div class="file-preview" id="file-preview">
+                        <img id="file-preview-img" src="" alt="Receipt preview">
+                        <button type="button" class="remove-file" onclick="removeReceiptFile()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="file-info">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="file-info-name">receipt.jpg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="send-info">
+                    <i class="fas fa-paper-plane"></i>
+                    <div>
+                        <strong>Your order will be sent automatically to:</strong>
+                        <div class="channels">
+                            <span class="channel-pill wa"><i class="fab fa-whatsapp"></i> WhatsApp</span>
+                            <span class="channel-pill em"><i class="fas fa-envelope"></i> Email (with image)</span>
+                        </div>
                     </div>
                 </div>
 
                 <button type="submit" class="btn btn-whatsapp" style="width: 100%; font-size: 1rem; padding: 16px; justify-content: center;">
-                    <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Send Order via WhatsApp
+                    <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Send Order (WhatsApp + Email)
                 </button>
             </form>
         </div>
@@ -1952,22 +2167,22 @@
             <div class="step-box">
                 <div class="step-icon">3</div>
                 <div class="step-text">
-                    <h4>Payment</h4>
-                    <p>Check Payment Details page for bank accounts and make your payment.</p>
+                    <h4>Payment + Receipt</h4>
+                    <p>Check Payment Details page, make the payment and upload the receipt image.</p>
                 </div>
             </div>
             
             <div class="step-box">
                 <div class="step-icon">4</div>
                 <div class="step-text">
-                    <h4>Submit via WhatsApp</h4>
-                    <p>Click "Send Order via WhatsApp" to complete your order.</p>
+                    <h4>Auto Send (WhatsApp + Email)</h4>
+                    <p>Your order will be auto-sent to WhatsApp and Email with the receipt image.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- LOGIN MODAL (GOOGLE ONLY) -->
+    <!-- LOGIN MODAL -->
     <div class="modal" id="login-modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeLogin()">&times;</span>
@@ -1977,7 +2192,6 @@
             <h3 style="text-align: center; margin-bottom: 8px; font-size: 1.35rem; font-weight: 700;">Welcome Back!</h3>
             <p class="login-subtitle">Sign in with your Google account to continue</p>
 
-            <!-- Google Sign-In Button renders here -->
             <div class="google-btn-wrapper" id="google-btn-wrapper">
                 <div id="g_id_onload"
                      data-client_id="646448378815-ho0bpnhclt0304d93c0ia56j4fhn21jp.apps.googleusercontent.com"
@@ -2020,7 +2234,7 @@
     </footer>
 
     <script>
-        // --- IMAGE LINKS ---
+        // ================= CONFIG =================
         const DIAMOND_IMG = "https://res.cloudinary.com/divxgmr1g/image/upload/v1790998929/m2i2riza9ghbnvdpvpov.png";
         const LEVEL_IMG = "https://res.cloudinary.com/divxgmr1g/image/upload/v1790999271/bzjdgvrg4q08mo9i9xuy.jpg";
         const SUB_WEEKLY_IMG = "https://res.cloudinary.com/divxgmr1g/image/upload/v1791004920/p4mtluw94fl3n31zdmit.jpg";
@@ -2028,10 +2242,12 @@
         const SUB_LITE_IMG = "https://res.cloudinary.com/divxgmr1g/image/upload/v1791004979/ncr5zezyfa9b7c8cr22q.jpg";
         const DEFAULT_AVATAR = "https://res.cloudinary.com/divxgmr1g/image/upload/v1790993539/xzdvfo7ywga5y9wbu5gl.jpg";
 
-        // --- GOOGLE CLIENT ID ---
         const GOOGLE_CLIENT_ID = "646448378815-ho0bpnhclt0304d93c0ia56j4fhn21jp.apps.googleusercontent.com";
+        const WHATSAPP_NUMBER = "94769141950";
+        const EMAIL_ADDRESS = "gamingjerry1523@gmail.com";
+        const FORMSUBMIT_ENDPOINT = "https://formsubmit.co/ajax/" + EMAIL_ADDRESS;
 
-        // --- DATA ---
+        // ================= DATA =================
         const packageData = {
             subs: [
                 { id: "sub_w", name: "WEEKLY", price: 550.0, img: SUB_WEEKLY_IMG },
@@ -2061,14 +2277,16 @@
             ]
         };
 
-        // --- LOADING SCREEN + INIT ---
+        // ================= SELECTED RECEIPT FILE =================
+        let selectedReceiptFile = null;
+
+        // ================= INIT =================
         window.onload = () => {
             let progress = 0;
             const percentEl = document.getElementById('loader-percent');
             const interval = setInterval(() => {
                 progress += 1;
                 percentEl.innerText = progress + '%';
-                
                 if (progress >= 100) {
                     clearInterval(interval);
                     setTimeout(() => {
@@ -2080,35 +2298,104 @@
             renderServices();
             addOrderItem();
             checkLogin();
+            setupReceiptUploader();
 
-            // Update time display every 30 seconds
-            setInterval(() => {
-                updateProfileTimeDisplay();
-            }, 30000);
+            setInterval(updateProfileTimeDisplay, 30000);
         };
 
-        // --- GOOGLE LOGIN ---
+        // ================= TOASTS =================
+        function showToast(message, type = 'info', duration = 4000) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            
+            let icon = 'fa-info-circle';
+            if (type === 'success') icon = 'fa-check-circle';
+            if (type === 'error') icon = 'fa-exclamation-circle';
+            
+            toast.innerHTML = `
+                <i class="fas ${icon} toast-icon"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('out');
+                setTimeout(() => toast.remove(), 400);
+            }, duration);
+        }
+
+        // ================= PROCESSING OVERLAY =================
+        function showProcessing(subText) {
+            document.getElementById('processing-sub').innerText = subText || 'Please wait...';
+            document.getElementById('processing-overlay').classList.add('active');
+        }
+        function hideProcessing() {
+            document.getElementById('processing-overlay').classList.remove('active');
+        }
+
+        // ================= RECEIPT UPLOAD =================
+        function setupReceiptUploader() {
+            const input = document.getElementById('receipt');
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    showToast('Please select an image file', 'error');
+                    input.value = '';
+                    return;
+                }
+                
+                // Max 8MB (FormSubmit limit)
+                if (file.size > 8 * 1024 * 1024) {
+                    showToast('Image is too large (max 8MB)', 'error');
+                    input.value = '';
+                    return;
+                }
+                
+                selectedReceiptFile = file;
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    document.getElementById('file-preview-img').src = ev.target.result;
+                    document.getElementById('file-info-name').innerText = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+                    document.getElementById('file-preview').classList.add('active');
+                    document.getElementById('file-upload-wrapper').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+                
+                showToast('Receipt attached', 'success', 2000);
+            });
+        }
+
+        function removeReceiptFile() {
+            selectedReceiptFile = null;
+            document.getElementById('receipt').value = '';
+            document.getElementById('file-preview').classList.remove('active');
+            document.getElementById('file-upload-wrapper').style.display = 'block';
+        }
+
+        // ================= GOOGLE LOGIN =================
         function handleGoogleCredential(response) {
             try {
                 const payload = parseJwt(response.credential);
                 const now = Date.now();
                 
-                // Check if user already exists (returning user - keep their stats)
                 const existingUser = JSON.parse(localStorage.getItem('jerryUser') || 'null');
                 let userData;
                 
                 if (existingUser && existingUser.email === payload.email) {
-                    // Returning user - update profile info but keep stats & loginTime
                     userData = {
                         ...existingUser,
                         name: payload.name,
                         email: payload.email,
                         picture: payload.picture,
-                        // Only update loginTime if they were logged out before
                         loginTime: existingUser.loginTime || now
                     };
                 } else {
-                    // New user
                     userData = {
                         name: payload.name,
                         email: payload.email,
@@ -2124,18 +2411,18 @@
                 updateProfileUI(userData);
                 closeLogin();
                 
-                // Show success feedback
+                showToast('Welcome, ' + (payload.given_name || payload.name) + '!', 'success');
+                
                 setTimeout(() => {
                     showSection('profile');
-                }, 200);
+                }, 300);
                 
             } catch (err) {
                 console.error('Google login error:', err);
-                alert('Login failed. Please try again.');
+                showToast('Login failed. Please try again.', 'error');
             }
         }
 
-        // Parse JWT token (Google ID token)
         function parseJwt(token) {
             const base64Url = token.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -2147,11 +2434,9 @@
             return JSON.parse(jsonPayload);
         }
 
-        // --- LOGIN MODAL ---
         function openLogin() {
             closeMenu();
             document.getElementById('login-modal').style.display = 'flex';
-            // Re-render Google button when modal opens
             setTimeout(renderGoogleButton, 100);
         }
         function closeLogin() {
@@ -2184,12 +2469,10 @@
                     console.log('Google button render error:', e);
                 }
             } else {
-                // Retry if GIS script not loaded yet
                 setTimeout(renderGoogleButton, 300);
             }
         }
 
-        // --- LOGIN CHECK & UI UPDATE ---
         function checkLogin() {
             const user = JSON.parse(localStorage.getItem('jerryUser'));
             if (user && user.email) {
@@ -2200,37 +2483,29 @@
         function updateProfileUI(user) {
             if (!user) return;
             
-            // Navbar user chip
             const navUser = document.getElementById('nav-user');
-            const navUserImg = document.getElementById('nav-user-img');
-            const navUserName = document.getElementById('nav-user-name');
             navUser.classList.add('active');
-            navUserImg.src = user.picture || DEFAULT_AVATAR;
-            navUserName.innerText = (user.name || 'User').split(' ')[0];
+            document.getElementById('nav-user-img').src = user.picture || DEFAULT_AVATAR;
+            document.getElementById('nav-user-name').innerText = (user.name || 'User').split(' ')[0];
             
-            // Side menu user
             const sideMenuUser = document.getElementById('side-menu-user');
             sideMenuUser.classList.add('active');
             document.getElementById('side-menu-user-img').src = user.picture || DEFAULT_AVATAR;
             document.getElementById('side-menu-user-name').innerText = user.name || 'User';
             document.getElementById('side-menu-user-email').innerText = user.email || '';
             
-            // Profile section
             document.getElementById('profile-img').src = user.picture || DEFAULT_AVATAR;
             document.getElementById('profile-name').innerText = user.name || 'User';
             document.getElementById('profile-email').innerText = user.email || '';
             document.getElementById('total-topup').innerText = `${(user.totalTopup || 0).toFixed(2)} LKR`;
             document.getElementById('total-orders').innerText = user.totalOrders || 0;
             
-            // Time display
             updateProfileTimeDisplay();
             
-            // Show/hide menu buttons
             document.getElementById('menu-login-btn').style.display = 'none';
             document.getElementById('menu-logout-btn').style.display = 'flex';
         }
 
-        // Time since login
         function updateProfileTimeDisplay() {
             const user = JSON.parse(localStorage.getItem('jerryUser'));
             const el = document.getElementById('profile-time');
@@ -2282,14 +2557,13 @@
 
         function logout() {
             localStorage.removeItem('jerryUser');
-            // Also sign out from Google
             if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
                 try { google.accounts.id.disableAutoSelect(); } catch(e) {}
             }
             location.reload();
         }
 
-        // --- THEME TOGGLE ---
+        // ================= THEME / NAV =================
         function toggleTheme() {
             const body = document.body;
             const currentTheme = body.getAttribute('data-theme');
@@ -2300,7 +2574,6 @@
             icon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
         }
 
-        // --- NAVIGATION ---
         function toggleMenu() {
             document.getElementById('side-menu').classList.toggle('active');
             document.querySelector('.side-menu-overlay').classList.toggle('active');
@@ -2328,7 +2601,7 @@
             }
         }
 
-        // --- COPY ---
+        // ================= COPY =================
         function copyText(text, btnEl) {
             const handleSuccess = () => {
                 const icon = btnEl.querySelector('i');
@@ -2364,7 +2637,7 @@
             document.body.removeChild(textarea);
         }
 
-        // --- RENDER SERVICES ---
+        // ================= SERVICES =================
         function renderServices() {
             const subsGrid = document.getElementById('subs-grid');
             packageData.subs.forEach(pkg => {
@@ -2401,7 +2674,7 @@
             `;
         }
 
-        // --- ORDER SYSTEM ---
+        // ================= ORDER =================
         function buyNow(packageId) {
             showSection('order');
             addOrderItem(packageId);
@@ -2482,23 +2755,67 @@
             });
 
             document.getElementById('order-total').innerText = `Total: ${total.toFixed(2)} LKR`;
+            return total;
         }
 
-        // --- ORDER SUBMISSION ---
-        function submitOrder(e) {
+        // ================= SEND TO EMAIL (with image) =================
+        async function sendOrderToEmail(orderData, receiptFile) {
+            const formData = new FormData();
+            
+            // FormSubmit config
+            formData.append('_subject', `🎮 New Order - ${orderData.playerName} (${orderData.total.toFixed(2)} LKR)`);
+            formData.append('_template', 'table');
+            formData.append('_captcha', 'false');
+            formData.append('_replyto', orderData.customerEmail || EMAIL_ADDRESS);
+            
+            // Order details
+            formData.append('Customer Name', orderData.customerName || 'Guest User');
+            formData.append('Customer Email', orderData.customerEmail || 'Not logged in');
+            formData.append('Player ID', orderData.playerId);
+            formData.append('Player Name', orderData.playerName);
+            formData.append('Payment Method', orderData.paymentMethod);
+            formData.append('Order Details', orderData.detailsText);
+            formData.append('Total Amount', orderData.total.toFixed(2) + ' LKR');
+            formData.append('Order Date', new Date().toLocaleString());
+            
+            // Attach receipt image
+            if (receiptFile) {
+                formData.append('Receipt Image', receiptFile, receiptFile.name);
+            } else {
+                formData.append('Receipt Image', 'No receipt uploaded');
+            }
+            
+            const response = await fetch(FORMSUBMIT_ENDPOINT, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Email send failed with status ' + response.status);
+            }
+            
+            return await response.json();
+        }
+
+        // ================= ORDER SUBMIT =================
+        async function submitOrder(e) {
             e.preventDefault();
             
-            const playerId = document.getElementById('player-id').value;
-            const playerName = document.getElementById('player-name').value;
+            const playerId = document.getElementById('player-id').value.trim();
+            const playerName = document.getElementById('player-name').value.trim();
             const paymentMethod = document.getElementById('payment-method').value;
             const rows = document.querySelectorAll('.order-item-row');
             
             if (rows.length === 0) {
-                alert('Please add at least one package!');
+                showToast('Please add at least one package!', 'error');
                 return;
             }
 
             let orderDetails = '';
+            let orderDetailsText = '';
             let total = 0;
             let isValid = true;
 
@@ -2518,58 +2835,102 @@
                 total += subTotal;
                 
                 orderDetails += `\n*${index + 1}. ${pkgName}*\n   Qty: ${quantity} x ${price.toFixed(2)} LKR = ${subTotal.toFixed(2)} LKR\n`;
+                orderDetailsText += `${index + 1}. ${pkgName} | Qty: ${quantity} x ${price.toFixed(2)} = ${subTotal.toFixed(2)} LKR\n`;
             });
 
             if (!isValid) {
-                alert('Please fill all package selections and quantities!');
+                showToast('Please fill all package selections and quantities!', 'error');
                 return;
             }
 
             if (!playerId || !playerName || !paymentMethod) {
-                alert('Please fill all required fields!');
+                showToast('Please fill all required fields!', 'error');
                 return;
             }
 
+            // Get user info
+            const user = JSON.parse(localStorage.getItem('jerryUser'));
+
+            // Disable button
             const btn = e.target.querySelector('button[type="submit"]');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending Order...';
             btn.disabled = true;
 
+            // Show processing overlay
+            showProcessing('Sending to Email and WhatsApp...');
+
+            const orderData = {
+                playerId: playerId,
+                playerName: playerName,
+                paymentMethod: paymentMethod,
+                detailsText: orderDetailsText,
+                total: total,
+                customerName: user ? user.name : 'Guest User',
+                customerEmail: user ? user.email : ''
+            };
+
+            // 1. Send Email with image (async)
+            let emailSuccess = false;
+            try {
+                await sendOrderToEmail(orderData, selectedReceiptFile);
+                emailSuccess = true;
+                console.log('✅ Email sent successfully');
+            } catch (err) {
+                console.error('❌ Email send error:', err);
+            }
+
+            // 2. Build WhatsApp message
+            let message = `*🎮 JERRY ID TOP-UP CENTER - NEW ORDER*\n\n`;
+            if (user && user.email) {
+                message += `*Customer:* ${user.name}\n`;
+                message += `*Email:* ${user.email}\n\n`;
+            }
+            message += `*Player ID:* ${playerId}\n`;
+            message += `*Player Name:* ${playerName}\n`;
+            message += `*Payment Method:* ${paymentMethod}\n\n`;
+            message += `*--- ORDER DETAILS ---*\n${orderDetails}`;
+            message += `\n*TOTAL: ${total.toFixed(2)} LKR*\n\n`;
+            if (selectedReceiptFile) {
+                message += `📎 *Receipt image also sent to email*\n\n`;
+            }
+            message += `_Thank you for choosing JERRY ID TOP-UP CENTER!_`;
+
+            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+            // Update user stats
+            if (user && user.email) {
+                user.totalTopup = (user.totalTopup || 0) + total;
+                user.totalOrders = (user.totalOrders || 0) + 1;
+                localStorage.setItem('jerryUser', JSON.stringify(user));
+                updateProfileUI(user);
+            }
+
+            // Show result toast
             setTimeout(() => {
-                // Get current user info for WhatsApp message
-                const user = JSON.parse(localStorage.getItem('jerryUser'));
-                
-                let message = `*🎮 JERRY ID TOP-UP CENTER - NEW ORDER*\n\n`;
-                if (user && user.email) {
-                    message += `*Customer:* ${user.name}\n`;
-                    message += `*Email:* ${user.email}\n\n`;
-                }
-                message += `*Player ID:* ${playerId}\n`;
-                message += `*Player Name:* ${playerName}\n`;
-                message += `*Payment Method:* ${paymentMethod}\n\n`;
-                message += `*--- ORDER DETAILS ---*\n${orderDetails}`;
-                message += `\n*TOTAL: ${total.toFixed(2)} LKR*\n\n`;
-                message += `_Thank you for choosing JERRY ID TOP-UP CENTER!_`;
-
-                const whatsappNumber = '94769141950';
-                const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-
-                // Update user stats if logged in
-                if (user && user.email) {
-                    user.totalTopup = (user.totalTopup || 0) + total;
-                    user.totalOrders = (user.totalOrders || 0) + 1;
-                    localStorage.setItem('jerryUser', JSON.stringify(user));
-                    updateProfileUI(user);
-                }
-
+                hideProcessing();
                 btn.innerHTML = originalText;
                 btn.disabled = false;
 
+                if (emailSuccess && selectedReceiptFile) {
+                    showToast('✅ Order sent to Email (with image) & WhatsApp!', 'success', 5000);
+                } else if (emailSuccess) {
+                    showToast('✅ Order sent to Email & WhatsApp!', 'success', 5000);
+                } else {
+                    showToast('⚠️ Order sent to WhatsApp. Email may take a moment.', 'info', 5000);
+                }
+
+                // Open WhatsApp
                 window.open(whatsappUrl, '_blank');
-            }, 1500);
+
+                // Reset form after successful submission
+                setTimeout(() => {
+                    removeReceiptFile();
+                }, 500);
+            }, 1000);
         }
 
-        // --- LEARN MODAL ---
+        // ================= LEARN MODAL =================
         function openLearnModal() {
             document.getElementById('learn-modal').style.display = 'flex';
         }
@@ -2588,7 +2949,6 @@
             }
         }
 
-        // Try initializing Google button on page load (hidden behind modal but ready)
         window.addEventListener('load', () => {
             setTimeout(renderGoogleButton, 500);
         });
