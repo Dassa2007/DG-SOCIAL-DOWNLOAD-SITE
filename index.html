@@ -562,6 +562,37 @@
             filter: brightness(1.05);
         }
 
+        /* --- ORDER BUTTON --- */
+        .btn-order {
+            background: var(--gradient-2);
+            color: #fff;
+            box-shadow: 0 8px 22px rgba(168, 85, 247, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-order:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 14px 32px rgba(168, 85, 247, 0.55);
+            filter: brightness(1.08);
+        }
+        .btn-order:disabled {
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+        .btn-order.pending {
+            background: linear-gradient(135deg, #d97706, #f59e0b);
+            box-shadow: 0 8px 22px rgba(245, 158, 11, 0.45);
+            animation: pulse 1.5s infinite;
+        }
+        .btn-order.success {
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            box-shadow: 0 8px 22px rgba(34, 197, 94, 0.5);
+        }
+        .btn-order.error {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            box-shadow: 0 8px 22px rgba(239, 68, 68, 0.5);
+        }
+
         /* --- SERVICE --- */
         .service-container { max-width: 900px; margin: 0 auto; }
         .service-category { margin-bottom: 55px; }
@@ -1150,61 +1181,6 @@
         }
         .file-info i { color: var(--success); }
 
-        /* Send options info */
-        .send-info {
-            background: linear-gradient(135deg, rgba(37, 211, 102, 0.08), rgba(168, 85, 247, 0.08));
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 14px 16px;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-        .send-info > i {
-            color: var(--accent-light);
-            font-size: 1.15rem;
-            margin-top: 2px;
-            flex-shrink: 0;
-        }
-        .send-info div {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            line-height: 1.55;
-        }
-        .send-info div strong {
-            color: var(--text-color);
-            display: block;
-            margin-bottom: 4px;
-            font-size: 0.88rem;
-        }
-        .send-info .channels {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-            flex-wrap: wrap;
-        }
-        .send-info .channel-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 4px 10px;
-            border-radius: 50px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            border: 1px solid;
-        }
-        .send-info .channel-pill.wa {
-            color: var(--whatsapp);
-            border-color: rgba(37, 211, 102, 0.4);
-            background: rgba(37, 211, 102, 0.08);
-        }
-        .send-info .channel-pill.em {
-            color: var(--accent-light);
-            border-color: rgba(168, 85, 247, 0.4);
-            background: rgba(168, 85, 247, 0.08);
-        }
-
         /* --- MODALS --- */
         .modal {
             display: none;
@@ -1702,8 +1678,8 @@
     <!-- PROCESSING OVERLAY -->
     <div id="processing-overlay">
         <div class="processing-spinner"></div>
-        <div class="processing-text">SENDING YOUR ORDER...</div>
-        <div class="processing-sub" id="processing-sub">Please wait, this may take a few seconds</div>
+        <div class="processing-text" id="processing-text">PENDING...</div>
+        <div class="processing-sub" id="processing-sub">Please wait while we process your order</div>
     </div>
 
     <!-- NAVBAR -->
@@ -2035,11 +2011,11 @@
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-receipt"></i> Upload Receipt (Recommended for auto email)</label>
+                    <label><i class="fas fa-receipt"></i> Upload Receipt</label>
                     <div class="file-upload-wrapper" id="file-upload-wrapper">
                         <i class="fas fa-cloud-upload-alt" style="font-size: 1.6rem;"></i>
-                        <p id="file-upload-text">Click to upload receipt image</p>
-                        <input type="file" id="receipt" accept="image/*">
+                        <p>Click to upload receipt image</p>
+                        <input type="file" id="receipt" accept="image/*" required>
                     </div>
                     <div class="file-preview" id="file-preview">
                         <img id="file-preview-img" src="" alt="Receipt preview">
@@ -2053,19 +2029,8 @@
                     </div>
                 </div>
 
-                <div class="send-info">
-                    <i class="fas fa-paper-plane"></i>
-                    <div>
-                        <strong>Your order will be sent automatically to:</strong>
-                        <div class="channels">
-                            <span class="channel-pill wa"><i class="fab fa-whatsapp"></i> WhatsApp</span>
-                            <span class="channel-pill em"><i class="fas fa-envelope"></i> Email (with image)</span>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-whatsapp" style="width: 100%; font-size: 1rem; padding: 16px; justify-content: center;">
-                    <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Send Order (WhatsApp + Email)
+                <button type="submit" class="btn btn-order" id="order-submit-btn" style="width: 100%; font-size: 1rem; padding: 16px; justify-content: center;">
+                    <i class="fas fa-shopping-bag"></i> Order
                 </button>
             </form>
         </div>
@@ -2175,8 +2140,8 @@
             <div class="step-box">
                 <div class="step-icon">4</div>
                 <div class="step-text">
-                    <h4>Auto Send (WhatsApp + Email)</h4>
-                    <p>Your order will be auto-sent to WhatsApp and Email with the receipt image.</p>
+                    <h4>Place Order</h4>
+                    <p>Click "Order" button and wait for the confirmation message.</p>
                 </div>
             </div>
         </div>
@@ -2243,9 +2208,7 @@
         const DEFAULT_AVATAR = "https://res.cloudinary.com/divxgmr1g/image/upload/v1790993539/xzdvfo7ywga5y9wbu5gl.jpg";
 
         const GOOGLE_CLIENT_ID = "646448378815-ho0bpnhclt0304d93c0ia56j4fhn21jp.apps.googleusercontent.com";
-        const WHATSAPP_NUMBER = "94769141950";
-        const EMAIL_ADDRESS = "gamingjerry1523@gmail.com";
-        const FORMSUBMIT_ENDPOINT = "https://formsubmit.co/ajax/" + EMAIL_ADDRESS;
+        const ORDER_API_URL = "https://jerry-id-top-up-oder-telegram-bot.vercel.app/api/order";
 
         // ================= DATA =================
         const packageData = {
@@ -2326,7 +2289,8 @@
         }
 
         // ================= PROCESSING OVERLAY =================
-        function showProcessing(subText) {
+        function showProcessing(text, subText) {
+            document.getElementById('processing-text').innerText = text || 'PENDING...';
             document.getElementById('processing-sub').innerText = subText || 'Please wait...';
             document.getElementById('processing-overlay').classList.add('active');
         }
@@ -2341,23 +2305,20 @@
                 const file = e.target.files[0];
                 if (!file) return;
                 
-                // Validate file type
                 if (!file.type.startsWith('image/')) {
                     showToast('Please select an image file', 'error');
                     input.value = '';
                     return;
                 }
                 
-                // Max 8MB (FormSubmit limit)
-                if (file.size > 8 * 1024 * 1024) {
-                    showToast('Image is too large (max 8MB)', 'error');
+                if (file.size > 10 * 1024 * 1024) {
+                    showToast('Image is too large (max 10MB)', 'error');
                     input.value = '';
                     return;
                 }
                 
                 selectedReceiptFile = file;
                 
-                // Show preview
                 const reader = new FileReader();
                 reader.onload = function(ev) {
                     document.getElementById('file-preview-img').src = ev.target.result;
@@ -2758,49 +2719,12 @@
             return total;
         }
 
-        // ================= SEND TO EMAIL (with image) =================
-        async function sendOrderToEmail(orderData, receiptFile) {
-            const formData = new FormData();
-            
-            // FormSubmit config
-            formData.append('_subject', `🎮 New Order - ${orderData.playerName} (${orderData.total.toFixed(2)} LKR)`);
-            formData.append('_template', 'table');
-            formData.append('_captcha', 'false');
-            formData.append('_replyto', orderData.customerEmail || EMAIL_ADDRESS);
-            
-            // Order details
-            formData.append('Customer Name', orderData.customerName || 'Guest User');
-            formData.append('Customer Email', orderData.customerEmail || 'Not logged in');
-            formData.append('Player ID', orderData.playerId);
-            formData.append('Player Name', orderData.playerName);
-            formData.append('Payment Method', orderData.paymentMethod);
-            formData.append('Order Details', orderData.detailsText);
-            formData.append('Total Amount', orderData.total.toFixed(2) + ' LKR');
-            formData.append('Order Date', new Date().toLocaleString());
-            
-            // Attach receipt image
-            if (receiptFile) {
-                formData.append('Receipt Image', receiptFile, receiptFile.name);
-            } else {
-                formData.append('Receipt Image', 'No receipt uploaded');
-            }
-            
-            const response = await fetch(FORMSUBMIT_ENDPOINT, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error('Email send failed with status ' + response.status);
-            }
-            
-            return await response.json();
+        // Format number with commas (e.g., 2500 -> "2,500")
+        function formatNumber(num) {
+            return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
 
-        // ================= ORDER SUBMIT =================
+        // ================= ORDER SUBMIT (API) =================
         async function submitOrder(e) {
             e.preventDefault();
             
@@ -2814,12 +2738,11 @@
                 return;
             }
 
-            let orderDetails = '';
-            let orderDetailsText = '';
+            let packagesArr = [];
             let total = 0;
             let isValid = true;
 
-            rows.forEach((row, index) => {
+            rows.forEach(row => {
                 const select = row.querySelector('select');
                 const qtyInput = row.querySelector('.qty-control input');
                 
@@ -2834,8 +2757,12 @@
                 const subTotal = price * quantity;
                 total += subTotal;
                 
-                orderDetails += `\n*${index + 1}. ${pkgName}*\n   Qty: ${quantity} x ${price.toFixed(2)} LKR = ${subTotal.toFixed(2)} LKR\n`;
-                orderDetailsText += `${index + 1}. ${pkgName} | Qty: ${quantity} x ${price.toFixed(2)} = ${subTotal.toFixed(2)} LKR\n`;
+                packagesArr.push({
+                    name: pkgName,
+                    quantity: quantity,
+                    price: price,
+                    subtotal: subTotal
+                });
             });
 
             if (!isValid) {
@@ -2848,86 +2775,124 @@
                 return;
             }
 
+            if (!selectedReceiptFile) {
+                showToast('Please upload your payment receipt!', 'error');
+                return;
+            }
+
             // Get user info
             const user = JSON.parse(localStorage.getItem('jerryUser'));
 
-            // Disable button
-            const btn = e.target.querySelector('button[type="submit"]');
+            // Update button to PENDING
+            const btn = document.getElementById('order-submit-btn');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending Order...';
+            btn.classList.remove('success', 'error');
+            btn.classList.add('pending');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PENDING...';
             btn.disabled = true;
 
             // Show processing overlay
-            showProcessing('Sending to Email and WhatsApp...');
+            showProcessing('PENDING...', 'Sending your order, please wait...');
 
-            const orderData = {
-                playerId: playerId,
-                playerName: playerName,
-                paymentMethod: paymentMethod,
-                detailsText: orderDetailsText,
-                total: total,
-                customerName: user ? user.name : 'Guest User',
-                customerEmail: user ? user.email : ''
-            };
+            // Build FormData
+            const formData = new FormData();
+            formData.append('playerId', playerId);
+            formData.append('playerName', playerName);
+            
+            // Packages as readable text (with details)
+            const packagesText = packagesArr.map((p, i) => 
+                `${i + 1}. ${p.name} | Qty: ${p.quantity} x ${p.price.toFixed(2)} LKR = ${p.subtotal.toFixed(2)} LKR`
+            ).join('\n');
+            formData.append('packages', packagesText);
+            
+            formData.append('paymentMethod', paymentMethod);
+            formData.append('totalPrice', `LKR ${formatNumber(total)}`);
+            formData.append('receipt', selectedReceiptFile, selectedReceiptFile.name);
 
-            // 1. Send Email with image (async)
-            let emailSuccess = false;
+            // Add customer info if logged in (optional, for your record)
+            if (user && user.email) {
+                formData.append('customerName', user.name || '');
+                formData.append('customerEmail', user.email || '');
+            }
+
             try {
-                await sendOrderToEmail(orderData, selectedReceiptFile);
-                emailSuccess = true;
-                console.log('✅ Email sent successfully');
-            } catch (err) {
-                console.error('❌ Email send error:', err);
-            }
+                const response = await fetch(ORDER_API_URL, {
+                    method: 'POST',
+                    body: formData
+                });
 
-            // 2. Build WhatsApp message
-            let message = `*🎮 JERRY ID TOP-UP CENTER - NEW ORDER*\n\n`;
-            if (user && user.email) {
-                message += `*Customer:* ${user.name}\n`;
-                message += `*Email:* ${user.email}\n\n`;
-            }
-            message += `*Player ID:* ${playerId}\n`;
-            message += `*Player Name:* ${playerName}\n`;
-            message += `*Payment Method:* ${paymentMethod}\n\n`;
-            message += `*--- ORDER DETAILS ---*\n${orderDetails}`;
-            message += `\n*TOTAL: ${total.toFixed(2)} LKR*\n\n`;
-            if (selectedReceiptFile) {
-                message += `📎 *Receipt image also sent to email*\n\n`;
-            }
-            message += `_Thank you for choosing JERRY ID TOP-UP CENTER!_`;
+                const data = await response.json().catch(() => ({}));
 
-            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+                if (response.ok && data && data.success === true) {
+                    // SUCCESS
+                    btn.classList.remove('pending');
+                    btn.classList.add('success');
+                    btn.innerHTML = '<i class="fas fa-check-circle"></i> SUCCESSFUL';
+                    
+                    // Update processing overlay text
+                    document.getElementById('processing-text').innerText = 'SUCCESSFUL!';
+                    document.getElementById('processing-sub').innerText = 'Your order has been placed successfully.';
+                    
+                    // Show success toast
+                    showToast('✅ Order placed successfully!', 'success', 5000);
+                    
+                    // Update user stats
+                    if (user && user.email) {
+                        user.totalTopup = (user.totalTopup || 0) + total;
+                        user.totalOrders = (user.totalOrders || 0) + 1;
+                        localStorage.setItem('jerryUser', JSON.stringify(user));
+                        updateProfileUI(user);
+                    }
 
-            // Update user stats
-            if (user && user.email) {
-                user.totalTopup = (user.totalTopup || 0) + total;
-                user.totalOrders = (user.totalOrders || 0) + 1;
-                localStorage.setItem('jerryUser', JSON.stringify(user));
-                updateProfileUI(user);
-            }
+                    // Hide overlay after delay
+                    setTimeout(() => {
+                        hideProcessing();
+                    }, 1500);
 
-            // Show result toast
-            setTimeout(() => {
-                hideProcessing();
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                    // Reset form after 2.5 seconds
+                    setTimeout(() => {
+                        document.getElementById('order-form').reset();
+                        document.getElementById('order-items-container').innerHTML = '';
+                        addOrderItem();
+                        removeReceiptFile();
+                        calculateTotal();
+                        
+                        // Reset button
+                        btn.classList.remove('success', 'pending', 'error');
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }, 2500);
 
-                if (emailSuccess && selectedReceiptFile) {
-                    showToast('✅ Order sent to Email (with image) & WhatsApp!', 'success', 5000);
-                } else if (emailSuccess) {
-                    showToast('✅ Order sent to Email & WhatsApp!', 'success', 5000);
                 } else {
-                    showToast('⚠️ Order sent to WhatsApp. Email may take a moment.', 'info', 5000);
+                    // API returned error
+                    throw new Error(data.message || 'Order failed');
                 }
 
-                // Open WhatsApp
-                window.open(whatsappUrl, '_blank');
+            } catch (err) {
+                console.error('Order submit error:', err);
+                
+                // ERROR state
+                btn.classList.remove('pending');
+                btn.classList.add('error');
+                btn.innerHTML = '<i class="fas fa-times-circle"></i> FAILED';
+                
+                document.getElementById('processing-text').innerText = 'FAILED';
+                document.getElementById('processing-sub').innerText = 'Could not place the order. Please try again.';
+                
+                showToast('❌ Order failed. Please try again.', 'error', 5000);
 
-                // Reset form after successful submission
+                // Hide overlay
                 setTimeout(() => {
-                    removeReceiptFile();
-                }, 500);
-            }, 1000);
+                    hideProcessing();
+                }, 1500);
+
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    btn.classList.remove('error', 'pending', 'success');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, 2200);
+            }
         }
 
         // ================= LEARN MODAL =================
