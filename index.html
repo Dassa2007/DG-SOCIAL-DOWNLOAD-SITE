@@ -15,11 +15,10 @@
 <body>
 
 <div id="loader">
-  <div class="atom-loader">
-    <div class="nucleus"></div>
-    <div class="orbit orbit1"></div>
-    <div class="orbit orbit2"></div>
-    <div class="orbit orbit3"></div>
+  <div class="loader-inner">
+    <div class="loader-ring"></div>
+    <div class="loader-ring"></div>
+    <div class="loader-ring"></div>
   </div>
   <div class="loader-text">DG STORE</div>
   <div class="loader-progress"><div class="bar"></div></div>
@@ -80,7 +79,7 @@
   </div>
 
   <div class="intro-box reveal">
-    <strong>Welcome to DG STORE 🚀</strong><br>
+    <strong>Welcome to DG STORE</strong><br>
     Your one-stop digital hub for <strong>Social Media Boosting</strong>, <strong>Sri Lanka Local Boosts</strong>,
     <strong>Website Design</strong>, <strong>Free Fire Top-Ups</strong>, <strong>V2Ray GB Packages</strong>,
     and <strong>Premium Account Services</strong>. Fast, safe and 100% trusted delivery.
@@ -89,7 +88,7 @@
   <div class="stats-box reveal" id="statsBox">
     <div class="stat-item"><div class="stat-num" data-target="180">0</div><div class="stat-label">Users</div></div>
     <div class="stat-item"><div class="stat-num" data-target="99.9" data-suffix="%" data-decimal="1">0</div><div class="stat-label">Success Rate</div></div>
-    <div class="stat-item"><div class="stat-num" id="statTotalOrders" data-target="178">0</div><div class="stat-label">Total Orders</div></div>
+    <div class="stat-item"><div class="stat-num" id="statTotalOrders" data-target="236">0</div><div class="stat-label">Total Orders</div></div>
     <div class="stat-item"><div class="stat-num" data-target="100" data-suffix="%">0</div><div class="stat-label">Happy Customers</div></div>
   </div>
 
@@ -201,7 +200,7 @@
         </div>
 
         <div class="wp-info-row" id="wpVerifyRow" style="display:block">
-          <div class="wir-label" style="margin-bottom:6px"><i class="fa-solid fa-shield-halved" style="color:var(--c1)"></i> Verify WhatsApp Number</div>
+          <div class="wir-label" style="margin-bottom:6px"><i class="fa-solid fa-shield-halved" style="color:var(--primary)"></i> Verify WhatsApp Number</div>
           <div class="wp-verify-input">
             <input type="tel" id="userWp" placeholder="07XXXXXXXX">
             <button id="verifyWpBtn" onclick="verifyWpNumber()">Verify</button>
@@ -209,7 +208,7 @@
         </div>
 
         <div class="wp-info-row">
-          <div class="wir-label"><i class="fa-solid fa-clock" style="color:var(--c3)"></i> Last Login</div>
+          <div class="wir-label"><i class="fa-solid fa-clock" style="color:var(--accent)"></i> Last Login</div>
           <div class="wir-value" id="lastLoginDisplay">—</div>
         </div>
 
@@ -232,28 +231,65 @@
 <!-- PAYMENT -->
 <section class="page" id="page-payment">
   <h3 class="sec-title">PAYMENT DETAILS</h3>
+
+  <div class="intro-box reveal">
+    <strong>💳 Payment Information</strong><br>
+    Complete your payment using any of the methods below, then upload your receipt when placing your order.
+  </div>
+
   <div class="card reveal">
-    <div class="box-title" style="color:var(--c1)"><i class="fa-solid fa-mobile-screen-button"></i> EZ CASH NUMBER</div>
+    <div class="box-title" style="color:var(--primary)"><i class="fa-solid fa-mobile-screen-button"></i> EZ CASH NUMBER</div>
     <div class="copy-row">
-      <div><div class="cl">EZ Number</div><div class="cv">0762664962</div></div>
+      <div class="copy-row-body">
+        <div class="cl">EZ Number</div>
+        <div class="cv">0762664962</div>
+      </div>
       <button class="copy-btn" onclick="copyText('0762664962',this)"><i class="fa-regular fa-copy"></i></button>
     </div>
   </div>
+
   <div class="card reveal">
-    <div class="box-title" style="color:var(--c2)"><i class="fa-solid fa-building-columns"></i> BANK DETAILS</div>
-    <div class="copy-row"><div><div class="cl">Bank Name</div><div class="cv">People's Bank</div></div></div>
-    <div class="copy-row"><div><div class="cl">Branch</div><div class="cv">Maho</div></div><button class="copy-btn" onclick="copyText('Maho',this)"><i class="fa-regular fa-copy"></i></button></div>
-    <div class="copy-row"><div><div class="cl">Account Name</div><div class="cv">HPG Dasun Gimhana</div></div><button class="copy-btn" onclick="copyText('HPG Dasun Gimhana',this)"><i class="fa-regular fa-copy"></i></button></div>
-    <div class="copy-row"><div><div class="cl">Account Number</div><div class="cv">052200140105510</div></div><button class="copy-btn" onclick="copyText('052200140105510',this)"><i class="fa-regular fa-copy"></i></button></div>
+    <div class="box-title" style="color:var(--accent)"><i class="fa-solid fa-building-columns"></i> BANK DETAILS</div>
+    <div class="copy-row">
+      <div class="copy-row-body">
+        <div class="cl">Bank Name</div>
+        <div class="cv">People's Bank</div>
+      </div>
+    </div>
+    <div class="copy-row">
+      <div class="copy-row-body">
+        <div class="cl">Branch</div>
+        <div class="cv">Maho</div>
+      </div>
+      <button class="copy-btn" onclick="copyText('Maho',this)"><i class="fa-regular fa-copy"></i></button>
+    </div>
+    <div class="copy-row">
+      <div class="copy-row-body">
+        <div class="cl">Account Name</div>
+        <div class="cv">HPG Dasun Gimhana</div>
+      </div>
+      <button class="copy-btn" onclick="copyText('HPG Dasun Gimhana',this)"><i class="fa-regular fa-copy"></i></button>
+    </div>
+    <div class="copy-row">
+      <div class="copy-row-body">
+        <div class="cl">Account Number</div>
+        <div class="cv">052200140105510</div>
+      </div>
+      <button class="copy-btn" onclick="copyText('052200140105510',this)"><i class="fa-regular fa-copy"></i></button>
+    </div>
   </div>
-  <div class="pink-box reveal">
-    <div class="box-title" style="color:var(--c2)"><i class="fa-solid fa-triangle-exclamation"></i> IMPORTANT NOTES</div>
-    <p class="muted">📸 After payment, please upload your receipt photo when placing the order.<br><br>
-    💳 When sending money via EZ Cash, please add an extra <strong>LKR 20</strong> for transaction charges.</p>
+
+  <div class="info-alert reveal">
+    <div class="ia-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+    <div class="ia-body">
+      <div class="ia-title">Important Notes</div>
+      <p>📸 After payment, please upload your receipt photo when placing the order.</p>
+      <p>💳 When sending money via EZ Cash, please add an extra <strong>LKR 20</strong> for transaction charges.</p>
+    </div>
   </div>
 </section>
 
-<!-- SOCIAL MEDIA BOOST (Non Drop Only) -->
+<!-- SOCIAL MEDIA BOOST -->
 <section class="page" id="page-social">
   <div class="slider" id="socialSlider" data-interval="6000">
     <div class="slide active" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791453073/sjctqdkpxxoljx54f0vx.png')"></div>
@@ -355,7 +391,7 @@
   </div>
 
   <div class="prod-section reveal">
-    <div class="prod-section-head"><i class="fa-brands fa-facebook"></i> Facebook Followers (Sri Lanka Followers) <span class="pss-badge">SL BOOST</span></div>
+    <div class="prod-section-head"><i class="fa-brands fa-facebook"></i> Facebook Followers (Sri Lanka) <span class="pss-badge">SL BOOST</span></div>
     <div class="product-grid">
       <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-users"></i></div><div class="pc-name">500 Followers</div><div class="pc-price">1200</div><div class="pc-lkr">LKR</div></div>
       <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-users"></i></div><div class="pc-name">1K Followers</div><div class="pc-price">1700</div><div class="pc-lkr">LKR</div></div>
@@ -365,12 +401,12 @@
   </div>
 
   <div class="prod-section reveal">
-    <div class="prod-section-head"><i class="fa-solid fa-circle-check"></i> Monetize ON Followers <span class="pss-badge" style="background:linear-gradient(135deg,#f59e0b,#ec4899)">MONETIZE</span></div>
+    <div class="prod-section-head"><i class="fa-solid fa-circle-check"></i> Monetize ON Followers <span class="pss-badge" style="background:var(--accent)">MONETIZE</span></div>
     <div class="product-grid">
-      <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#10b981,#06b6d4)"><i class="fa-solid fa-user-plus"></i></div><div class="pc-name">2K Follow</div><div class="pc-price">1700</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#10b981,#06b6d4)"><i class="fa-solid fa-user-plus"></i></div><div class="pc-name">3K Follow</div><div class="pc-price">2000</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#10b981,#06b6d4)"><i class="fa-solid fa-user-plus"></i></div><div class="pc-name">5K Follow</div><div class="pc-price">2500</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#10b981,#06b6d4)"><i class="fa-solid fa-user-plus"></i></div><div class="pc-name">10K Follow</div><div class="pc-price">4500</div><div class="pc-lkr">LKR</div></div>
+      <div class="product-card"><div class="pc-icon" style="background:var(--accent-gradient)"><i class="fa-solid fa-user-plus"></i></div><div class="pc-name">2K Follow</div><div class="pc-price">1700</div><div class="pc-lkr">LKR</div></div>
+      <div class="product-card"><div class="pc-icon" style="background:var(--accent-gradient)"><i class="fa-solid fa-user-plus"></i></div><div class="pc-name">3K Follow</div><div class="pc-price">2000</div><div class="pc-lkr">LKR</div></div>
+      <div class="product-card"><div class="pc-icon" style="background:var(--accent-gradient)"><i class="fa-solid fa-user-plus"></i></div><div class="pc-name">5K Follow</div><div class="pc-price">2500</div><div class="pc-lkr">LKR</div></div>
+      <div class="product-card"><div class="pc-icon" style="background:var(--accent-gradient)"><i class="fa-solid fa-user-plus"></i></div><div class="pc-name">10K Follow</div><div class="pc-price">4500</div><div class="pc-lkr">LKR</div></div>
     </div>
   </div>
 
@@ -426,29 +462,87 @@
     <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791454823/ew31nsl07bvx4fpkjpes.png')"></div>
     <div class="dots" id="wdDots"></div>
   </div>
+
   <div class="intro-box reveal">
     <strong>💻 Professional Website Design</strong><br>
-    Fast, modern, mobile-friendly websites with stunning animations and dark/light mode.
+    Fast, modern, mobile-friendly websites with stunning animations and dark/light mode. Perfect for your business, store, or personal brand.
   </div>
+
   <div class="contact-owner-box reveal">
+    <div class="cob-icon"><i class="fa-solid fa-headset"></i></div>
     <h3>CONTACT THE OWNER</h3>
-    <p>Want a website for your business? Get in touch with me directly on WhatsApp or Telegram.</p>
+    <p>Want a website for your business? Get in touch with me directly on WhatsApp or Telegram for pricing, details, and custom requests.</p>
     <div class="contact-btns">
       <a class="contact-btn wa" href="https://wa.me/94743277981?text=Hi%20DG%20STORE,%20I%20want%20a%20website" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WHATSAPP</a>
       <a class="contact-btn tg" href="https://t.me/DasunTECH" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i> TELEGRAM</a>
     </div>
   </div>
+
   <h3 class="sec-title reveal">MY PROJECTS</h3>
-  <a class="proj reveal" href="http://dgsaver.ddns.net" target="_blank"><div class="pi"><i class="fa-solid fa-download"></i></div><div class="pt"><h5>Social Media Download Web</h5><span>dgsaver.ddns.net</span></div><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-  <a class="proj reveal" href="https://dgui.ddns.net/" target="_blank"><div class="pi"><i class="fa-solid fa-palette"></i></div><div class="pt"><h5>Primayam UI Free Download Web</h5><span>dgui.ddns.net</span></div><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-  <a class="proj reveal" href="https://dgsubz.ddns.net" target="_blank"><div class="pi"><i class="fa-solid fa-closed-captioning"></i></div><div class="pt"><h5>Subtitles Translate & SRT/ASS Convert</h5><span>dgsubz.ddns.net</span></div><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-  <a class="proj reveal" href="https://jerrytopup.free.nf/" target="_blank"><div class="pi"><i class="fa-solid fa-gamepad"></i></div><div class="pt"><h5>ID Top-Up Web</h5><span>jerrytopup.free.nf</span></div><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-  <a class="proj reveal" href="https://dg-1-x-signal.vercel.app" target="_blank"><div class="pi"><i class="fa-solid fa-chart-line"></i></div><div class="pt"><h5>1xBet Signal Web</h5><span>dg-1-x-signal.vercel.app</span></div><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-  <a class="proj reveal" href="https://dg-modz-store.vercel.app" target="_blank"><div class="pi"><i class="fa-solid fa-mobile-screen"></i></div><div class="pt"><h5>ModzApp Download Web</h5><span>dg-modz-store.vercel.app</span></div><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-  <div class="pink-box reveal" style="margin-top:18px">
-    <div class="box-title" style="color:var(--c2)"><i class="fa-solid fa-gift"></i> GET YOUR WEBSITE BUILT</div>
-    <p class="muted mb-10">Custom business websites with modern design, animations, dark/light mode and full functionality.</p>
-    <p class="muted">🎁 <strong>FREE</strong> Domain & Hosting included!</p>
+
+  <div class="projects-list">
+    <a class="proj reveal" href="http://dgsaver.ddns.net" target="_blank" rel="noopener">
+      <div class="pi"><i class="fa-solid fa-download"></i></div>
+      <div class="pt">
+        <h5>Social Media Download Web</h5>
+        <span>dgsaver.ddns.net</span>
+      </div>
+      <div class="proj-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+    </a>
+
+    <a class="proj reveal" href="https://dgui.ddns.net/" target="_blank" rel="noopener">
+      <div class="pi"><i class="fa-solid fa-palette"></i></div>
+      <div class="pt">
+        <h5>Primayam UI Free Download Web</h5>
+        <span>dgui.ddns.net</span>
+      </div>
+      <div class="proj-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+    </a>
+
+    <a class="proj reveal" href="https://dgsubz.ddns.net" target="_blank" rel="noopener">
+      <div class="pi"><i class="fa-solid fa-closed-captioning"></i></div>
+      <div class="pt">
+        <h5>Subtitles Translate & SRT/ASS Convert</h5>
+        <span>dgsubz.ddns.net</span>
+      </div>
+      <div class="proj-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+    </a>
+
+    <a class="proj reveal" href="https://jerrytopup.free.nf/" target="_blank" rel="noopener">
+      <div class="pi"><i class="fa-solid fa-gamepad"></i></div>
+      <div class="pt">
+        <h5>ID Top-Up Web</h5>
+        <span>jerrytopup.free.nf</span>
+      </div>
+      <div class="proj-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+    </a>
+
+    <a class="proj reveal" href="https://dg-1-x-signal.vercel.app" target="_blank" rel="noopener">
+      <div class="pi"><i class="fa-solid fa-chart-line"></i></div>
+      <div class="pt">
+        <h5>1xBet Signal Web</h5>
+        <span>dg-1-x-signal.vercel.app</span>
+      </div>
+      <div class="proj-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+    </a>
+
+    <a class="proj reveal" href="https://dg-modz-store.vercel.app" target="_blank" rel="noopener">
+      <div class="pi"><i class="fa-solid fa-mobile-screen"></i></div>
+      <div class="pt">
+        <h5>ModzApp Download Web</h5>
+        <span>dg-modz-store.vercel.app</span>
+      </div>
+      <div class="proj-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+    </a>
+  </div>
+
+  <div class="cta-box reveal">
+    <div class="cta-icon"><i class="fa-solid fa-gift"></i></div>
+    <div class="cta-body">
+      <div class="cta-title">GET YOUR WEBSITE BUILT</div>
+      <p>Custom business websites with modern design, animations, dark/light mode, and full functionality.</p>
+      <p class="cta-highlight">🎁 <strong>FREE</strong> Domain & Hosting included!</p>
+    </div>
   </div>
 </section>
 
@@ -463,7 +557,7 @@
   <h3 class="social-title">FREE FIRE TOP-UP</h3>
 
   <div class="green-box reveal">
-    <div class="box-title" style="color:#facc15"><i class="fa-solid fa-gem"></i> NORMAL DIAMOND</div>
+    <div class="box-title" style="color:var(--gold)"><i class="fa-solid fa-gem"></i> NORMAL DIAMOND</div>
     <div class="diamond-grid">
       <div class="diamond-item" onclick="selectFFItem('Normal 200 Diamonds|550')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791377290/faztdeikzvj0ukiniro0.png" alt="diamond"><h5>200 Diamonds</h5><span class="dprice">550 LKR</span></div>
       <div class="diamond-item" onclick="selectFFItem('Normal 400 Diamonds|1100')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791377290/faztdeikzvj0ukiniro0.png" alt="diamond"><h5>400 Diamonds</h5><span class="dprice">1100 LKR</span></div>
@@ -484,7 +578,7 @@
   </div>
 
   <div class="gold-box reveal">
-    <div class="box-title" style="color:#f59e0b"><i class="fa-solid fa-thumbs-up"></i> FREE FIRE PROFILE LIKES</div>
+    <div class="box-title" style="color:var(--gold)"><i class="fa-solid fa-thumbs-up"></i> FREE FIRE PROFILE LIKES</div>
     <div class="diamond-grid">
       <div class="diamond-item" onclick="selectFFItem('FF Profile Like 200|180')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791680367/istba8y444xglbrhuvqm.png" alt="profile likes"><h5>Like 200</h5><span class="dprice">180 LKR</span></div>
       <div class="diamond-item" onclick="selectFFItem('FF Profile Like 400|320')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791680367/istba8y444xglbrhuvqm.png" alt="profile likes"><h5>Like 400</h5><span class="dprice">320 LKR</span></div>
@@ -495,7 +589,7 @@
   </div>
 
   <div class="pink-box reveal">
-    <div class="box-title" style="color:#10b981"><i class="fa-solid fa-crown"></i> WEEKLY & MONTHLY PASSES</div>
+    <div class="box-title" style="color:var(--accent)"><i class="fa-solid fa-crown"></i> WEEKLY & MONTHLY PASSES</div>
     <div class="diamond-grid">
       <div class="diamond-item" onclick="selectFFItem('Weekly Lite|135')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791456165/sdtv22uyyxtxhkgdnxty.png" alt="weekly lite"><h5>Weekly Lite</h5><span class="dprice">135 LKR</span></div>
       <div class="diamond-item" onclick="selectFFItem('Weekly|560')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791456120/wl7mjfb5uu0nhbs593ly.png" alt="weekly"><h5>Weekly</h5><span class="dprice">560 LKR</span></div>
@@ -504,7 +598,6 @@
     </div>
   </div>
 
-  <!-- FF ID VERIFY BOX -->
   <div class="ff-verify-box reveal" id="ff-verify-box">
     <div class="ffv-head">
       <div class="ffv-icon"><i class="fa-solid fa-id-card"></i></div>
@@ -810,16 +903,16 @@
       <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#25d366,#128c7e)"><i class="fa-solid fa-users"></i></div><div class="pc-name">1000+ Followers</div><div class="pc-price">800</div><div class="pc-lkr">LKR</div></div>
       <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#25d366,#128c7e)"><i class="fa-solid fa-users"></i></div><div class="pc-name">2000+ Followers</div><div class="pc-price">1400</div><div class="pc-lkr">LKR</div></div>
       <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#25d366,#128c7e)"><i class="fa-solid fa-users"></i></div><div class="pc-name">5000+ Followers</div><div class="pc-price">2900</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#f59e0b,#ec4899)"><i class="fa-solid fa-heart"></i></div><div class="pc-name">One Month React</div><div class="pc-price">250</div><div class="pc-lkr">LKR</div></div>
+      <div class="product-card"><div class="pc-icon" style="background:var(--accent-gradient)"><i class="fa-solid fa-heart"></i></div><div class="pc-name">One Month React</div><div class="pc-price">250</div><div class="pc-lkr">LKR</div></div>
     </div>
   </div>
   <div class="prod-section reveal">
     <div class="prod-section-head"><i class="fa-solid fa-square-poll-vertical"></i> Poll Votes <span class="pss-badge">NEW</span></div>
     <div class="product-grid">
-      <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#6366f1,#ec4899)"><i class="fa-solid fa-check-to-slot"></i></div><div class="pc-name">100 Votes</div><div class="pc-price">500</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#6366f1,#ec4899)"><i class="fa-solid fa-check-to-slot"></i></div><div class="pc-name">200 Votes</div><div class="pc-price">900</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#6366f1,#ec4899)"><i class="fa-solid fa-check-to-slot"></i></div><div class="pc-name">500 Votes</div><div class="pc-price">1950</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#6366f1,#ec4899)"><i class="fa-solid fa-check-to-slot"></i></div><div class="pc-name">1000 Votes</div><div class="pc-price">3700</div><div class="pc-lkr">LKR</div></div>
+      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-check-to-slot"></i></div><div class="pc-name">100 Votes</div><div class="pc-price">500</div><div class="pc-lkr">LKR</div></div>
+      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-check-to-slot"></i></div><div class="pc-name">200 Votes</div><div class="pc-price">900</div><div class="pc-lkr">LKR</div></div>
+      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-check-to-slot"></i></div><div class="pc-name">500 Votes</div><div class="pc-price">1950</div><div class="pc-lkr">LKR</div></div>
+      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-check-to-slot"></i></div><div class="pc-name">1000 Votes</div><div class="pc-price">3700</div><div class="pc-lkr">LKR</div></div>
     </div>
   </div>
   <div class="form-card reveal" id="wa-form">
@@ -884,12 +977,12 @@
     <br>
     <strong>DG STORE</strong> is Sri Lanka's trusted digital services platform — delivering premium social media boosts, top-ups, web design and much more. With <strong>thousands of successful orders</strong> and a <strong>99.9% success rate</strong>, we're committed to giving you the fastest, safest and most reliable service in the country.
     <br><br>
-    Whether you're a content creator, business owner or gamer — we've got the digital solutions you need. All delivered with <strong>100% trust</strong> and <strong>instant response</strong>. 🚀
+    Whether you're a content creator, business owner or gamer — we've got the digital solutions you need. All delivered with <strong>100% trust</strong> and <strong>instant response</strong>.
 
     <div class="about-stats-grid">
       <div class="about-stat-card"><div class="asc-icon"><i class="fa-solid fa-users"></i></div><h5>180+</h5><p>Users</p></div>
       <div class="about-stat-card"><div class="asc-icon"><i class="fa-solid fa-trophy"></i></div><h5>99.9%</h5><p>Success</p></div>
-      <div class="about-stat-card"><div class="asc-icon"><i class="fa-solid fa-box"></i></div><h5>236+</h5><p>Orders</p></div>
+      <div class="about-stat-card"><div class="asc-icon"><i class="fa-solid fa-box"></i></div><h5>236</h5><p>Orders</p></div>
       <div class="about-stat-card"><div class="asc-icon"><i class="fa-solid fa-heart"></i></div><h5>100%</h5><p>Happy</p></div>
     </div>
   </div>
