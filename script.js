@@ -1,18 +1,37 @@
 /* ============================================================
    DG STORE — Main JavaScript
-   Owner Email: gimahandasun@gmail.com
-   Firebase Reviews: Shared across all devices
+   Owner: gimahandasun@gmail.com
+   Firebase Reviews: Multi-region auto-detect
    ============================================================ */
 
 /* ═══════════════════════════════════════════════════════════
-   🔥 STEP 1: FIREBASE SETUP (1 වතාවක් විතරයි)
-   ─────────────────────────────────────────────────────────────
-   1. https://console.firebase.google.com/ → Create Project
-   2. Build → Realtime Database → Create Database → Test Mode
-   3. එහි එන URL එක පහත FIREBASE_URL එකට paste කරන්න
+   🔥 FIREBASE — AUTO REGION DETECTION
+   Database: dg-store-comment-detabase-default-rtdb
+   Attempts multiple regions automatically on startup
    ═══════════════════════════════════════════════════════════ */
-const FIREBASE_URL = 'https://console.firebase.google.com/u/1/project/dg-store-comment-detabase/database/dg-store-comment-detabase-default-rtdb/data/~2F';
-// ═══════════════════════════════════════════════════════════
+const FIREBASE_URL_CANDIDATES = [
+  'https://dg-store-comment-detabase-default-rtdb.firebaseio.com',
+  'https://dg-store-comment-detabase-default-rtdb.asia-southeast1.firebasedatabase.app',
+  'https://dg-store-comment-detabase-default-rtdb.us-central1.firebasedatabase.app',
+  'https://dg-store-comment-detabase-default-rtdb.europe-west1.firebasedatabase.app',
+  'https://dg-store-comment-detabase-default-rtdb.firebasedatabase.app',
+];
+let FIREBASE_URL = FIREBASE_URL_CANDIDATES[0];
+
+async function detectFirebaseUrl(){
+  for(const url of FIREBASE_URL_CANDIDATES){
+    try {
+      const res = await fetch(`${url}/.json?shallow=true`, {method:'GET', mode:'cors'});
+      if(res.ok || res.status === 200){
+        FIREBASE_URL = url;
+        console.log('✅ Firebase URL detected:', url);
+        return url;
+      }
+    } catch(e){ /* try next */ }
+  }
+  console.warn('⚠ Firebase URL not auto-detected. Using default.');
+  return FIREBASE_URL;
+}
 
 const OWNER_EMAIL = 'gimahandasun@gmail.com';
 const OWNER_WA = '94743277981';
@@ -20,7 +39,7 @@ const FF_API_BASE = 'https://ff-lookup.vercel.app';
 
 /* ============ LOADER ============ */
 window.addEventListener('load', () => {
-  setTimeout(() => document.getElementById('loader').classList.add('hide'), 1600);
+  setTimeout(() => document.getElementById('loader').classList.add('hide'), 1400);
 });
 
 /* ============ THEME ============ */
@@ -57,18 +76,10 @@ function showPage(id){
   });
   closeDrawer();
   window.scrollTo({top:0,behavior:'smooth'});
-  setTimeout(() => {
-    document.querySelectorAll('.page.active .reveal').forEach(el => io.observe(el));
-    if(id === 'home') startCounters();
-    if(id === 'reviews') loadReviewsFromFirebase();
-    if(id === 'profile') renderOrders();
-  }, 40);
+  if(id === 'home') startCounters();
+  if(id === 'reviews') loadReviewsFromFirebase();
+  if(id === 'profile') renderOrders();
 }
-
-/* ============ REVEAL ============ */
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); }});
-}, {threshold:0.08});
 
 /* ============ SLIDERS ============ */
 function initSlider(id){
@@ -109,7 +120,7 @@ function startCounters(){
     const suffix = c.dataset.suffix || '';
     const decimal = parseInt(c.dataset.decimal) || 0;
     let current = 0;
-    const steps = 50;
+    const steps = 40;
     const inc = target / steps;
     let step = 0;
     const timer = setInterval(() => {
@@ -141,7 +152,7 @@ function toast(msg, type){
   const txt = t.querySelector('.toast-text');
   txt.textContent = msg;
   t.className = 'show' + (type === 'error' ? ' error' : '');
-  clearTimeout(t._tm); t._tm = setTimeout(() => t.className = '', 2600);
+  clearTimeout(t._tm); t._tm = setTimeout(() => t.className = '', 2400);
 }
 
 /* ============ FILE PREVIEW ============ */
@@ -190,15 +201,13 @@ async function sendEmailNotification(subject, dataObject){
   } catch(err){ console.warn('Email notify failed:', err); }
 }
 function notifyLogin(user){
-  const now = new Date().toLocaleString();
   sendEmailNotification(`🔔 DG STORE — Login: ${user.name}`, {
     'Event': 'Customer Login', 'Name': user.name || '-', 'Email': user.email || '-',
-    'DG ID': user.userId || '-', 'Time': now, 'Device': navigator.userAgent,
+    'DG ID': user.userId || '-', 'Time': new Date().toLocaleString(), 'Device': navigator.userAgent,
     'Message': `${user.name} (${user.email}) logged into DG STORE.`
   });
 }
 function notifyOrder(orderType, orderData, orderNumber){
-  const now = new Date().toLocaleString();
   const details = {};
   Object.keys(orderData).forEach(k => {
     if(k === 'orderType') return;
@@ -212,7 +221,7 @@ function notifyOrder(orderType, orderData, orderNumber){
     'Event': 'New Order', 'Order #': orderNumber, 'Type': orderType,
     'Customer': orderData.name || '-', 'WhatsApp': orderData.whatsapp || '-',
     'Total': orderData.total || '-', 'Payment': orderData.paymentMethod || '-',
-    'Time': now, 'Message': `A new ${orderType} order was placed.`, ...details
+    'Time': new Date().toLocaleString(), 'Message': `New ${orderType} order placed.`, ...details
   });
 }
 
@@ -248,7 +257,7 @@ async function sendToBot(pageKey, orderData, receiptInputId){
 }
 async function sendToBotAndWA(pageKey, orderData, receiptInputId, btnEl, whatsappMessage, resetFn){
   if(btnEl){ btnEl.disabled = true; btnEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> PROCESSING...'; }
-  await new Promise(r => setTimeout(r, 600));
+  await new Promise(r => setTimeout(r, 500));
   try { window.open(`https://wa.me/${OWNER_WA}?text=${encodeURIComponent(whatsappMessage)}`, '_blank'); } catch(e){}
   const ok = await sendToBot(pageKey, orderData, receiptInputId);
   const orderNumber = generateOrderNumber();
@@ -261,7 +270,7 @@ async function sendToBotAndWA(pageKey, orderData, receiptInputId, btnEl, whatsap
 }
 async function sendToBotOnly(pageKey, orderData, receiptInputId, btnEl, resetFn){
   if(btnEl){ btnEl.disabled = true; btnEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SENDING...'; }
-  await new Promise(r => setTimeout(r, 500));
+  await new Promise(r => setTimeout(r, 400));
   const ok = await sendToBot(pageKey, orderData, receiptInputId);
   const orderNumber = generateOrderNumber();
   saveUserOrder({ orderNumber, type: orderData.orderType || 'Order', details: orderData, total: orderData.total || 'LKR 0', timestamp: new Date().toISOString(), status: 'Pending' });
@@ -303,8 +312,7 @@ function addSmItem(){
   const id = smItemCount;
   const wrap = document.getElementById('sm-items');
   const div = document.createElement('div');
-  div.className = 'order-item';
-  div.id = 'smItem-' + id;
+  div.className = 'order-item'; div.id = 'smItem-' + id;
   div.innerHTML = `
     <div class="oi-head"><span><i class="fa-solid fa-box"></i> Service #${id}</span>
       <button type="button" class="remove-btn" onclick="removeSmItem(${id})"><i class="fa-solid fa-xmark"></i></button></div>
@@ -967,43 +975,53 @@ function showOrderDetail(idx){
 }
 
 /* ============================================================
-   ═══════════ REVIEWS SYSTEM (FIREBASE REALTIME) ═════════════
-   Comments shared across ALL devices in real-time
+   ═══════════ REVIEWS (Firebase Multi-Region) ═══════════════
    ============================================================ */
 let allReviews = [];
 let reviewsListenerInterval = null;
 
-/* Fetch all reviews from Firebase */
 async function fetchReviewsFromFirebase(){
   try {
     const res = await fetch(`${FIREBASE_URL}/reviews.json`);
-    if(!res.ok) throw new Error('Fetch failed');
+    if(!res.ok) throw new Error('Fetch failed ' + res.status);
     const data = await res.json();
     if(!data) return [];
-    /* Convert object to array */
     return Object.keys(data).map(id => ({ ...data[id], id })).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
   } catch(err){
     console.warn('Firebase fetch failed:', err);
-    return [];
+    return null;
   }
 }
 
-/* Load & render reviews */
 async function loadReviewsFromFirebase(){
   const feed = document.getElementById('reviewsFeed');
   if(feed && allReviews.length === 0){
     feed.innerHTML = '<div class="loading-reviews"><div class="lr-spinner"></div><p>Loading reviews...</p></div>';
   }
   const reviews = await fetchReviewsFromFirebase();
+  if(reviews === null){
+    /* Network/DB error */
+    if(feed){
+      feed.innerHTML = `<div class="empty-orders"><i class="fa-solid fa-triangle-exclamation" style="color:var(--warning)"></i>
+        <p style="margin-bottom:8px">Could not load reviews right now.</p>
+        <p style="font-size:.7rem;opacity:.7">Please check the database rules are set to read/write = true.</p>
+        <button onclick="loadReviewsFromFirebase()" style="margin-top:12px;padding:8px 20px;border-radius:10px;border:0;background:var(--primary);color:#fff;font-weight:600;cursor:pointer">
+          <i class="fa-solid fa-rotate"></i> Retry
+        </button>
+      </div>`;
+    }
+    return;
+  }
   const hasChanged = JSON.stringify(reviews) !== JSON.stringify(allReviews);
   if(hasChanged){
     allReviews = reviews;
     renderReviews();
     updateReviewsCount();
+  } else if(allReviews.length === 0){
+    renderReviews();
   }
 }
 
-/* Start real-time polling (every 5s) */
 function startReviewsRealtime(){
   if(reviewsListenerInterval) clearInterval(reviewsListenerInterval);
   reviewsListenerInterval = setInterval(loadReviewsFromFirebase, 5000);
@@ -1027,7 +1045,6 @@ function timeAgo(ts){
   return new Date(ts).toLocaleDateString();
 }
 
-/* Review composer */
 function renderReviewComposer(){
   const wrap = document.getElementById('reviewComposerWrap');
   if(!wrap) return;
@@ -1061,7 +1078,6 @@ function renderReviewComposer(){
   if(ti && cc) ti.addEventListener('input', () => { cc.textContent = ti.value.length; });
 }
 
-/* Post a review to Firebase */
 async function postReview(){
   if(!currentUser) return toast('Please login first', 'error');
   const ti = document.getElementById('reviewInput');
@@ -1076,9 +1092,7 @@ async function postReview(){
     email: currentUser.email,
     picture: currentUser.picture,
     text: text,
-    timestamp: new Date().toISOString(),
-    likes: [],
-    replies: []
+    timestamp: new Date().toISOString()
   };
   try {
     const res = await fetch(`${FIREBASE_URL}/reviews.json`, {
@@ -1086,19 +1100,21 @@ async function postReview(){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(review)
     });
-    if(!res.ok) throw new Error('Post failed');
+    if(!res.ok){
+      throw new Error('POST failed ' + res.status);
+    }
     ti.value = '';
     document.getElementById('reviewCharCount').textContent = '0';
     toast('✅ Review posted!');
     await loadReviewsFromFirebase();
   } catch(err){
-    toast('❌ Failed to post review', 'error');
+    console.error('Post review error:', err);
+    toast('❌ Failed — check DB rules (read/write = true)', 'error');
   } finally {
     if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Post Review'; }
   }
 }
 
-/* Render all reviews */
 function renderReviews(){
   const feed = document.getElementById('reviewsFeed');
   if(!feed) return;
@@ -1159,7 +1175,6 @@ function renderReviewItem(r){
     </div>`;
 }
 
-/* Like a review */
 async function toggleLikeReview(id){
   if(!currentUser) return toast('Please login to like', 'error');
   const r = allReviews.find(x => x.id === id);
@@ -1227,7 +1242,6 @@ async function deleteReview(id){
   } catch(err){ toast('Failed to delete', 'error'); }
 }
 
-/* Delete timer UI */
 setInterval(() => {
   document.querySelectorAll('.delete-timer').forEach(el => {
     const id = el.dataset.del;
@@ -1244,11 +1258,13 @@ setInterval(() => {
 }, 1000);
 
 /* ============ INIT ============ */
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
   setTimeout(() => {
-    document.querySelectorAll('.page.active .reveal').forEach(el => io.observe(el));
-    setTimeout(() => { if(document.querySelector('#page-home.active')) startCounters(); }, 400);
-  }, 1700);
+    if(document.querySelector('#page-home.active')) startCounters();
+  }, 1500);
+
+  /* Detect Firebase URL first */
+  await detectFirebaseUrl();
 
   const sess = localStorage.getItem('dg_session');
   if(sess){
