@@ -1,7 +1,18 @@
 /* ============================================================
    DG STORE — Main JavaScript
    Owner Email: gimahandasun@gmail.com
+   Firebase Reviews: Shared across all devices
    ============================================================ */
+
+/* ═══════════════════════════════════════════════════════════
+   🔥 STEP 1: FIREBASE SETUP (1 වතාවක් විතරයි)
+   ─────────────────────────────────────────────────────────────
+   1. https://console.firebase.google.com/ → Create Project
+   2. Build → Realtime Database → Create Database → Test Mode
+   3. එහි එන URL එක පහත FIREBASE_URL එකට paste කරන්න
+   ═══════════════════════════════════════════════════════════ */
+const FIREBASE_URL = 'https://dg-store-default-rtdb.firebaseio.com';
+// ═══════════════════════════════════════════════════════════
 
 const OWNER_EMAIL = 'gimahandasun@gmail.com';
 const OWNER_WA = '94743277981';
@@ -9,7 +20,7 @@ const FF_API_BASE = 'https://ff-lookup.vercel.app';
 
 /* ============ LOADER ============ */
 window.addEventListener('load', () => {
-  setTimeout(() => document.getElementById('loader').classList.add('hide'), 1800);
+  setTimeout(() => document.getElementById('loader').classList.add('hide'), 1600);
 });
 
 /* ============ THEME ============ */
@@ -49,7 +60,7 @@ function showPage(id){
   setTimeout(() => {
     document.querySelectorAll('.page.active .reveal').forEach(el => io.observe(el));
     if(id === 'home') startCounters();
-    if(id === 'reviews') renderReviews();
+    if(id === 'reviews') loadReviewsFromFirebase();
     if(id === 'profile') renderOrders();
   }, 40);
 }
@@ -153,8 +164,6 @@ function generateOrderNumber(){
   localStorage.setItem('dg_order_counter', c + 1);
   return '#' + c;
 }
-
-/* ============ USER ORDER STORAGE ============ */
 function getUserOrders(){
   if(!currentUser) return [];
   const key = 'dg_orders_' + currentUser.userId;
@@ -169,50 +178,27 @@ function saveUserOrder(order){
   localStorage.setItem(key, JSON.stringify(orders));
 }
 
-/* ============================================================
-   ============ EMAIL NOTIFICATIONS (FormSubmit.co) ===========
-   ============================================================ */
+/* ============ EMAIL NOTIFICATIONS ============ */
 async function sendEmailNotification(subject, dataObject){
   try {
-    const payload = {
-      _subject: subject,
-      _template: 'table',
-      _captcha: 'false',
-      ...dataObject
-    };
-    const res = await fetch(`https://formsubmit.co/ajax/${OWNER_EMAIL}`, {
+    const payload = { _subject: subject, _template: 'table', _captcha: 'false', ...dataObject };
+    await fetch(`https://formsubmit.co/ajax/${OWNER_EMAIL}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload)
     });
-    return res.ok;
-  } catch(err){
-    console.warn('Email notification failed:', err);
-    return false;
-  }
+  } catch(err){ console.warn('Email notify failed:', err); }
 }
-
-/* Notify owner when a customer logs in with Google */
 function notifyLogin(user){
   const now = new Date().toLocaleString();
-  sendEmailNotification(`🔔 DG STORE — Customer Login: ${user.name}`, {
-    'Event': 'Customer Login',
-    'Name': user.name || '-',
-    'Email': user.email || '-',
-    'DG User ID': user.userId || '-',
-    'Time': now,
-    'Device': navigator.userAgent,
-    'Message': `${user.name} (${user.email}) just logged into DG STORE.`
+  sendEmailNotification(`🔔 DG STORE — Login: ${user.name}`, {
+    'Event': 'Customer Login', 'Name': user.name || '-', 'Email': user.email || '-',
+    'DG ID': user.userId || '-', 'Time': now, 'Device': navigator.userAgent,
+    'Message': `${user.name} (${user.email}) logged into DG STORE.`
   });
 }
-
-/* Notify owner when a new order is placed */
 function notifyOrder(orderType, orderData, orderNumber){
   const now = new Date().toLocaleString();
-  /* Format order details */
   const details = {};
   Object.keys(orderData).forEach(k => {
     if(k === 'orderType') return;
@@ -223,22 +209,14 @@ function notifyOrder(orderType, orderData, orderNumber){
     details[label] = String(v || '-');
   });
   sendEmailNotification(`🛒 DG STORE — New ${orderType} (${orderNumber})`, {
-    'Event': 'New Order',
-    'Order Number': orderNumber,
-    'Order Type': orderType,
-    'Customer Name': orderData.name || '-',
-    'Customer WhatsApp': orderData.whatsapp || '-',
-    'Total': orderData.total || '-',
-    'Payment Method': orderData.paymentMethod || '-',
-    'Time': now,
-    'Message': `A new ${orderType} order (${orderNumber}) was placed on DG STORE.`,
-    ...details
+    'Event': 'New Order', 'Order #': orderNumber, 'Type': orderType,
+    'Customer': orderData.name || '-', 'WhatsApp': orderData.whatsapp || '-',
+    'Total': orderData.total || '-', 'Payment': orderData.paymentMethod || '-',
+    'Time': now, 'Message': `A new ${orderType} order was placed.`, ...details
   });
 }
 
-/* ============================================================
-   ============ TELEGRAM BOT APIs ============================
-   ============================================================ */
+/* ============ TELEGRAM BOT APIs ============ */
 const PAGE_APIS = {
   social:    'https://dg-store-oders-telegram-bot.vercel.app/api/order',
   freefire:  'https://dg-store-ff-id-topup-oder-telegram.vercel.app/api/order',
@@ -247,7 +225,6 @@ const PAGE_APIS = {
   gbshell:   'https://dg-store-2vary-gb-oder-telegram-bot.vercel.app/api/order',
   premium:   'https://dg-store-primam-acc-oder-telegram-b.vercel.app/api/order'
 };
-
 async function sendToBot(pageKey, orderData, receiptInputId){
   const apiUrl = PAGE_APIS[pageKey];
   if(!apiUrl){ toast('❌ API not configured', 'error'); return false; }
@@ -265,78 +242,43 @@ async function sendToBot(pageKey, orderData, receiptInputId){
     }
     fd.append('timestamp', new Date().toISOString());
     const res = await fetch(apiUrl, { method: 'POST', body: fd });
-    if(!res.ok) throw new Error('Server responded with ' + res.status);
+    if(!res.ok) throw new Error('Server error ' + res.status);
     return true;
-  } catch(err){
-    console.error('Order send failed:', err);
-    return false;
-  }
+  } catch(err){ console.error('Order send failed:', err); return false; }
 }
-
 async function sendToBotAndWA(pageKey, orderData, receiptInputId, btnEl, whatsappMessage, resetFn){
-  if(btnEl){
-    btnEl.disabled = true;
-    btnEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> PROCESSING...';
-  }
+  if(btnEl){ btnEl.disabled = true; btnEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> PROCESSING...'; }
   await new Promise(r => setTimeout(r, 600));
   try { window.open(`https://wa.me/${OWNER_WA}?text=${encodeURIComponent(whatsappMessage)}`, '_blank'); } catch(e){}
   const ok = await sendToBot(pageKey, orderData, receiptInputId);
   const orderNumber = generateOrderNumber();
-  saveUserOrder({
-    orderNumber: orderNumber,
-    type: orderData.orderType || 'Order',
-    details: orderData,
-    total: orderData.total || 'LKR 0',
-    timestamp: new Date().toISOString(),
-    status: 'Pending'
-  });
-  /* Email notification */
+  saveUserOrder({ orderNumber, type: orderData.orderType || 'Order', details: orderData, total: orderData.total || 'LKR 0', timestamp: new Date().toISOString(), status: 'Pending' });
   notifyOrder(orderData.orderType || 'Order', orderData, orderNumber);
   if(typeof resetFn === 'function') resetFn();
-  if(btnEl){
-    btnEl.disabled = false;
-    btnEl.innerHTML = '<i class="fa-solid fa-paper-plane"></i> PLACE ORDER NOW';
-  }
-  if(ok){ toast('✅ Order placed successfully!', 'success'); }
-  else { toast('⚠ Sent to WhatsApp — please confirm', 'error'); }
+  if(btnEl){ btnEl.disabled = false; btnEl.innerHTML = '<i class="fa-solid fa-paper-plane"></i> PLACE ORDER NOW'; }
+  if(ok){ toast('✅ Order placed successfully!'); } else { toast('⚠ Sent to WhatsApp — please confirm', 'error'); }
   openSuccessModal();
 }
-
 async function sendToBotOnly(pageKey, orderData, receiptInputId, btnEl, resetFn){
-  if(btnEl){
-    btnEl.disabled = true;
-    btnEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SENDING...';
-  }
+  if(btnEl){ btnEl.disabled = true; btnEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SENDING...'; }
   await new Promise(r => setTimeout(r, 500));
   const ok = await sendToBot(pageKey, orderData, receiptInputId);
   const orderNumber = generateOrderNumber();
-  saveUserOrder({
-    orderNumber: orderNumber,
-    type: orderData.orderType || 'Order',
-    details: orderData,
-    total: orderData.total || 'LKR 0',
-    timestamp: new Date().toISOString(),
-    status: 'Pending'
-  });
-  /* Email notification */
+  saveUserOrder({ orderNumber, type: orderData.orderType || 'Order', details: orderData, total: orderData.total || 'LKR 0', timestamp: new Date().toISOString(), status: 'Pending' });
   notifyOrder(orderData.orderType || 'Order', orderData, orderNumber);
   if(typeof resetFn === 'function') resetFn();
-  if(btnEl){
-    btnEl.disabled = false;
-    btnEl.innerHTML = '<i class="fa-solid fa-paper-plane"></i> PLACE ORDER NOW';
-  }
-  if(ok){ toast('✅ Order sent successfully!', 'success'); openSuccessModal(); }
-  else { toast('❌ Failed to send. Please try again.', 'error'); }
+  if(btnEl){ btnEl.disabled = false; btnEl.innerHTML = '<i class="fa-solid fa-paper-plane"></i> PLACE ORDER NOW'; }
+  if(ok){ toast('✅ Order sent successfully!'); openSuccessModal(); } else { toast('❌ Failed to send', 'error'); }
 }
 
-/* ============ RESET HELPERS ============ */
+/* ============ HELPERS ============ */
 function clearInputs(ids){
   ids.forEach(id => {
     const el = document.getElementById(id);
     if(el){
-      if(el.type === 'file'){ el.value = ''; }
-      else if(el.tagName === 'SELECT'){ el.selectedIndex = 0; }
-      else { el.value = ''; }
+      if(el.type === 'file') el.value = '';
+      else if(el.tagName === 'SELECT') el.selectedIndex = 0;
+      else el.value = '';
     }
   });
 }
@@ -344,35 +286,17 @@ function clearPreview(previewId){
   const img = document.getElementById(previewId);
   if(img){ img.src = ''; img.style.display = 'none'; }
 }
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
 
-/* ============ SOCIAL MEDIA (NON DROP) ============ */
+/* ============ SOCIAL MEDIA ============ */
 const smPrices = {
-  TikTok: {
-    "Likes":{base:1000,p:700},
-    "Views":{base:100,p:200},
-    "Followers":{base:1000,p:1900},
-    "Saves":{base:1000,p:700},
-    "Share":{base:1000,p:900},
-    "Comments":{base:1000,p:3500}
-  },
-  Instagram: {
-    "Followers":{base:1000,p:3300},
-    "Likes":{base:1000,p:350},
-    "Comments":{base:1000,p:1900}
-  },
-  Facebook: {
-    "Followers":{base:1000,p:1200},
-    "Post Likes":{base:1000,p:800},
-    "Group Member":{base:1000,p:2700},
-    "Comments":{base:1000,p:3200}
-  },
-  YouTube: {
-    "Likes":{base:1000,p:3500},
-    "Views":{base:1000,p:2400},
-    "Subscribers":{base:1000,p:29600}
-  }
+  TikTok: { "Likes":{base:1000,p:700}, "Views":{base:100,p:200}, "Followers":{base:1000,p:1900}, "Saves":{base:1000,p:700}, "Share":{base:1000,p:900}, "Comments":{base:1000,p:3500} },
+  Instagram: { "Followers":{base:1000,p:3300}, "Likes":{base:1000,p:350}, "Comments":{base:1000,p:1900} },
+  Facebook: { "Followers":{base:1000,p:1200}, "Post Likes":{base:1000,p:800}, "Group Member":{base:1000,p:2700}, "Comments":{base:1000,p:3200} },
+  YouTube: { "Likes":{base:1000,p:3500}, "Views":{base:1000,p:2400}, "Subscribers":{base:1000,p:29600} }
 };
-
 let smItemCount = 0;
 function addSmItem(){
   smItemCount++;
@@ -397,8 +321,7 @@ function addSmItem(){
     </div>
     <div class="form-group" style="margin:8px 0 0"><label>Quantity (min 100)</label>
       <input type="number" class="form-control sm-qty" min="100" value="1000" oninput="smCalcAll()">
-    </div>
-  `;
+    </div>`;
   wrap.appendChild(div);
   smCalcAll();
 }
@@ -422,10 +345,7 @@ function smCalcAll(){
     const plat = item.querySelector('.sm-plat').value;
     const svc = item.querySelector('.sm-svc').value;
     const q = parseInt(item.querySelector('.sm-qty').value) || 0;
-    if(plat && svc && q > 0){
-      const d = smPrices[plat][svc];
-      total += Math.round((q / d.base) * d.p);
-    }
+    if(plat && svc && q > 0){ const d = smPrices[plat][svc]; total += Math.round((q / d.base) * d.p); }
   });
   window._smBaseTotal = total;
   updateTotalBox('sm', total);
@@ -436,14 +356,12 @@ function addSmLink(){
   const id = smLinkCount;
   const wrap = document.getElementById('sm-links');
   const div = document.createElement('div');
-  div.className = 'link-item';
-  div.id = 'smLink-' + id;
+  div.className = 'link-item'; div.id = 'smLink-' + id;
   div.innerHTML = `
     <div class="li-head"><span><i class="fa-solid fa-link"></i> Video Link #${id}</span>
       <button type="button" class="remove-btn" onclick="removeSmLink(${id})"><i class="fa-solid fa-xmark"></i></button></div>
     <input type="text" class="form-control sm-link-url" placeholder="https://..." style="margin-bottom:6px">
-    <input type="number" class="form-control sm-link-qty" placeholder="Quantity for this video" min="0" value="0">
-  `;
+    <input type="number" class="form-control sm-link-qty" placeholder="Quantity for this video" min="0" value="0">`;
   wrap.appendChild(div);
 }
 function removeSmLink(id){ const el = document.getElementById('smLink-' + id); if(el) el.remove(); }
@@ -466,12 +384,9 @@ function updateTotalBox(prefix, baseTotal){
   }
 }
 function recalcAllTotals(){
-  if(typeof window._smBaseTotal !== 'undefined') updateTotalBox('sm', window._smBaseTotal);
-  if(typeof window._slBaseTotal !== 'undefined') updateTotalBox('sl', window._slBaseTotal);
-  if(typeof window._ffBaseTotal !== 'undefined') updateTotalBox('ff', window._ffBaseTotal);
-  if(typeof window._gbBaseTotal !== 'undefined') updateTotalBox('gb', window._gbBaseTotal);
-  if(typeof window._prBaseTotal !== 'undefined') updateTotalBox('pr', window._prBaseTotal);
-  if(typeof window._waBaseTotal !== 'undefined') updateTotalBox('wa', window._waBaseTotal);
+  ['sm','sl','ff','gb','pr','wa'].forEach(p => {
+    if(typeof window['_' + p + 'BaseTotal'] !== 'undefined') updateTotalBox(p, window['_' + p + 'BaseTotal']);
+  });
 }
 
 /* ============ RESET FORMS ============ */
@@ -505,11 +420,9 @@ function resetFFForm(){
   clearPreview('ff-preview');
   const fi = document.getElementById('ff-receipt'); if(fi) fi.value = '';
   ffVerifiedId = null;
-  const ffIdInput = document.getElementById('ff-id');
-  if(ffIdInput){ ffIdInput.value = ''; }
+  const ffIdInput = document.getElementById('ff-id'); if(ffIdInput) ffIdInput.value = '';
   const verifyId = document.getElementById('ff-verify-id'); if(verifyId) verifyId.value = '';
-  const status = document.getElementById('ff-verify-status');
-  if(status){ status.className = 'ffv-status'; status.innerHTML = ''; }
+  const status = document.getElementById('ff-verify-status'); if(status){ status.className = 'ffv-status'; status.innerHTML = ''; }
 }
 function resetGBForm(){
   clearInputs(['gb-name','gb-wp','gb-sim','gb-pkg','gb-gb']);
@@ -556,14 +469,10 @@ async function submitSocialOrder(btnEl){
   });
   const total = document.getElementById('sm-total').textContent;
   const pay = document.getElementById('sm-pay').value;
-  const orderData = {
-    orderType: 'Social Media Boost Service (Non Drop)',
-    name, whatsapp: wp, serviceType: 'Non Drop Service',
-    items, videoLinks: links, total, paymentMethod: pay
-  };
+  const orderData = { orderType: 'Social Media Boost', name, whatsapp: wp, serviceType: 'Non Drop Service', items, videoLinks: links, total, paymentMethod: pay };
   let waMsg = `🛒 NEW ORDER — Social Media Boost\n\n👤 Name: ${name}\n📱 WhatsApp: ${wp}\n🏷 Type: Non Drop Service\n\n📦 Items:\n• ${items.join('\n• ')}\n\n💰 Total: ${total}\n💳 Payment: ${pay}`;
-  if(links.length) waMsg += `\n\n🔗 Video Links:\n• ${links.join('\n• ')}`;
-  waMsg += `\n\n📸 (Please attach your payment receipt in this chat)`;
+  if(links.length) waMsg += `\n\n🔗 Links:\n• ${links.join('\n• ')}`;
+  waMsg += `\n\n📸 (Attach your receipt in this chat)`;
   await sendToBotAndWA('social', orderData, 'sm-receipt', btnEl, waMsg, resetSocialForm);
 }
 
@@ -574,8 +483,7 @@ function addSlItem(){
   const id = slItemCount;
   const wrap = document.getElementById('sl-items');
   const div = document.createElement('div');
-  div.className = 'order-item';
-  div.id = 'slItem-' + id;
+  div.className = 'order-item'; div.id = 'slItem-' + id;
   div.innerHTML = `
     <div class="oi-head"><span><i class="fa-solid fa-box"></i> Package #${id}</span>
       <button type="button" class="remove-btn" onclick="removeSlItem(${id})"><i class="fa-solid fa-xmark"></i></button></div>
@@ -588,17 +496,17 @@ function addSlItem(){
           <option value="TikTok 900 Likes + 6000 Views|2000">900 Likes + 6000 Views — 2000 LKR</option>
           <option value="TikTok 1K Likes + 12000 Views|3200">1K Likes + 12000 Views — 3200 LKR</option>
         </optgroup>
-        <optgroup label="Facebook Followers (Sri Lanka)">
-          <option value="FB SriLanka 500 Followers|1200">500 Followers — 1200 LKR</option>
-          <option value="FB SriLanka 1K Followers|1700">1K Followers — 1700 LKR</option>
-          <option value="FB SriLanka 2K Followers|2200">2K Followers — 2200 LKR</option>
-          <option value="FB SriLanka 5K Followers|3350">5K Followers — 3350 LKR</option>
+        <optgroup label="FB Followers (Sri Lanka)">
+          <option value="FB SL 500 Followers|1200">500 Followers — 1200 LKR</option>
+          <option value="FB SL 1K Followers|1700">1K Followers — 1700 LKR</option>
+          <option value="FB SL 2K Followers|2200">2K Followers — 2200 LKR</option>
+          <option value="FB SL 5K Followers|3350">5K Followers — 3350 LKR</option>
         </optgroup>
         <optgroup label="Monetize ON Followers">
-          <option value="Monetize ON 2K Follow|1700">2K Follow — 1700 LKR</option>
-          <option value="Monetize ON 3K Follow|2000">3K Follow — 2000 LKR</option>
-          <option value="Monetize ON 5K Follow|2500">5K Follow — 2500 LKR</option>
-          <option value="Monetize ON 10K Follow|4500">10K Follow — 4500 LKR</option>
+          <option value="Monetize 2K Follow|1700">2K Follow — 1700 LKR</option>
+          <option value="Monetize 3K Follow|2000">3K Follow — 2000 LKR</option>
+          <option value="Monetize 5K Follow|2500">5K Follow — 2500 LKR</option>
+          <option value="Monetize 10K Follow|4500">10K Follow — 4500 LKR</option>
         </optgroup>
         <optgroup label="Facebook Views">
           <option value="FB 15K Views|2300">15K Views — 2300 LKR</option>
@@ -607,7 +515,7 @@ function addSlItem(){
           <option value="FB 150K Views|6000">150K Views — 6000 LKR</option>
           <option value="FB 300K Views|11500">300K Views — 11500 LKR</option>
         </optgroup>
-        <optgroup label="Facebook Comment & Like">
+        <optgroup label="FB Comments & Likes">
           <option value="FB 200 Comments|2400">200 Comments — 2400 LKR</option>
           <option value="FB 500 Likes|2500">500 Likes — 2500 LKR</option>
         </optgroup>
@@ -615,8 +523,7 @@ function addSlItem(){
     </div>
     <div class="form-group" style="margin:0"><label>Quantity</label>
       <input type="number" class="form-control sl-qty" min="1" value="1" oninput="slCalcAll()">
-    </div>
-  `;
+    </div>`;
   wrap.appendChild(div);
   slCalcAll();
 }
@@ -628,8 +535,7 @@ function slCalcAll(){
     const q = parseInt(item.querySelector('.sl-qty').value) || 0;
     if(pkg && q > 0) total += parseInt(pkg.split('|')[1]) * q;
   });
-  window._slBaseTotal = total;
-  updateTotalBox('sl', total);
+  window._slBaseTotal = total; updateTotalBox('sl', total);
 }
 let slLinkCount = 0;
 function addSlLink(){
@@ -637,14 +543,12 @@ function addSlLink(){
   const id = slLinkCount;
   const wrap = document.getElementById('sl-links');
   const div = document.createElement('div');
-  div.className = 'link-item';
-  div.id = 'slLink-' + id;
+  div.className = 'link-item'; div.id = 'slLink-' + id;
   div.innerHTML = `
     <div class="li-head"><span><i class="fa-solid fa-link"></i> Video Link #${id}</span>
       <button type="button" class="remove-btn" onclick="removeSlLink(${id})"><i class="fa-solid fa-xmark"></i></button></div>
     <input type="text" class="form-control sl-link-url" placeholder="https://..." style="margin-bottom:6px">
-    <input type="number" class="form-control sl-link-qty" placeholder="Quantity for this video" min="0" value="0">
-  `;
+    <input type="number" class="form-control sl-link-qty" placeholder="Quantity" min="0" value="0">`;
   wrap.appendChild(div);
 }
 function removeSlLink(id){ const el = document.getElementById('slLink-' + id); if(el) el.remove(); }
@@ -668,17 +572,14 @@ async function submitSLOrder(btnEl){
   });
   const total = document.getElementById('sl-total').textContent;
   const pay = document.getElementById('sl-pay').value;
-  const orderData = {
-    orderType: 'SriLanka Boost Service',
-    name, whatsapp: wp, packages: items, videoLinks: links, total, paymentMethod: pay
-  };
+  const orderData = { orderType: 'SriLanka Boost', name, whatsapp: wp, packages: items, videoLinks: links, total, paymentMethod: pay };
   let waMsg = `🛒 NEW ORDER — SriLanka Boost\n\n👤 Name: ${name}\n📱 WhatsApp: ${wp}\n\n📦 Packages:\n• ${items.join('\n• ')}\n\n💰 Total: ${total}\n💳 Payment: ${pay}`;
-  if(links.length) waMsg += `\n\n🔗 Video Links:\n• ${links.join('\n• ')}`;
-  waMsg += `\n\n📸 (Please attach your payment receipt in this chat)`;
+  if(links.length) waMsg += `\n\n🔗 Links:\n• ${links.join('\n• ')}`;
+  waMsg += `\n\n📸 (Attach your receipt in this chat)`;
   await sendToBotAndWA('srilanka', orderData, 'sl-receipt', btnEl, waMsg, resetSriLankaForm);
 }
 
-/* ============ FF ID VERIFY ============ */
+/* ============ FF VERIFY ============ */
 let ffVerifiedId = null;
 async function verifyFFId(){
   const uid = document.getElementById('ff-verify-id').value.trim();
@@ -686,36 +587,29 @@ async function verifyFFId(){
   const btn = document.getElementById('ff-verify-btn');
   if(!/^\d{6,15}$/.test(uid)){
     status.className = 'ffv-status error';
-    status.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Invalid UID — must be 6-15 digits';
+    status.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Invalid UID — 6-15 digits';
     return;
   }
   btn.disabled = true;
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
-  status.className = 'ffv-status';
-  status.innerHTML = '';
+  status.className = 'ffv-status'; status.innerHTML = '';
   try {
     const res = await fetch(`${FF_API_BASE}/api/ff?uid=${uid}`);
     const json = await res.json();
-    if(!json.status || !json.data){
-      throw new Error(json.error || json.message || 'Player not found');
-    }
+    if(!json.status || !json.data) throw new Error(json.error || json.message || 'Player not found');
     const d = json.data;
     ffVerifiedId = uid;
     showFFVerifyPopup(d, uid);
     status.className = 'ffv-status success';
     status.innerHTML = `<i class="fa-solid fa-circle-check"></i> Verified: ${escapeHtml(d.nickname || 'Player')}`;
-    const ffIdInput = document.getElementById('ff-id');
-    ffIdInput.value = uid;
-    setTimeout(() => {
-      document.getElementById('ff-form').scrollIntoView({behavior:'smooth', block:'start'});
-    }, 400);
+    document.getElementById('ff-id').value = uid;
+    setTimeout(() => { document.getElementById('ff-form').scrollIntoView({behavior:'smooth', block:'start'}); }, 400);
     toast('✅ FF ID verified!');
   } catch(e){
     status.className = 'ffv-status error';
     status.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> ${escapeHtml(e.message)}`;
     ffVerifiedId = null;
-    const ffIdInput = document.getElementById('ff-id');
-    ffIdInput.value = '';
+    document.getElementById('ff-id').value = '';
     toast('❌ ' + e.message, 'error');
   } finally {
     btn.disabled = false;
@@ -729,77 +623,39 @@ function showFFVerifyPopup(d, uid){
   const likes = typeof d.liked === 'number' ? d.liked.toLocaleString() : (d.liked ?? '-');
   const lastLogin = d.lastLogin || '-';
   const createAt = d.createAt || '-';
-  const content = document.getElementById('ffVerifyContent');
-  content.innerHTML = `
+  document.getElementById('ffVerifyContent').innerHTML = `
     <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-user"></i> Name</span><span class="fmr-value">${escapeHtml(name)}</span></div>
-    <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-shield"></i> Guild Name</span><span class="fmr-value">${escapeHtml(guild)}</span></div>
+    <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-shield"></i> Guild</span><span class="fmr-value">${escapeHtml(guild)}</span></div>
     <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-star"></i> Account LV</span><span class="fmr-value">${escapeHtml(String(level))}</span></div>
-    <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-heart"></i> Like Count</span><span class="fmr-value">${escapeHtml(String(likes))}</span></div>
+    <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-heart"></i> Likes</span><span class="fmr-value">${escapeHtml(String(likes))}</span></div>
     <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-clock"></i> Last Login</span><span class="fmr-value">${escapeHtml(String(lastLogin))}</span></div>
-    <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-calendar"></i> Create Date</span><span class="fmr-value">${escapeHtml(String(createAt))}</span></div>
-    <div class="modal-note" style="margin-top:14px">
-      <i class="fa-solid fa-circle-info"></i>
-      <div>This ID is now locked in the order form. To change it, edit the ID above and verify again.</div>
-    </div>
-  `;
+    <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-calendar"></i> Created</span><span class="fmr-value">${escapeHtml(String(createAt))}</span></div>
+    <div class="modal-note" style="margin-top:14px"><i class="fa-solid fa-circle-info"></i>
+      <div>This ID is now locked in the order form. To change it, edit the ID above and verify again.</div></div>`;
   document.getElementById('ffVerifyModal').classList.add('on');
   document.body.style.overflow = 'hidden';
 }
-function closeFFVerify(){
-  document.getElementById('ffVerifyModal').classList.remove('on');
-  document.body.style.overflow = '';
-}
+function closeFFVerify(){ document.getElementById('ffVerifyModal').classList.remove('on'); document.body.style.overflow = ''; }
 
-/* ============ FREE FIRE ============ */
+/* ============ FF/GB/PREMIUM ============ */
 function ffCalc(){
   const v = document.getElementById('ff-pkg').value;
   const q = parseInt(document.getElementById('ff-qty').value) || 0;
-  let t = 0;
-  if(v){ t = parseInt(v.split('|')[1]) * q; }
-  window._ffBaseTotal = t;
-  updateTotalBox('ff', t);
+  let t = 0; if(v) t = parseInt(v.split('|')[1]) * q;
+  window._ffBaseTotal = t; updateTotalBox('ff', t);
 }
-function selectFFItem(value){
-  document.getElementById('ff-pkg').value = value;
-  ffCalc();
-  document.getElementById('ff-pkg').scrollIntoView({behavior:'smooth', block:'center'});
-}
-
-/* ============ GB ============ */
-function gbCalc(){
-  const v = document.getElementById('gb-gb').value;
-  let t = 0;
-  if(v){ t = parseInt(v.split('|')[1]); }
-  window._gbBaseTotal = t;
-  updateTotalBox('gb', t);
-}
-
-/* ============ PREMIUM ============ */
-function togglePrSvc(el){
-  el.classList.toggle('on');
-  prCalc();
-}
+function selectFFItem(value){ document.getElementById('ff-pkg').value = value; ffCalc(); document.getElementById('ff-pkg').scrollIntoView({behavior:'smooth', block:'center'}); }
+function gbCalc(){ const v = document.getElementById('gb-gb').value; let t = 0; if(v) t = parseInt(v.split('|')[1]); window._gbBaseTotal = t; updateTotalBox('gb', t); }
+function togglePrSvc(el){ el.classList.toggle('on'); prCalc(); }
 function prCalc(){
-  let t = 0;
-  const selected = [];
+  let t = 0; const selected = [];
   document.querySelectorAll('#pr-svc-grid .svc-opt.on').forEach(el => {
-    const v = el.dataset.value;
-    t += parseInt(v.split('|')[1]);
-    selected.push(v.split('|')[0]);
+    const v = el.dataset.value; t += parseInt(v.split('|')[1]); selected.push(v.split('|')[0]);
   });
-  window._prBaseTotal = t;
-  window._prSelected = selected;
-  updateTotalBox('pr', t);
+  window._prBaseTotal = t; window._prSelected = selected; updateTotalBox('pr', t);
 }
+function waCalc(){ const v = document.getElementById('wa-svc').value; let t = 0; if(v) t = parseInt(v.split('|')[1]); window._waBaseTotal = t; updateTotalBox('wa', t); }
 
-/* ============ WHATSAPP CHANNEL ============ */
-function waCalc(){
-  const v = document.getElementById('wa-svc').value;
-  let t = 0;
-  if(v){ t = parseInt(v.split('|')[1]); }
-  window._waBaseTotal = t;
-  updateTotalBox('wa', t);
-}
 async function submitWAOrder(btnEl){
   const name = document.getElementById('wa-name').value.trim();
   const wp = document.getElementById('wa-wp').value.trim();
@@ -808,13 +664,9 @@ async function submitWAOrder(btnEl){
   const total = document.getElementById('wa-total').textContent;
   const pay = document.getElementById('wa-pay').value;
   if(!name || !wp || !svc || !link) return toast('Please fill all fields', 'error');
-  const orderData = {
-    orderType: 'WhatsApp Channel Boost Service',
-    name, whatsapp: wp, service: svc.split('|')[0], channelLink: link, total, paymentMethod: pay
-  };
+  const orderData = { orderType: 'WhatsApp Channel Boost', name, whatsapp: wp, service: svc.split('|')[0], channelLink: link, total, paymentMethod: pay };
   await sendToBotOnly('wachannel', orderData, 'wa-receipt', btnEl, resetWAForm);
 }
-
 async function submitOrder(type, btnEl){
   if(type === 'ff'){
     const name = document.getElementById('ff-name').value.trim();
@@ -824,20 +676,10 @@ async function submitOrder(type, btnEl){
     const qty = document.getElementById('ff-qty').value;
     const total = document.getElementById('ff-total').textContent;
     const pay = document.getElementById('ff-pay').value;
-    if(!ffVerifiedId){
-      return toast('⚠ Please verify your Free Fire ID first', 'error');
-    }
-    if(ffid !== ffVerifiedId){
-      return toast('⚠ FF ID does not match verified ID', 'error');
-    }
-    if(!name || !wp || !ffid || !pkg){
-      return toast('Please fill all fields', 'error');
-    }
-    const orderData = {
-      orderType: 'Free Fire TopUp Service',
-      name, whatsapp: wp, ffAccountId: ffid, package: pkg.split('|')[0],
-      quantity: qty, total, paymentMethod: pay
-    };
+    if(!ffVerifiedId) return toast('⚠ Please verify your FF ID first', 'error');
+    if(ffid !== ffVerifiedId) return toast('⚠ FF ID mismatch', 'error');
+    if(!name || !wp || !ffid || !pkg) return toast('Please fill all fields', 'error');
+    const orderData = { orderType: 'Free Fire TopUp', name, whatsapp: wp, ffAccountId: ffid, package: pkg.split('|')[0], quantity: qty, total, paymentMethod: pay };
     return await sendToBotOnly('freefire', orderData, 'ff-receipt', btnEl, resetFFForm);
   }
   if(type === 'gb'){
@@ -849,12 +691,8 @@ async function submitOrder(type, btnEl){
     const total = document.getElementById('gb-total').textContent;
     const pay = document.getElementById('gb-pay').value;
     if(!name || !wp || !pkg || !gb) return toast('Please fill all fields', 'error');
-    const orderData = {
-      orderType: '2vary GB Shell Service',
-      name, whatsapp: wp, network: sim, package: pkg, gbCount: gb.split('|')[0],
-      total, paymentMethod: pay
-    };
-    let waMsg = `🛒 NEW ORDER — 2vary GB Shell\n\n👤 Name: ${name}\n📱 WhatsApp: ${wp}\n📡 SIM: ${sim}\n📦 Package: ${pkg}\n💾 GB: ${gb.split('|')[0]}\n💰 Total: ${total}\n💳 Payment: ${pay}\n\n📸 (Please attach your payment receipt in this chat)`;
+    const orderData = { orderType: '2vary GB Shell', name, whatsapp: wp, network: sim, package: pkg, gbCount: gb.split('|')[0], total, paymentMethod: pay };
+    let waMsg = `🛒 NEW ORDER — 2vary GB Shell\n\n👤 Name: ${name}\n📱 WhatsApp: ${wp}\n📡 SIM: ${sim}\n📦 Package: ${pkg}\n💾 GB: ${gb.split('|')[0]}\n💰 Total: ${total}\n💳 Payment: ${pay}\n\n📸 (Attach your receipt in this chat)`;
     return await sendToBotAndWA('gbshell', orderData, 'gb-receipt', btnEl, waMsg, resetGBForm);
   }
   if(type === 'pr'){
@@ -864,16 +702,13 @@ async function submitOrder(type, btnEl){
     const total = document.getElementById('pr-total').textContent;
     const pay = document.getElementById('pr-pay').value;
     if(!name || !wp || svc.length === 0) return toast('Please fill all fields', 'error');
-    const orderData = {
-      orderType: 'Premium Account Shell Service',
-      name, whatsapp: wp, services: svc, total, paymentMethod: pay
-    };
-    let waMsg = `🛒 NEW ORDER — Premium Accounts\n\n👤 Name: ${name}\n📱 WhatsApp: ${wp}\n📦 Services:\n• ${svc.join('\n• ')}\n💰 Total: ${total}\n💳 Payment: ${pay}\n\n📸 (Please attach your payment receipt in this chat)`;
+    const orderData = { orderType: 'Premium Account', name, whatsapp: wp, services: svc, total, paymentMethod: pay };
+    let waMsg = `🛒 NEW ORDER — Premium Accounts\n\n👤 Name: ${name}\n📱 WhatsApp: ${wp}\n📦 Services:\n• ${svc.join('\n• ')}\n💰 Total: ${total}\n💳 Payment: ${pay}\n\n📸 (Attach your receipt in this chat)`;
     return await sendToBotAndWA('premium', orderData, 'pr-receipt', btnEl, waMsg, resetPremiumForm);
   }
 }
 
-/* ============ MODALS ============ */
+/* ============ HOW-TO MODALS ============ */
 const howToOrderData = {
   social: { title: 'How to Order — Social Media Boost', subtitle: 'Social Media Boost', icon: 'fa-solid fa-rocket',
     steps: ['Go to the <strong>Social Media Boost Service</strong> page.','Select your <strong>Platform</strong> and <strong>Service</strong>.','Enter the <strong>Quantity</strong> you need.','Add more services if needed.','Fill in your <strong>Name</strong> and <strong>WhatsApp Number</strong>.','Choose your <strong>Payment Method</strong>.','Paste your <strong>Video/Post links</strong>.','Upload your <strong>Payment Receipt</strong>.','Click <strong>"PLACE ORDER NOW"</strong>!'] },
@@ -891,13 +726,11 @@ const howToOrderData = {
     steps: ['Open the <strong>WhatsApp Channel Boost</strong> page.','Check packages — Followers, Reacts and Poll Votes.','Fill in your <strong>Name</strong> and <strong>WhatsApp Number</strong>.','Select your desired <strong>service</strong>.','The total price updates automatically.','Choose your <strong>Payment Method</strong>.','Paste your <strong>Channel Link</strong> or <strong>Post Link</strong>.','Upload your <strong>payment receipt</strong>.','Click <strong>"PLACE ORDER NOW"</strong>!'] }
 };
 function openHowToOrder(key){
-  const data = howToOrderData[key];
-  if(!data) return;
+  const data = howToOrderData[key]; if(!data) return;
   document.getElementById('modalTitle').textContent = data.title;
   document.getElementById('modalSubtitle').textContent = data.subtitle;
   document.getElementById('modalIcon').innerHTML = `<i class="${data.icon}"></i>`;
-  const stepsHTML = data.steps.map((s,i) => `<li><span class="step-num">${i+1}</span><span>${s}</span></li>`).join('');
-  document.getElementById('modalSteps').innerHTML = stepsHTML;
+  document.getElementById('modalSteps').innerHTML = data.steps.map((s,i) => `<li><span class="step-num">${i+1}</span><span>${s}</span></li>`).join('');
   document.getElementById('howtoModal').classList.add('on');
   document.body.style.overflow = 'hidden';
 }
@@ -939,16 +772,13 @@ function handleCredentialResponse(response){
   localStorage.setItem('dg_session', JSON.stringify(currentUser));
   renderProfile();
   toast('Logged in successfully!');
-  /* Email owner about the login */
   notifyLogin(currentUser);
 }
 function initGoogle(){
   if(typeof google === 'undefined' || !google.accounts){ setTimeout(initGoogle, 400); return; }
   google.accounts.id.initialize({ client_id: CLIENT_ID, callback: handleCredentialResponse });
   const btn = document.getElementById('googleBtn');
-  if(btn){
-    google.accounts.id.renderButton(btn, { theme: 'filled_black', size: 'large', shape: 'pill', text: 'signin_with', width: 260 });
-  }
+  if(btn) google.accounts.id.renderButton(btn, { theme: 'filled_black', size: 'large', shape: 'pill', text: 'signin_with', width: 260 });
 }
 function renderProfile(){
   if(!currentUser){
@@ -965,8 +795,7 @@ function renderProfile(){
   document.getElementById('userId').textContent = currentUser.userId;
   updateWpDisplay();
   if(currentUser.lastLogin){
-    const d = new Date(currentUser.lastLogin);
-    document.getElementById('lastLoginDisplay').textContent = d.toLocaleString();
+    document.getElementById('lastLoginDisplay').textContent = new Date(currentUser.lastLogin).toLocaleString();
   }
   renderCover();
   renderOrders();
@@ -978,8 +807,7 @@ function renderCover(){
   const wpCover = document.getElementById('wpCover');
   coverImg.style.display = 'none';
   coverVideo.style.display = 'none';
-  coverVideo.pause();
-  coverVideo.src = '';
+  coverVideo.pause(); coverVideo.src = '';
   if(currentUser && currentUser.coverImage){
     if(currentUser.coverType === 'video'){
       coverVideo.src = currentUser.coverImage;
@@ -992,7 +820,7 @@ function renderCover(){
     }
     wpCover.style.background = 'transparent';
   } else {
-    wpCover.style.background = 'linear-gradient(135deg,#1e3a8a,#172554)';
+    wpCover.style.background = 'linear-gradient(135deg,#7c3aed,#06b6d4)';
   }
 }
 function updateWpDisplay(){
@@ -1011,22 +839,19 @@ function updateWpDisplay(){
 }
 function verifyWpNumber(){
   const wp = document.getElementById('userWp').value.trim();
-  if(!wp || wp.length < 9) return toast('Please enter a valid WhatsApp number', 'error');
+  if(!wp || wp.length < 9) return toast('Enter a valid WhatsApp number', 'error');
   if(!currentUser) return toast('Please login first', 'error');
   const btn = document.getElementById('verifyWpBtn');
-  btn.disabled = true;
-  btn.textContent = 'Verifying...';
+  btn.disabled = true; btn.textContent = 'Verifying...';
   setTimeout(() => {
-    currentUser.wp = wp;
-    currentUser.wpVerified = true;
+    currentUser.wp = wp; currentUser.wpVerified = true;
     const stored = JSON.parse(localStorage.getItem('dg_user_' + currentUser.userId) || '{}');
     stored.wp = wp; stored.wpVerified = true;
     localStorage.setItem('dg_user_' + currentUser.userId, JSON.stringify(stored));
     localStorage.setItem('dg_session', JSON.stringify(currentUser));
     updateWpDisplay();
-    btn.disabled = false;
-    btn.textContent = 'Verify';
-    toast('✅ WhatsApp number verified!');
+    btn.disabled = false; btn.textContent = 'Verify';
+    toast('✅ WhatsApp verified!');
   }, 900);
 }
 function editUserName(){
@@ -1049,7 +874,7 @@ function saveNameEdit(){
   toast('Name updated!');
 }
 function logout(){
-  if(!confirm('Your account ID will be preserved. Are you sure you want to logout?')) return;
+  if(!confirm('Are you sure you want to logout?')) return;
   localStorage.removeItem('dg_session');
   currentUser = null;
   renderProfile();
@@ -1073,7 +898,7 @@ document.getElementById('picUpload').addEventListener('change', function(){
 document.getElementById('coverUpload').addEventListener('change', function(){
   const f = this.files[0]; if(!f || !currentUser) return;
   const isVideo = f.type.startsWith('video/');
-  if(f.size > 3 * 1024 * 1024){ toast('File too large (max 3MB)', 'error'); return; }
+  if(f.size > 3 * 1024 * 1024){ toast('Max 3MB', 'error'); return; }
   const r = new FileReader();
   r.onload = e => {
     currentUser.coverImage = e.target.result;
@@ -1086,14 +911,12 @@ document.getElementById('coverUpload').addEventListener('change', function(){
       localStorage.setItem('dg_session', JSON.stringify(currentUser));
       renderCover();
       toast('Cover updated');
-    } catch(err){
-      toast('File too large to save', 'error');
-    }
+    } catch(err){ toast('File too large', 'error'); }
   };
   r.readAsDataURL(f);
 });
 
-/* ============ ORDERS RENDERING ============ */
+/* ============ ORDERS ============ */
 function renderOrders(){
   const c = document.getElementById('ordersContainer');
   const badge = document.getElementById('ordersCountBadge');
@@ -1106,17 +929,14 @@ function renderOrders(){
   const orders = getUserOrders();
   if(badge) badge.textContent = orders.length;
   if(orders.length === 0){
-    c.innerHTML = '<div class="empty-orders"><i class="fa-solid fa-box-open"></i>No orders yet — place your first order!</div>';
+    c.innerHTML = '<div class="empty-orders"><i class="fa-solid fa-box-open"></i>No orders yet</div>';
     return;
   }
   c.innerHTML = orders.map((o, i) => {
     const d = new Date(o.timestamp);
     const dateStr = d.toLocaleDateString() + ' • ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     return `<div class="order-card" onclick="showOrderDetail(${i})">
-      <div class="order-card-head">
-        <span class="order-num">${o.orderNumber}</span>
-        <span class="order-date">${dateStr}</span>
-      </div>
+      <div class="order-card-head"><span class="order-num">${o.orderNumber}</span><span class="order-date">${dateStr}</span></div>
       <div class="order-type">${escapeHtml(o.type)}</div>
       <div class="order-total">${escapeHtml(o.total)}</div>
     </div>`;
@@ -1124,8 +944,7 @@ function renderOrders(){
 }
 function showOrderDetail(idx){
   const orders = getUserOrders();
-  const o = orders[idx];
-  if(!o) return;
+  const o = orders[idx]; if(!o) return;
   const d = new Date(o.timestamp);
   let rows = '';
   rows += `<div class="order-detail-row"><span class="odr-label">Order #</span><span class="odr-value">${escapeHtml(o.orderNumber)}</span></div>`;
@@ -1142,25 +961,59 @@ function showOrderDetail(idx){
     const label = k.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
     rows += `<div class="order-detail-row"><span class="odr-label">${escapeHtml(label)}</span><span class="odr-value">${escapeHtml(String(v))}</span></div>`;
   });
-  document.getElementById('orderDetailContent').innerHTML = `
-    <h4><i class="fa-solid fa-receipt"></i> Order Details</h4>
-    ${rows}
-  `;
+  document.getElementById('orderDetailContent').innerHTML = `<h4><i class="fa-solid fa-receipt"></i> Order Details</h4>${rows}`;
   document.getElementById('orderDetailModal').classList.add('on');
   document.body.style.overflow = 'hidden';
 }
-function escapeHtml(str){
-  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+/* ============================================================
+   ═══════════ REVIEWS SYSTEM (FIREBASE REALTIME) ═════════════
+   Comments shared across ALL devices in real-time
+   ============================================================ */
+let allReviews = [];
+let reviewsListenerInterval = null;
+
+/* Fetch all reviews from Firebase */
+async function fetchReviewsFromFirebase(){
+  try {
+    const res = await fetch(`${FIREBASE_URL}/reviews.json`);
+    if(!res.ok) throw new Error('Fetch failed');
+    const data = await res.json();
+    if(!data) return [];
+    /* Convert object to array */
+    return Object.keys(data).map(id => ({ ...data[id], id })).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+  } catch(err){
+    console.warn('Firebase fetch failed:', err);
+    return [];
+  }
 }
 
-/* ============ REVIEWS ============ */
-function getReviews(){
-  try { return JSON.parse(localStorage.getItem('dg_reviews') || '[]'); }
-  catch(e){ return []; }
+/* Load & render reviews */
+async function loadReviewsFromFirebase(){
+  const feed = document.getElementById('reviewsFeed');
+  if(feed && allReviews.length === 0){
+    feed.innerHTML = '<div class="loading-reviews"><div class="lr-spinner"></div><p>Loading reviews...</p></div>';
+  }
+  const reviews = await fetchReviewsFromFirebase();
+  const hasChanged = JSON.stringify(reviews) !== JSON.stringify(allReviews);
+  if(hasChanged){
+    allReviews = reviews;
+    renderReviews();
+    updateReviewsCount();
+  }
 }
-function saveReviews(reviews){
-  localStorage.setItem('dg_reviews', JSON.stringify(reviews));
+
+/* Start real-time polling (every 5s) */
+function startReviewsRealtime(){
+  if(reviewsListenerInterval) clearInterval(reviewsListenerInterval);
+  reviewsListenerInterval = setInterval(loadReviewsFromFirebase, 5000);
 }
+
+function updateReviewsCount(){
+  const el = document.getElementById('reviewsCountTop');
+  if(el) el.textContent = allReviews.length;
+}
+
 function timeAgo(ts){
   const diff = Date.now() - new Date(ts).getTime();
   const sec = Math.floor(diff / 1000);
@@ -1173,6 +1026,8 @@ function timeAgo(ts){
   if(day < 7) return day + 'd ago';
   return new Date(ts).toLocaleDateString();
 }
+
+/* Review composer */
 function renderReviewComposer(){
   const wrap = document.getElementById('reviewComposerWrap');
   if(!wrap) return;
@@ -1181,10 +1036,9 @@ function renderReviewComposer(){
       <div class="review-login-prompt">
         <i class="fa-solid fa-lock"></i>
         <h4>Login to Write a Review</h4>
-        <p>Please sign in with Google to share your experience and help other customers.</p>
+        <p>Sign in with Google to share your experience. Your review will be visible to everyone in real-time.</p>
         <button onclick="showPage('profile')"><i class="fa-brands fa-google"></i> Login with Google</button>
-      </div>
-    `;
+      </div>`;
     return;
   }
   wrap.innerHTML = `
@@ -1196,28 +1050,27 @@ function renderReviewComposer(){
           <div class="rus-email">${escapeHtml(currentUser.email || '')}</div>
         </div>
       </div>
-      <textarea class="review-textarea" id="reviewInput" placeholder="Write your honest review here... (max 300 chars)" maxlength="300"></textarea>
+      <textarea class="review-textarea" id="reviewInput" placeholder="Share your experience with DG STORE..." maxlength="300"></textarea>
       <div class="review-post-row">
         <span class="review-char-count"><span id="reviewCharCount">0</span>/300</span>
-        <button class="review-post-btn" onclick="postReview()"><i class="fa-solid fa-paper-plane"></i> Post Review</button>
+        <button class="review-post-btn" id="postReviewBtn" onclick="postReview()"><i class="fa-solid fa-paper-plane"></i> Post Review</button>
       </div>
-    </div>
-  `;
+    </div>`;
   const ti = document.getElementById('reviewInput');
   const cc = document.getElementById('reviewCharCount');
-  if(ti && cc){
-    ti.addEventListener('input', () => { cc.textContent = ti.value.length; });
-  }
+  if(ti && cc) ti.addEventListener('input', () => { cc.textContent = ti.value.length; });
 }
-function postReview(){
+
+/* Post a review to Firebase */
+async function postReview(){
   if(!currentUser) return toast('Please login first', 'error');
   const ti = document.getElementById('reviewInput');
   const text = ti.value.trim();
   if(!text) return toast('Please write something', 'error');
   if(text.length > 300) return toast('Too long (max 300)', 'error');
-  const reviews = getReviews();
-  const r = {
-    id: 'r' + Date.now(),
+  const btn = document.getElementById('postReviewBtn');
+  if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Posting...'; }
+  const review = {
     userId: currentUser.userId,
     name: currentUser.name,
     email: currentUser.email,
@@ -1227,29 +1080,44 @@ function postReview(){
     likes: [],
     replies: []
   };
-  reviews.unshift(r);
-  saveReviews(reviews);
-  ti.value = '';
-  document.getElementById('reviewCharCount').textContent = '0';
-  renderReviews();
-  toast('✅ Review posted!');
+  try {
+    const res = await fetch(`${FIREBASE_URL}/reviews.json`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(review)
+    });
+    if(!res.ok) throw new Error('Post failed');
+    ti.value = '';
+    document.getElementById('reviewCharCount').textContent = '0';
+    toast('✅ Review posted!');
+    await loadReviewsFromFirebase();
+  } catch(err){
+    toast('❌ Failed to post review', 'error');
+  } finally {
+    if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Post Review'; }
+  }
 }
+
+/* Render all reviews */
 function renderReviews(){
   const feed = document.getElementById('reviewsFeed');
   if(!feed) return;
-  const reviews = getReviews();
-  if(reviews.length === 0){
+  if(allReviews.length === 0){
     feed.innerHTML = '<div class="empty-orders"><i class="fa-solid fa-comment-dots"></i>No reviews yet. Be the first to review!</div>';
     return;
   }
-  feed.innerHTML = reviews.map(r => renderReviewItem(r)).join('');
+  feed.innerHTML = allReviews.map(r => renderReviewItem(r)).join('');
 }
+
 function renderReviewItem(r){
-  const liked = currentUser && r.likes && r.likes.includes(currentUser.userId);
-  const likesCount = r.likes ? r.likes.length : 0;
+  const likesArr = Array.isArray(r.likes) ? r.likes : (r.likes ? Object.values(r.likes) : []);
+  const liked = currentUser && likesArr.includes(currentUser.userId);
+  const likesCount = likesArr.length;
   const canDelete = currentUser && currentUser.userId === r.userId && (Date.now() - new Date(r.timestamp).getTime() < 50000);
   const remaining = canDelete ? Math.max(0, Math.ceil((50000 - (Date.now() - new Date(r.timestamp).getTime())) / 1000)) : 0;
-  const repliesHtml = (r.replies || []).map(rep => `
+  const repliesObj = r.replies || {};
+  const repliesArr = Array.isArray(repliesObj) ? repliesObj : Object.values(repliesObj);
+  const repliesHtml = repliesArr.map(rep => `
     <div class="reply-item">
       <div class="reply-item-head">
         <img src="${rep.picture || ''}" alt="">
@@ -1259,8 +1127,7 @@ function renderReviewItem(r){
         </div>
       </div>
       <div class="reply-item-text">${escapeHtml(rep.text)}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
   return `
     <div class="review-item" data-id="${r.id}">
       <div class="review-item-head">
@@ -1289,21 +1156,28 @@ function renderReviewItem(r){
           <button onclick="postReply('${r.id}')">Send</button>
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
 }
-function toggleLikeReview(id){
+
+/* Like a review */
+async function toggleLikeReview(id){
   if(!currentUser) return toast('Please login to like', 'error');
-  const reviews = getReviews();
-  const r = reviews.find(x => x.id === id);
+  const r = allReviews.find(x => x.id === id);
   if(!r) return;
-  if(!r.likes) r.likes = [];
-  const idx = r.likes.indexOf(currentUser.userId);
-  if(idx >= 0) r.likes.splice(idx, 1);
-  else r.likes.push(currentUser.userId);
-  saveReviews(reviews);
-  renderReviews();
+  let likesArr = Array.isArray(r.likes) ? r.likes : (r.likes ? Object.values(r.likes) : []);
+  const idx = likesArr.indexOf(currentUser.userId);
+  if(idx >= 0) likesArr.splice(idx, 1);
+  else likesArr.push(currentUser.userId);
+  try {
+    await fetch(`${FIREBASE_URL}/reviews/${id}/likes.json`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(likesArr)
+    });
+    await loadReviewsFromFirebase();
+  } catch(err){ toast('Failed to update', 'error'); }
 }
+
 function toggleReplyBox(id){
   if(!currentUser) return toast('Please login to reply', 'error');
   const box = document.getElementById('replyComposer-' + id);
@@ -1315,44 +1189,49 @@ function toggleReplyBox(id){
     }
   }
 }
-function postReply(id){
+
+async function postReply(id){
   if(!currentUser) return toast('Please login first', 'error');
   const inp = document.getElementById('replyInput-' + id);
   const text = inp.value.trim();
   if(!text) return toast('Please write a reply', 'error');
-  const reviews = getReviews();
-  const r = reviews.find(x => x.id === id);
-  if(!r) return;
-  if(!r.replies) r.replies = [];
-  r.replies.push({
+  const reply = {
     userId: currentUser.userId,
     name: currentUser.name,
     picture: currentUser.picture,
     text: text,
     timestamp: new Date().toISOString()
-  });
-  saveReviews(reviews);
-  renderReviews();
-  toast('Reply posted!');
+  };
+  try {
+    await fetch(`${FIREBASE_URL}/reviews/${id}/replies.json`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reply)
+    });
+    toast('Reply posted!');
+    await loadReviewsFromFirebase();
+  } catch(err){ toast('Failed to reply', 'error'); }
 }
-function deleteReview(id){
+
+async function deleteReview(id){
   if(!currentUser) return;
-  const reviews = getReviews();
-  const r = reviews.find(x => x.id === id);
+  const r = allReviews.find(x => x.id === id);
   if(!r) return;
-  if(r.userId !== currentUser.userId) return toast('You can only delete your own reviews', 'error');
+  if(r.userId !== currentUser.userId) return toast('Not your review', 'error');
   if(Date.now() - new Date(r.timestamp).getTime() > 50000) return toast('Delete time expired', 'error');
   if(!confirm('Delete this review?')) return;
-  const filtered = reviews.filter(x => x.id !== id);
-  saveReviews(filtered);
-  renderReviews();
-  toast('Review deleted');
+  try {
+    await fetch(`${FIREBASE_URL}/reviews/${id}.json`, { method: 'DELETE' });
+    toast('Review deleted');
+    await loadReviewsFromFirebase();
+  } catch(err){ toast('Failed to delete', 'error'); }
 }
+
+/* Delete timer UI */
 setInterval(() => {
   document.querySelectorAll('.delete-timer').forEach(el => {
     const id = el.dataset.del;
-    const reviews = getReviews();
-    const r = reviews.find(x => x.id === id);
+    const r = allReviews.find(x => x.id === id);
     if(!r) return;
     const ms = Date.now() - new Date(r.timestamp).getTime();
     if(ms >= 50000){
@@ -1369,7 +1248,8 @@ window.addEventListener('load', () => {
   setTimeout(() => {
     document.querySelectorAll('.page.active .reveal').forEach(el => io.observe(el));
     setTimeout(() => { if(document.querySelector('#page-home.active')) startCounters(); }, 400);
-  }, 1900);
+  }, 1700);
+
   const sess = localStorage.getItem('dg_session');
   if(sess){
     try{
@@ -1389,6 +1269,7 @@ window.addEventListener('load', () => {
   addSmLink();
   addSlItem();
   addSlLink();
-  renderReviews();
+  loadReviewsFromFirebase();
   renderReviewComposer();
+  startReviewsRealtime();
 });
