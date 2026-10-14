@@ -11,7 +11,7 @@
    2. Build → Realtime Database → Create Database → Test Mode
    3. එහි එන URL එක පහත FIREBASE_URL එකට paste කරන්න
    ═══════════════════════════════════════════════════════════ */
-const FIREBASE_URL = 'https://dg-bot-f8078-default-rtdb.asia-southeast1.firebasedatabase.app/';
+const FIREBASE_URL = 'https://console.firebase.google.com/u/1/project/dg-store-comment-detabase/database/dg-store-comment-detabase-default-rtdb/data/~2F';
 // ═══════════════════════════════════════════════════════════
 
 const OWNER_EMAIL = 'gimahandasun@gmail.com';
