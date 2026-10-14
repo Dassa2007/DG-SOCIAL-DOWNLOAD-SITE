@@ -1,6 +1,15 @@
+/* ============================================================
+   DG STORE — Main JavaScript
+   Owner Email: gimahandasun@gmail.com
+   ============================================================ */
+
+const OWNER_EMAIL = 'gimahandasun@gmail.com';
+const OWNER_WA = '94743277981';
+const FF_API_BASE = 'https://ff-lookup.vercel.app';
+
 /* ============ LOADER ============ */
 window.addEventListener('load', () => {
-  setTimeout(() => document.getElementById('loader').classList.add('hide'), 2000);
+  setTimeout(() => document.getElementById('loader').classList.add('hide'), 1800);
 });
 
 /* ============ THEME ============ */
@@ -48,7 +57,7 @@ function showPage(id){
 /* ============ REVEAL ============ */
 const io = new IntersectionObserver(entries => {
   entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); }});
-}, {threshold:0.1});
+}, {threshold:0.08});
 
 /* ============ SLIDERS ============ */
 function initSlider(id){
@@ -68,15 +77,11 @@ function initSlider(id){
   }
   function go(i){
     slides[idx].classList.remove('active');
-    slides[idx].classList.remove('kenburns');
     if(dotsWrap) dotsWrap.children[idx].classList.remove('on');
     idx = i;
-    void slides[idx].offsetWidth;
     slides[idx].classList.add('active');
-    setTimeout(() => slides[idx].classList.add('kenburns'), 80);
     if(dotsWrap) dotsWrap.children[idx].classList.add('on');
   }
-  setTimeout(() => slides[0].classList.add('kenburns'), 100);
   const interval = parseInt(el.dataset.interval) || 6000;
   setInterval(() => go((idx+1) % slides.length), interval);
 }
@@ -87,18 +92,13 @@ let countersStarted = false;
 function startCounters(){
   if(countersStarted) return;
   countersStarted = true;
-  const orderStat = document.getElementById('statTotalOrders');
-  if(orderStat){
-    const totalOrders = getOrderCounter();
-    orderStat.dataset.target = totalOrders;
-  }
   const counters = document.querySelectorAll('#statsBox .stat-num');
   counters.forEach(c => {
     const target = parseFloat(c.dataset.target);
     const suffix = c.dataset.suffix || '';
     const decimal = parseInt(c.dataset.decimal) || 0;
     let current = 0;
-    const steps = 60;
+    const steps = 50;
     const inc = target / steps;
     let step = 0;
     const timer = setInterval(() => {
@@ -106,7 +106,7 @@ function startCounters(){
       current += inc;
       if(step >= steps){ current = target; clearInterval(timer); }
       c.textContent = (decimal ? current.toFixed(decimal) : Math.floor(current)) + suffix;
-    }, 25);
+    }, 22);
   });
 }
 
@@ -169,8 +169,76 @@ function saveUserOrder(order){
   localStorage.setItem(key, JSON.stringify(orders));
 }
 
-/* ============ TELEGRAM BOT APIs ============ */
-const OWNER_WA = '94743277981';
+/* ============================================================
+   ============ EMAIL NOTIFICATIONS (FormSubmit.co) ===========
+   ============================================================ */
+async function sendEmailNotification(subject, dataObject){
+  try {
+    const payload = {
+      _subject: subject,
+      _template: 'table',
+      _captcha: 'false',
+      ...dataObject
+    };
+    const res = await fetch(`https://formsubmit.co/ajax/${OWNER_EMAIL}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    return res.ok;
+  } catch(err){
+    console.warn('Email notification failed:', err);
+    return false;
+  }
+}
+
+/* Notify owner when a customer logs in with Google */
+function notifyLogin(user){
+  const now = new Date().toLocaleString();
+  sendEmailNotification(`🔔 DG STORE — Customer Login: ${user.name}`, {
+    'Event': 'Customer Login',
+    'Name': user.name || '-',
+    'Email': user.email || '-',
+    'DG User ID': user.userId || '-',
+    'Time': now,
+    'Device': navigator.userAgent,
+    'Message': `${user.name} (${user.email}) just logged into DG STORE.`
+  });
+}
+
+/* Notify owner when a new order is placed */
+function notifyOrder(orderType, orderData, orderNumber){
+  const now = new Date().toLocaleString();
+  /* Format order details */
+  const details = {};
+  Object.keys(orderData).forEach(k => {
+    if(k === 'orderType') return;
+    let v = orderData[k];
+    if(Array.isArray(v)) v = v.join(' | ');
+    else if(typeof v === 'object') v = JSON.stringify(v);
+    const label = k.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
+    details[label] = String(v || '-');
+  });
+  sendEmailNotification(`🛒 DG STORE — New ${orderType} (${orderNumber})`, {
+    'Event': 'New Order',
+    'Order Number': orderNumber,
+    'Order Type': orderType,
+    'Customer Name': orderData.name || '-',
+    'Customer WhatsApp': orderData.whatsapp || '-',
+    'Total': orderData.total || '-',
+    'Payment Method': orderData.paymentMethod || '-',
+    'Time': now,
+    'Message': `A new ${orderType} order (${orderNumber}) was placed on DG STORE.`,
+    ...details
+  });
+}
+
+/* ============================================================
+   ============ TELEGRAM BOT APIs ============================
+   ============================================================ */
 const PAGE_APIS = {
   social:    'https://dg-store-oders-telegram-bot.vercel.app/api/order',
   freefire:  'https://dg-store-ff-id-topup-oder-telegram.vercel.app/api/order',
@@ -210,7 +278,7 @@ async function sendToBotAndWA(pageKey, orderData, receiptInputId, btnEl, whatsap
     btnEl.disabled = true;
     btnEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> PROCESSING...';
   }
-  await new Promise(r => setTimeout(r, 700));
+  await new Promise(r => setTimeout(r, 600));
   try { window.open(`https://wa.me/${OWNER_WA}?text=${encodeURIComponent(whatsappMessage)}`, '_blank'); } catch(e){}
   const ok = await sendToBot(pageKey, orderData, receiptInputId);
   const orderNumber = generateOrderNumber();
@@ -222,6 +290,8 @@ async function sendToBotAndWA(pageKey, orderData, receiptInputId, btnEl, whatsap
     timestamp: new Date().toISOString(),
     status: 'Pending'
   });
+  /* Email notification */
+  notifyOrder(orderData.orderType || 'Order', orderData, orderNumber);
   if(typeof resetFn === 'function') resetFn();
   if(btnEl){
     btnEl.disabled = false;
@@ -248,6 +318,8 @@ async function sendToBotOnly(pageKey, orderData, receiptInputId, btnEl, resetFn)
     timestamp: new Date().toISOString(),
     status: 'Pending'
   });
+  /* Email notification */
+  notifyOrder(orderData.orderType || 'Order', orderData, orderNumber);
   if(typeof resetFn === 'function') resetFn();
   if(btnEl){
     btnEl.disabled = false;
@@ -273,31 +345,31 @@ function clearPreview(previewId){
   if(img){ img.src = ''; img.style.display = 'none'; }
 }
 
-/* ============ SOCIAL MEDIA (NON DROP ONLY) ============ */
+/* ============ SOCIAL MEDIA (NON DROP) ============ */
 const smPrices = {
-  TikTok: { 
-    "Likes":{base:1000,p:700}, 
-    "Views":{base:100,p:200}, 
-    "Followers":{base:1000,p:1900}, 
-    "Saves":{base:1000,p:700}, 
-    "Share":{base:1000,p:900}, 
-    "Comments":{base:1000,p:3500} 
+  TikTok: {
+    "Likes":{base:1000,p:700},
+    "Views":{base:100,p:200},
+    "Followers":{base:1000,p:1900},
+    "Saves":{base:1000,p:700},
+    "Share":{base:1000,p:900},
+    "Comments":{base:1000,p:3500}
   },
-  Instagram: { 
-    "Followers":{base:1000,p:3300}, 
-    "Likes":{base:1000,p:350}, 
+  Instagram: {
+    "Followers":{base:1000,p:3300},
+    "Likes":{base:1000,p:350},
     "Comments":{base:1000,p:1900}
   },
-  Facebook: { 
-    "Followers":{base:1000,p:1200}, 
-    "Post Likes":{base:1000,p:800}, 
-    "Group Member":{base:1000,p:2700}, 
+  Facebook: {
+    "Followers":{base:1000,p:1200},
+    "Post Likes":{base:1000,p:800},
+    "Group Member":{base:1000,p:2700},
     "Comments":{base:1000,p:3200}
   },
-  YouTube: { 
-    "Likes":{base:1000,p:3500}, 
-    "Views":{base:1000,p:2400}, 
-    "Subscribers":{base:1000,p:29600} 
+  YouTube: {
+    "Likes":{base:1000,p:3500},
+    "Views":{base:1000,p:2400},
+    "Subscribers":{base:1000,p:29600}
   }
 };
 
@@ -402,7 +474,7 @@ function recalcAllTotals(){
   if(typeof window._waBaseTotal !== 'undefined') updateTotalBox('wa', window._waBaseTotal);
 }
 
-/* ============ RESET FUNCTIONS ============ */
+/* ============ RESET FORMS ============ */
 function resetSocialForm(){
   clearInputs(['sm-name','sm-wp']);
   const wrap = document.getElementById('sm-items');
@@ -432,10 +504,9 @@ function resetFFForm(){
   window._ffBaseTotal = 0; updateTotalBox('ff', 0);
   clearPreview('ff-preview');
   const fi = document.getElementById('ff-receipt'); if(fi) fi.value = '';
-  /* Reset verification - keep ID locked until user changes */
   ffVerifiedId = null;
   const ffIdInput = document.getElementById('ff-id');
-  if(ffIdInput){ ffIdInput.value = ''; ffIdInput.readOnly = false; }
+  if(ffIdInput){ ffIdInput.value = ''; }
   const verifyId = document.getElementById('ff-verify-id'); if(verifyId) verifyId.value = '';
   const status = document.getElementById('ff-verify-status');
   if(status){ status.className = 'ffv-status'; status.innerHTML = ''; }
@@ -464,7 +535,7 @@ function resetWAForm(){
   const fi = document.getElementById('wa-receipt'); if(fi) fi.value = '';
 }
 
-/* ============ SUBMIT: SOCIAL ============ */
+/* ============ SUBMIT SOCIAL ============ */
 async function submitSocialOrder(btnEl){
   const name = document.getElementById('sm-name').value.trim();
   const wp = document.getElementById('sm-wp').value.trim();
@@ -485,7 +556,6 @@ async function submitSocialOrder(btnEl){
   });
   const total = document.getElementById('sm-total').textContent;
   const pay = document.getElementById('sm-pay').value;
-
   const orderData = {
     orderType: 'Social Media Boost Service (Non Drop)',
     name, whatsapp: wp, serviceType: 'Non Drop Service',
@@ -494,7 +564,6 @@ async function submitSocialOrder(btnEl){
   let waMsg = `🛒 NEW ORDER — Social Media Boost\n\n👤 Name: ${name}\n📱 WhatsApp: ${wp}\n🏷 Type: Non Drop Service\n\n📦 Items:\n• ${items.join('\n• ')}\n\n💰 Total: ${total}\n💳 Payment: ${pay}`;
   if(links.length) waMsg += `\n\n🔗 Video Links:\n• ${links.join('\n• ')}`;
   waMsg += `\n\n📸 (Please attach your payment receipt in this chat)`;
-
   await sendToBotAndWA('social', orderData, 'sm-receipt', btnEl, waMsg, resetSocialForm);
 }
 
@@ -599,7 +668,6 @@ async function submitSLOrder(btnEl){
   });
   const total = document.getElementById('sl-total').textContent;
   const pay = document.getElementById('sl-pay').value;
-
   const orderData = {
     orderType: 'SriLanka Boost Service',
     name, whatsapp: wp, packages: items, videoLinks: links, total, paymentMethod: pay
@@ -607,57 +675,40 @@ async function submitSLOrder(btnEl){
   let waMsg = `🛒 NEW ORDER — SriLanka Boost\n\n👤 Name: ${name}\n📱 WhatsApp: ${wp}\n\n📦 Packages:\n• ${items.join('\n• ')}\n\n💰 Total: ${total}\n💳 Payment: ${pay}`;
   if(links.length) waMsg += `\n\n🔗 Video Links:\n• ${links.join('\n• ')}`;
   waMsg += `\n\n📸 (Please attach your payment receipt in this chat)`;
-
   await sendToBotAndWA('srilanka', orderData, 'sl-receipt', btnEl, waMsg, resetSriLankaForm);
 }
 
 /* ============ FF ID VERIFY ============ */
-const FF_API_BASE = 'https://ff-lookup.vercel.app';
 let ffVerifiedId = null;
-
 async function verifyFFId(){
   const uid = document.getElementById('ff-verify-id').value.trim();
   const status = document.getElementById('ff-verify-status');
   const btn = document.getElementById('ff-verify-btn');
-  
   if(!/^\d{6,15}$/.test(uid)){
     status.className = 'ffv-status error';
     status.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Invalid UID — must be 6-15 digits';
     return;
   }
-  
   btn.disabled = true;
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
   status.className = 'ffv-status';
   status.innerHTML = '';
-  
   try {
     const res = await fetch(`${FF_API_BASE}/api/ff?uid=${uid}`);
     const json = await res.json();
     if(!json.status || !json.data){
       throw new Error(json.error || json.message || 'Player not found');
     }
-    
     const d = json.data;
     ffVerifiedId = uid;
-    
-    // Show popup
     showFFVerifyPopup(d, uid);
-    
-    // Update status
     status.className = 'ffv-status success';
     status.innerHTML = `<i class="fa-solid fa-circle-check"></i> Verified: ${escapeHtml(d.nickname || 'Player')}`;
-    
-    // Auto-fill order form ID and lock it
     const ffIdInput = document.getElementById('ff-id');
     ffIdInput.value = uid;
-    ffIdInput.readOnly = true;
-    
-    // Scroll to form
     setTimeout(() => {
       document.getElementById('ff-form').scrollIntoView({behavior:'smooth', block:'start'});
     }, 400);
-    
     toast('✅ FF ID verified!');
   } catch(e){
     status.className = 'ffv-status error';
@@ -665,14 +716,12 @@ async function verifyFFId(){
     ffVerifiedId = null;
     const ffIdInput = document.getElementById('ff-id');
     ffIdInput.value = '';
-    ffIdInput.readOnly = false;
     toast('❌ ' + e.message, 'error');
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Verify';
   }
 }
-
 function showFFVerifyPopup(d, uid){
   const name = d.nickname || 'Unknown';
   const guild = (d.clan && d.clan.name) ? d.clan.name : 'No Guild';
@@ -680,34 +729,15 @@ function showFFVerifyPopup(d, uid){
   const likes = typeof d.liked === 'number' ? d.liked.toLocaleString() : (d.liked ?? '-');
   const lastLogin = d.lastLogin || '-';
   const createAt = d.createAt || '-';
-  
   const content = document.getElementById('ffVerifyContent');
   content.innerHTML = `
-    <div class="ffv-modal-row">
-      <span class="fmr-label"><i class="fa-solid fa-user"></i> Name</span>
-      <span class="fmr-value">${escapeHtml(name)}</span>
-    </div>
-    <div class="ffv-modal-row">
-      <span class="fmr-label"><i class="fa-solid fa-shield"></i> Guild Name</span>
-      <span class="fmr-value">${escapeHtml(guild)}</span>
-    </div>
-    <div class="ffv-modal-row">
-      <span class="fmr-label"><i class="fa-solid fa-star"></i> Account LV</span>
-      <span class="fmr-value">${escapeHtml(String(level))}</span>
-    </div>
-    <div class="ffv-modal-row">
-      <span class="fmr-label"><i class="fa-solid fa-heart"></i> Like Count</span>
-      <span class="fmr-value">${escapeHtml(String(likes))}</span>
-    </div>
-    <div class="ffv-modal-row">
-      <span class="fmr-label"><i class="fa-solid fa-clock"></i> Last Login</span>
-      <span class="fmr-value">${escapeHtml(String(lastLogin))}</span>
-    </div>
-    <div class="ffv-modal-row">
-      <span class="fmr-label"><i class="fa-solid fa-calendar"></i> Create Date</span>
-      <span class="fmr-value">${escapeHtml(String(createAt))}</span>
-    </div>
-    <div class="modal-note" style="margin-top:12px">
+    <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-user"></i> Name</span><span class="fmr-value">${escapeHtml(name)}</span></div>
+    <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-shield"></i> Guild Name</span><span class="fmr-value">${escapeHtml(guild)}</span></div>
+    <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-star"></i> Account LV</span><span class="fmr-value">${escapeHtml(String(level))}</span></div>
+    <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-heart"></i> Like Count</span><span class="fmr-value">${escapeHtml(String(likes))}</span></div>
+    <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-clock"></i> Last Login</span><span class="fmr-value">${escapeHtml(String(lastLogin))}</span></div>
+    <div class="ffv-modal-row"><span class="fmr-label"><i class="fa-solid fa-calendar"></i> Create Date</span><span class="fmr-value">${escapeHtml(String(createAt))}</span></div>
+    <div class="modal-note" style="margin-top:14px">
       <i class="fa-solid fa-circle-info"></i>
       <div>This ID is now locked in the order form. To change it, edit the ID above and verify again.</div>
     </div>
@@ -770,7 +800,6 @@ function waCalc(){
   window._waBaseTotal = t;
   updateTotalBox('wa', t);
 }
-
 async function submitWAOrder(btnEl){
   const name = document.getElementById('wa-name').value.trim();
   const wp = document.getElementById('wa-wp').value.trim();
@@ -779,7 +808,6 @@ async function submitWAOrder(btnEl){
   const total = document.getElementById('wa-total').textContent;
   const pay = document.getElementById('wa-pay').value;
   if(!name || !wp || !svc || !link) return toast('Please fill all fields', 'error');
-
   const orderData = {
     orderType: 'WhatsApp Channel Boost Service',
     name, whatsapp: wp, service: svc.split('|')[0], channelLink: link, total, paymentMethod: pay
@@ -796,7 +824,6 @@ async function submitOrder(type, btnEl){
     const qty = document.getElementById('ff-qty').value;
     const total = document.getElementById('ff-total').textContent;
     const pay = document.getElementById('ff-pay').value;
-    
     if(!ffVerifiedId){
       return toast('⚠ Please verify your Free Fire ID first', 'error');
     }
@@ -806,7 +833,6 @@ async function submitOrder(type, btnEl){
     if(!name || !wp || !ffid || !pkg){
       return toast('Please fill all fields', 'error');
     }
-    
     const orderData = {
       orderType: 'Free Fire TopUp Service',
       name, whatsapp: wp, ffAccountId: ffid, package: pkg.split('|')[0],
@@ -823,7 +849,6 @@ async function submitOrder(type, btnEl){
     const total = document.getElementById('gb-total').textContent;
     const pay = document.getElementById('gb-pay').value;
     if(!name || !wp || !pkg || !gb) return toast('Please fill all fields', 'error');
-
     const orderData = {
       orderType: '2vary GB Shell Service',
       name, whatsapp: wp, network: sim, package: pkg, gbCount: gb.split('|')[0],
@@ -839,7 +864,6 @@ async function submitOrder(type, btnEl){
     const total = document.getElementById('pr-total').textContent;
     const pay = document.getElementById('pr-pay').value;
     if(!name || !wp || svc.length === 0) return toast('Please fill all fields', 'error');
-
     const orderData = {
       orderType: 'Premium Account Shell Service',
       name, whatsapp: wp, services: svc, total, paymentMethod: pay
@@ -915,6 +939,8 @@ function handleCredentialResponse(response){
   localStorage.setItem('dg_session', JSON.stringify(currentUser));
   renderProfile();
   toast('Logged in successfully!');
+  /* Email owner about the login */
+  notifyLogin(currentUser);
 }
 function initGoogle(){
   if(typeof google === 'undefined' || !google.accounts){ setTimeout(initGoogle, 400); return; }
@@ -966,7 +992,7 @@ function renderCover(){
     }
     wpCover.style.background = 'transparent';
   } else {
-    wpCover.style.background = 'linear-gradient(135deg,var(--c1),var(--c2),var(--c3))';
+    wpCover.style.background = 'linear-gradient(135deg,#1e3a8a,#172554)';
   }
 }
 function updateWpDisplay(){
@@ -1105,7 +1131,7 @@ function showOrderDetail(idx){
   rows += `<div class="order-detail-row"><span class="odr-label">Order #</span><span class="odr-value">${escapeHtml(o.orderNumber)}</span></div>`;
   rows += `<div class="order-detail-row"><span class="odr-label">Date</span><span class="odr-value">${d.toLocaleString()}</span></div>`;
   rows += `<div class="order-detail-row"><span class="odr-label">Type</span><span class="odr-value">${escapeHtml(o.type)}</span></div>`;
-  rows += `<div class="order-detail-row"><span class="odr-label">Total</span><span class="odr-value" style="color:var(--c5)">${escapeHtml(o.total)}</span></div>`;
+  rows += `<div class="order-detail-row"><span class="odr-label">Total</span><span class="odr-value" style="color:var(--accent)">${escapeHtml(o.total)}</span></div>`;
   const det = o.details || {};
   Object.keys(det).forEach(k => {
     if(['orderType','total'].includes(k)) return;
@@ -1343,7 +1369,7 @@ window.addEventListener('load', () => {
   setTimeout(() => {
     document.querySelectorAll('.page.active .reveal').forEach(el => io.observe(el));
     setTimeout(() => { if(document.querySelector('#page-home.active')) startCounters(); }, 400);
-  }, 2100);
+  }, 1900);
   const sess = localStorage.getItem('dg_session');
   if(sess){
     try{
