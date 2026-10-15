@@ -25,7 +25,6 @@
     min-height:100dvh;display:flex;flex-direction:column;
     padding:18px 16px 32px;position:relative;overflow-x:hidden;
   }
-  /* background glows */
   body::before,body::after{
     content:'';position:fixed;border-radius:50%;filter:blur(90px);opacity:.35;
     pointer-events:none;z-index:0;
@@ -35,8 +34,7 @@
 
   .wrap{position:relative;z-index:1;width:100%;max-width:640px;margin:0 auto;flex:1;display:flex;flex-direction:column}
 
-  /* header */
-  header{text-align:center;margin:14px 0 26px}
+  header{text-align:center;margin:14px 0 22px}
   .logo{
     display:inline-flex;align-items:center;gap:9px;
     font-size:21px;font-weight:800;letter-spacing:-.4px;
@@ -53,7 +51,6 @@
   }
   header p{color:var(--mut);font-size:13px;margin-top:8px}
 
-  /* card */
   .card{
     background:var(--card);
     border:1px solid var(--line);
@@ -62,6 +59,39 @@
     backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px);
     box-shadow:0 16px 44px rgba(0,0,0,.5);
+  }
+
+  /* Platform selector */
+  .platform-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .pbtn{
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:11px 4px;
+    display:flex;flex-direction:column;align-items:center;gap:5px;
+    cursor:pointer;font-family:inherit;
+    color:var(--mut);
+    transition:all .18s;
+    position:relative;
+    overflow:hidden;
+  }
+  .pbtn .picon{font-size:19px;line-height:1}
+  .pbtn .plabel{font-size:10.5px;font-weight:700;letter-spacing:.2px;text-align:center;line-height:1.2}
+  .pbtn:active{transform:scale(.96)}
+  .pbtn.active{
+    color:#fff;
+    border-color:rgba(109,94,252,.6);
+    background:linear-gradient(135deg,rgba(109,94,252,.25),rgba(0,212,255,.15));
+    box-shadow:0 4px 16px rgba(109,94,252,.28);
+  }
+  .pbtn.active::after{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--p1),var(--p2));
   }
 
   .field{position:relative;display:flex;align-items:center;gap:8px}
@@ -107,19 +137,6 @@
   .btn:active{transform:scale(.975)}
   .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
 
-  /* platform chips */
-  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px;justify-content:center}
-  .chip{
-    font-size:11px;font-weight:700;padding:6px 12px;border-radius:999px;
-    border:1px solid var(--line);color:var(--mut);
-    background:rgba(255,255,255,.03);
-  }
-  .chip.on{
-    color:#c9c1ff;border-color:rgba(109,94,252,.5);
-    background:rgba(109,94,252,.14);
-  }
-
-  /* status */
   #status{margin-top:16px;display:none}
   #status.show{display:block}
   .box{
@@ -135,7 +152,6 @@
   }
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* result */
   #result{margin-top:18px;display:none}
   #result.show{display:block;animation:up .35s ease}
   @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
@@ -210,14 +226,43 @@
       <div class="dot">⬇</div>
       <div>Media<span class="grad">Grab</span></div>
     </div>
-    <p>Facebook, Instagram — එකම තැනකින්</p>
+    <p>හැම social media එකකින්ම videos download කරන්න</p>
   </header>
 
   <div class="card">
+
+    <!-- Platform Selector -->
+    <div class="platform-grid" id="platformGrid">
+      <button class="pbtn" data-p="facebook" type="button">
+        <span class="picon">📘</span>
+        <span class="plabel">Facebook</span>
+      </button>
+      <button class="pbtn" data-p="instagram" type="button">
+        <span class="picon">📷</span>
+        <span class="plabel">Instagram</span>
+      </button>
+      <button class="pbtn" data-p="tiktok" type="button">
+        <span class="picon">🎵</span>
+        <span class="plabel">TikTok</span>
+      </button>
+      <button class="pbtn" data-p="pinterest" type="button">
+        <span class="picon">📌</span>
+        <span class="plabel">Pinterest</span>
+      </button>
+      <button class="pbtn" data-p="ytmp3" type="button">
+        <span class="picon">🎧</span>
+        <span class="plabel">YT MP3</span>
+      </button>
+      <button class="pbtn" data-p="ytmp4" type="button">
+        <span class="picon">🎬</span>
+        <span class="plabel">YT MP4</span>
+      </button>
+    </div>
+
     <div class="field">
       <span class="ico">🔗</span>
       <input id="urlInput" type="url" inputmode="url" autocomplete="off"
-             spellcheck="false" placeholder="Video link එක මෙතන paste කරන්න...">
+             spellcheck="false" placeholder="Link එක මෙතන paste කරන්න...">
       <div class="tools">
         <button class="mini" id="pasteBtn" type="button">PASTE</button>
         <button class="mini" id="clearBtn" type="button">✕</button>
@@ -227,13 +272,6 @@
     <button class="btn" id="fetchBtn" type="button">
       <span id="btnIcon">⬇</span><span id="btnText">Download කරන්න</span>
     </button>
-
-    <div class="chips">
-      <div class="chip on" data-p="facebook">Facebook</div>
-      <div class="chip on" data-p="instagram">Instagram</div>
-      <div class="chip" data-p="tiktok">TikTok</div>
-      <div class="chip" data-p="youtube">YouTube</div>
-    </div>
   </div>
 
   <div id="status"></div>
@@ -250,17 +288,64 @@
 /* =========================================================
    CONFIG
    ========================================================= */
-const PROXY_ENDPOINTS = {
-  facebook : '/api/facebook',
-  instagram: '/api/instagram'
-};
+const API_KEY = 'kcey_3aac11b6ed5c49a5b3b0a2a2922a38de4014';
 
-const DIRECT_ENDPOINTS = {
-  facebook : 'https://api.kcey.online/api/facebook',
-  instagram: 'https://api.kcey.online/api/instagram'
+const PLATFORMS = {
+  facebook: {
+    label: 'Facebook',
+    icon:  '📘',
+    proxy: '/api/facebook',
+    direct:'https://api.kcey.online/api/facebook',
+    pattern: /(facebook\.com|fb\.watch|fb\.me|m\.facebook\.com)/i,
+    placeholder: 'https://www.facebook.com/... හෝ fb.watch link එක paste කරන්න',
+    render: renderFacebook
+  },
+  instagram: {
+    label: 'Instagram',
+    icon:  '📷',
+    proxy: '/api/instagram',
+    direct:'https://api.kcey.online/api/instagram',
+    pattern: /(instagram\.com|instagr\.am)/i,
+    placeholder: 'https://www.instagram.com/reel/... link එක paste කරන්න',
+    render: renderInstagram
+  },
+  tiktok: {
+    label: 'TikTok',
+    icon:  '🎵',
+    proxy: '/api/tiktok',
+    direct:'https://api.kcey.online/api/tiktok',
+    pattern: /(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)/i,
+    placeholder: 'https://vt.tiktok.com/... link එක paste කරන්න',
+    render: renderTikTok
+  },
+  pinterest: {
+    label: 'Pinterest',
+    icon:  '📌',
+    proxy: '/api/pinterest',
+    direct:'https://api.kcey.online/api/pinterest',
+    pattern: /(pinterest\.com|pin\.it)/i,
+    placeholder: 'https://pin.it/... හෝ pinterest link එක paste කරන්න',
+    render: renderPinterest
+  },
+  ytmp3: {
+    label: 'YouTube MP3',
+    icon:  '🎧',
+    proxy: '/api/ytmp3',
+    direct:'https://api.kcey.online/api/ytmp3',
+    pattern: /(youtube\.com|youtu\.be)/i,
+    placeholder: 'https://youtu.be/... හෝ youtube link එක paste කරන්න',
+    render: renderYtmp3
+  },
+  ytmp4: {
+    label: 'YouTube MP4',
+    icon:  '🎬',
+    proxy: '/api/ytmp4',
+    direct:'https://api.kcey.online/api/ytmp4',
+    pattern: /(youtube\.com|youtu\.be)/i,
+    placeholder: 'https://youtu.be/... හෝ youtube link එක paste කරන්න',
+    render: renderYtmp4
+  }
 };
-
-const DIRECT_KEY = 'kcey_3aac11b6ed5c49a5b3b0a2a2922a38de4014'; // fallback (local test only)
 
 /* =========================================================
    ELEMENTS
@@ -273,36 +358,45 @@ const btnIcon  = document.getElementById('btnIcon');
 const btnText  = document.getElementById('btnText');
 const statusEl = document.getElementById('status');
 const resultEl = document.getElementById('result');
+const grid     = document.getElementById('platformGrid');
+
+let currentPlatform = 'facebook';
 
 /* =========================================================
-   PLATFORM DETECTION
+   PLATFORM SELECTOR
    ========================================================= */
-const PATTERNS = {
-  facebook : /(facebook\.com|fb\.watch|fb\.me|m\.facebook\.com)/i,
-  instagram: /(instagram\.com|instagr\.am)/i,
-  tiktok   : /(tiktok\.com|vm\.tiktok\.com)/i,
-  youtube  : /(youtube\.com|youtu\.be)/i
-};
-
-function detectPlatform(url){
-  for (const [name, re] of Object.entries(PATTERNS)) {
-    if (re.test(url)) return name;
-  }
-  return null;
+function setPlatform(name){
+  if (!PLATFORMS[name]) return;
+  currentPlatform = name;
+  grid.querySelectorAll('.pbtn').forEach(b => {
+    b.classList.toggle('active', b.dataset.p === name);
+  });
+  input.placeholder = PLATFORMS[name].placeholder || 'Link එක මෙතන paste කරන්න...';
 }
+
+grid.addEventListener('click', e => {
+  const btn = e.target.closest('.pbtn');
+  if (!btn) return;
+  setPlatform(btn.dataset.p);
+  resultEl.className = '';
+  resultEl.innerHTML = '';
+  showStatus('none');
+});
 
 /* =========================================================
    HELPERS
    ========================================================= */
 function showStatus(type, msg){
+  if (!type || type === 'none') {
+    statusEl.className = '';
+    statusEl.innerHTML = '';
+    return;
+  }
   statusEl.className = 'show';
   if (type === 'loading') {
     statusEl.innerHTML = `<div class="box load"><div class="spinner"></div><div>${msg}</div></div>`;
   } else if (type === 'error') {
     statusEl.innerHTML = `<div class="box err"><div>⚠️</div><div>${msg}</div></div>`;
-  } else {
-    statusEl.className = '';
-    statusEl.innerHTML = '';
   }
 }
 
@@ -320,6 +414,14 @@ function fmtNum(n){
   return String(n);
 }
 
+function fmtDur(sec){
+  sec = Number(sec) || 0;
+  if (!sec) return '';
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+
 function esc(str){
   return String(str ?? '').replace(/[&<>"']/g, c => (
     {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
@@ -331,7 +433,7 @@ function qualityLabel(link){
   const t = String(link.type || '').toLowerCase();
 
   if (q.includes('audio') || t.includes('audio'))
-    return { icon:'🎵', title:'Audio Only', sub:'M4A · ශබ්දය පමණයි' };
+    return { icon:'🎵', title:'Audio Only', sub:'ශබ්දය පමණයි · M4A' };
 
   if (q === '360' || q.includes('360'))
     return { icon:'📱', title:'360p Video', sub:'Data අඩුවෙන් · MP4' };
@@ -348,30 +450,40 @@ function qualityLabel(link){
   return { icon:'🎞️', title:`Video ${esc(link.quality)}`, sub:'MP4 Video' };
 }
 
-/* =========================================================
-   FETCH FROM API
-   ========================================================= */
-async function callApi(platform, url){
-  // 1) Try the Vercel proxy first (hides the key, no CORS issues)
-  try {
-    const proxy = PROXY_ENDPOINTS[platform];
-    if (proxy) {
-      const r = await fetch(`${proxy}?url=${encodeURIComponent(url)}`);
-      if (r.ok) {
-        const data = await r.json();
-        if (data && typeof data === 'object') return data;
-      }
-    }
-  } catch (_) { /* fall through */ }
+function thumbBlock(url, duration){
+  if (!url) return '';
+  return `
+    <div class="thumb">
+      <img src="${esc(url)}" alt="thumbnail" referrerpolicy="no-referrer"
+           onerror="this.parentElement.style.display='none'">
+      ${duration ? `<div class="dur">${esc(duration)}</div>` : ''}
+    </div>`;
+}
 
-  // 2) Fallback: direct call (works when opening the file locally)
-  const directBase = DIRECT_ENDPOINTS[platform];
-  if (!directBase) throw new Error('මේ platform එකට API එකක් නෑ');
+function statBlock(list){
+  const items = list.filter(Boolean).slice(0, 3);
+  if (!items.length) return '';
+  return `<div class="stats">` + items.map(s =>
+    `<div class="stat"><b>${s.n}</b><small>${s.l}</small></div>`
+  ).join('') + `</div>`;
+}
 
-  const direct = `${directBase}?url=${encodeURIComponent(url)}&key=${DIRECT_KEY}`;
-  const r2 = await fetch(direct);
-  if (!r2.ok) throw new Error('API එකට සම්බන්ධ වෙන්න බැරි වුණා');
-  return await r2.json();
+function dlRow(href, icon, title, sub, cta){
+  return `
+    <a class="dl" href="${esc(href)}" target="_blank" rel="noopener noreferrer">
+      <div class="badge">${icon}</div>
+      <div class="txt">
+        <b>${title}</b>
+        <small>${sub}</small>
+      </div>
+      <div class="go">${cta || 'GET'}</div>
+    </a>`;
+}
+
+function showResult(html){
+  resultEl.innerHTML = html;
+  resultEl.className = 'show';
+  resultEl.scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
 /* =========================================================
@@ -381,66 +493,35 @@ function renderFacebook(data){
   const md = data.metadata || {};
   const dl = data.downloads || {};
   const links = Array.isArray(dl.links) ? dl.links : [];
-
   const thumb = dl.thumbnail || '';
   const title = md.title || 'Facebook Video';
 
-  let html = '';
+  let html = thumbBlock(thumb, md.duration);
 
-  // thumbnail
-  if (thumb) {
-    html += `
-      <div class="thumb">
-        <img src="${esc(thumb)}" alt="thumbnail" referrerpolicy="no-referrer"
-             onerror="this.parentElement.style.display='none'">
-        ${md.duration ? `<div class="dur">${esc(md.duration)}</div>` : ''}
-      </div>`;
-  }
-
-  // meta
   html += `<div class="meta">
     <h2>${esc(title)}</h2>
     <div class="author">👤 ${esc(md.author || 'Unknown')}</div>
   </div>`;
 
-  // stats
-  const stats = [];
-  if (md.view_count)    stats.push({ n: fmtNum(md.view_count),    l:'VIEWS' });
-  if (md.like_count)    stats.push({ n: fmtNum(md.like_count),    l:'LIKES' });
-  if (md.comment_count) stats.push({ n: fmtNum(md.comment_count), l:'COMMENTS' });
-  if (md.resolution)    stats.push({ n: esc(md.resolution),       l:'RESOLUTION' });
+  html += statBlock([
+    md.view_count    ? { n: fmtNum(md.view_count),    l:'VIEWS' }    : null,
+    md.like_count    ? { n: fmtNum(md.like_count),    l:'LIKES' }    : null,
+    md.comment_count ? { n: fmtNum(md.comment_count), l:'COMMENTS' } : null,
+    md.resolution    ? { n: esc(md.resolution),       l:'RESOLUTION'} : null
+  ]);
 
-  if (stats.length) {
-    html += `<div class="stats">` +
-      stats.slice(0, 3).map(s =>
-        `<div class="stat"><b>${s.n}</b><small>${s.l}</small></div>`
-      ).join('') + `</div>`;
-  }
-
-  // downloads
   if (links.length) {
     html += `<div class="sec-title">Download Options</div>`;
     links.forEach(link => {
       if (!link || !link.url) return;
       const q = qualityLabel(link);
-      html += `
-        <a class="dl" href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">
-          <div class="badge">${q.icon}</div>
-          <div class="txt">
-            <b>${q.title}</b>
-            <small>${q.sub}</small>
-          </div>
-          <div class="go">GET</div>
-        </a>`;
+      html += dlRow(link.url, q.icon, q.title, q.sub);
     });
   } else {
-    html += `<div class="box err" style="margin-top:14px">
-      <div>⚠️</div><div>Download link කිසිවක් හමු නොවුණා</div></div>`;
+    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link කිසිවක් හමු නොවුණා</div></div>`;
   }
 
-  resultEl.innerHTML = html;
-  resultEl.className = 'show';
-  resultEl.scrollIntoView({ behavior:'smooth', block:'start' });
+  showResult(html);
 }
 
 /* =========================================================
@@ -450,48 +531,244 @@ function renderInstagram(data){
   const md = data.metadata || {};
   const dl = data.downloads || {};
 
-  const thumb = dl.thumbnail || '';
-  const videoUrl = dl.video || '';
-  const username = md.username || 'Instagram User';
-  const caption = md.caption || '';
+  const thumb    = dl.thumbnail || md.thumbnail || '';
+  const videoUrl = dl.video || dl.videoUrl || (dl.links && dl.links[0]?.url) || '';
+  const username = md.username || md.author || 'Instagram User';
+  const caption  = md.caption || md.title || '';
 
-  let html = '';
+  let html = thumbBlock(thumb, md.duration);
 
-  // thumbnail
-  if (thumb) {
-    html += `
-      <div class="thumb">
-        <img src="${esc(thumb)}" alt="thumbnail" referrerpolicy="no-referrer"
-             onerror="this.parentElement.style.display='none'">
-      </div>`;
-  }
-
-  // meta
   html += `<div class="meta">
-    <h2>${caption ? esc(caption.substring(0, 120)) + (caption.length > 120 ? '...' : '') : 'Instagram Video'}</h2>
+    <h2>${caption ? esc(caption.substring(0, 140)) + (caption.length > 140 ? '...' : '') : 'Instagram Video'}</h2>
     <div class="author">👤 @${esc(username)}</div>
   </div>`;
 
-  // downloads
   if (videoUrl) {
-    html += `<div class="sec-title">Download Options</div>
-      <a class="dl" href="${esc(videoUrl)}" target="_blank" rel="noopener noreferrer">
-        <div class="badge">⚡</div>
-        <div class="txt">
-          <b>HD Video</b>
-          <small>Watermark රහිත · MP4</small>
-        </div>
-        <div class="go">GET</div>
-      </a>`;
+    html += `<div class="sec-title">Download Options</div>`;
+    html += dlRow(videoUrl, '⚡', 'HD Video', 'Watermark රහිත · MP4');
   } else {
-    html += `<div class="box err" style="margin-top:14px">
-      <div>⚠️</div><div>Download link එකක් හමු නොවුණා</div></div>`;
+    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link එකක් හමු නොවුණා</div></div>`;
   }
 
-  resultEl.innerHTML = html;
-  resultEl.className = 'show';
-  resultEl.scrollIntoView({ behavior:'smooth', block:'start' });
+  showResult(html);
 }
+
+/* =========================================================
+   RENDER: TIKTOK
+   ========================================================= */
+function renderTikTok(data){
+  const md = data.metadata || data.data || {};
+  const dl = data.downloads || data.data || {};
+
+  const thumb    = dl.thumbnail || dl.cover || md.cover || '';
+  const videoUrl = (dl.links && dl.links[0]?.url) || dl.video || dl.play || dl.no_watermark || dl.download || '';
+  const title    = md.title || md.desc || md.description || 'TikTok Video';
+  const author   = md.author || md.username || md.nickname || 'TikTok User';
+
+  let html = thumbBlock(thumb, md.duration ? fmtDur(md.duration) : '');
+
+  html += `<div class="meta">
+    <h2>${esc(String(title).substring(0, 140))}</h2>
+    <div class="author">👤 @${esc(author)}</div>
+  </div>`;
+
+  html += statBlock([
+    md.play_count    ? { n: fmtNum(md.play_count),    l:'VIEWS' }    : null,
+    md.digg_count    ? { n: fmtNum(md.digg_count),    l:'LIKES' }    : null,
+    md.comment_count ? { n: fmtNum(md.comment_count), l:'COMMENTS' } : null
+  ]);
+
+  if (videoUrl) {
+    html += `<div class="sec-title">Download Options</div>`;
+    html += dlRow(videoUrl, '⚡', 'HD Video', 'Watermark රහිත · MP4');
+
+    // Extra links (audio / hd if present)
+    if (Array.isArray(dl.links)) {
+      dl.links.slice(1).forEach(link => {
+        if (!link || !link.url) return;
+        const q = qualityLabel(link);
+        html += dlRow(link.url, q.icon, q.title, q.sub);
+      });
+    }
+  } else {
+    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link එකක් හමු නොවුණා</div></div>`;
+  }
+
+  showResult(html);
+}
+
+/* =========================================================
+   RENDER: PINTEREST
+   ========================================================= */
+function renderPinterest(data){
+  const md = data.metadata || data.data || {};
+  const dl = data.downloads || data.data || {};
+
+  const thumb    = dl.thumbnail || dl.image || md.image || md.thumbnail || '';
+  const videoUrl = (dl.links && dl.links[0]?.url) || dl.video || dl.mp4 || dl.download || '';
+  const title    = md.title || md.description || 'Pinterest Pin';
+  const author   = md.author || md.username || 'Pinterest User';
+
+  let html = thumbBlock(thumb, '');
+
+  html += `<div class="meta">
+    <h2>${esc(String(title).substring(0, 140))}</h2>
+    <div class="author">👤 @${esc(author)}</div>
+  </div>`;
+
+  if (videoUrl) {
+    html += `<div class="sec-title">Download Options</div>`;
+    html += dlRow(videoUrl, '⚡', 'Video', 'HD · MP4');
+
+    if (Array.isArray(dl.links)) {
+      dl.links.slice(1).forEach(link => {
+        if (!link || !link.url) return;
+        const q = qualityLabel(link);
+        html += dlRow(link.url, q.icon, q.title, q.sub);
+      });
+    }
+  } else if (thumb) {
+    html += `<div class="sec-title">Download Options</div>`;
+    html += dlRow(thumb, '🖼️', 'Image', 'Full Resolution · JPG');
+  } else {
+    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link එකක් හමු නොවුණා</div></div>`;
+  }
+
+  showResult(html);
+}
+
+/* =========================================================
+   RENDER: YOUTUBE MP3
+   ========================================================= */
+function renderYtmp3(data){
+  // Handle error response
+  if (!data || data.ok === false || (!data.download && !data.raw)) {
+    showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || 'මේ video එකට MP3 හමු නොවුණා')}</div></div>`);
+    return;
+  }
+
+  const bk = data.raw?.BK9 || {};
+  const thumb = data.thumbnail || bk.image || '';
+  const title = data.title || bk.title || 'YouTube Audio';
+  const audioUrl = data.download || bk.downloadUrl || '';
+  const duration = bk.duration || 0;
+  const quality  = bk.quality || 'M4A Audio';
+  const bitrate  = bk.bitrate ? Math.round(bk.bitrate / 1000) + ' kbps' : '';
+
+  let html = thumbBlock(thumb, fmtDur(duration));
+
+  html += `<div class="meta">
+    <h2>${esc(title)}</h2>
+    <div class="author">🎧 YouTube Audio</div>
+  </div>`;
+
+  html += statBlock([
+    quality ? { n: esc(quality),   l:'FORMAT' }  : null,
+    bitrate ? { n: esc(bitrate),   l:'BITRATE' } : null,
+    duration? { n: fmtDur(duration), l:'DURATION' } : null
+  ]);
+
+  if (audioUrl) {
+    html += `<div class="sec-title">Download Options</div>`;
+    html += dlRow(audioUrl, '🎵', 'MP3 / M4A Audio', bitrate ? `ශබ්දය පමණයි · ${bitrate}` : 'ශබ්දය පමණයි');
+  } else {
+    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Audio link එකක් හමු නොවුණා</div></div>`;
+  }
+
+  showResult(html);
+}
+
+/* =========================================================
+   RENDER: YOUTUBE MP4
+   ========================================================= */
+function renderYtmp4(data){
+  // The API currently returns a "no worker" message — handle gracefully
+  if (!data || data.ok === false || data.message || (!data.download && !data.raw)) {
+    const msg = data?.message || 'මේ API එක තවම වැඩ කරන්නේ නෑ';
+    showResult(`<div class="box err">
+      <div>🚧</div>
+      <div>
+        <b>YouTube MP4 තවම available නෑ</b><br>
+        <span style="font-size:12px;opacity:.85">${esc(msg)}</span><br>
+        <span style="font-size:12px;opacity:.85">කරුණාකර YT MP3 එක try කරන්න හෝ පසුව උත්සාහ කරන්න.</span>
+      </div>
+    </div>`);
+    return;
+  }
+
+  // Generic handler (if API later works)
+  const dl = data.downloads || data.data || data;
+  const thumb = dl.thumbnail || dl.image || data.thumbnail || '';
+  const videoUrl = (dl.links && dl.links[0]?.url) || dl.video || dl.download || data.download || '';
+  const title = dl.title || data.title || 'YouTube Video';
+  const author = dl.author || data.author || 'YouTube';
+
+  let html = thumbBlock(thumb, dl.duration ? fmtDur(dl.duration) : '');
+
+  html += `<div class="meta">
+    <h2>${esc(title)}</h2>
+    <div class="author">👤 ${esc(author)}</div>
+  </div>`;
+
+  if (videoUrl) {
+    html += `<div class="sec-title">Download Options</div>`;
+    html += dlRow(videoUrl, '⚡', 'HD Video', 'MP4 Video');
+  } else {
+    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link එකක් හමු නොවුණා</div></div>`;
+  }
+
+  showResult(html);
+}
+
+/* =========================================================
+   API CALL
+   ========================================================= */
+async function callApi(platformKey, url){
+  const p = PLATFORMS[platformKey];
+  if (!p) throw new Error('මේ platform එක support කරන්නේ නෑ');
+
+  // 1) Vercel proxy (recommended)
+  if (p.proxy) {
+    try {
+      const r = await fetch(`${p.proxy}?url=${encodeURIComponent(url)}`);
+      if (r.ok) {
+        const data = await r.json();
+        if (data && typeof data === 'object') return data;
+      }
+    } catch (_) { /* fall through */ }
+  }
+
+  // 2) Direct fallback
+  const direct = `${p.direct}?url=${encodeURIComponent(url)}&key=${API_KEY}`;
+  const r2 = await fetch(direct);
+  if (!r2.ok) throw new Error('API එකට සම්බන්ධ වෙන්න බැරි වුණා');
+  return await r2.json();
+}
+
+/* =========================================================
+   AUTO-DETECT ON INPUT
+   ========================================================= */
+function autoDetect(url){
+  // YouTube needs priority because ytmp3/ytmp4 share same pattern
+  if (/(youtube\.com|youtu\.be)/i.test(url)) {
+    if (currentPlatform !== 'ytmp3' && currentPlatform !== 'ytmp4') {
+      setPlatform('ytmp3');
+    }
+    return;
+  }
+  for (const [key, p] of Object.entries(PLATFORMS)) {
+    if (key === 'ytmp3' || key === 'ytmp4') continue;
+    if (p.pattern.test(url)) {
+      setPlatform(key);
+      return;
+    }
+  }
+}
+
+input.addEventListener('input', () => {
+  const url = input.value.trim();
+  if (url.length > 8) autoDetect(url);
+});
 
 /* =========================================================
    MAIN
@@ -500,7 +777,7 @@ async function handleFetch(){
   const url = input.value.trim();
 
   if (!url) {
-    showStatus('error', 'කරුණාකර video link එකක් ඇතුළත් කරන්න');
+    showStatus('error', 'කරුණාකර link එකක් ඇතුළත් කරන්න');
     input.focus();
     return;
   }
@@ -509,35 +786,24 @@ async function handleFetch(){
     return;
   }
 
-  const platform = detectPlatform(url);
-  if (!platform) {
-    showStatus('error', 'මේ link එක හඳුනාගන්න බැරි වුණා. Facebook හෝ Instagram link එකක් උත්සාහ කරන්න');
-    return;
-  }
-  if (platform !== 'facebook' && platform !== 'instagram') {
-    showStatus('error', `${platform} support තවම add කරලා නෑ — Facebook සහ Instagram පමණයි දැනට`);
-    return;
-  }
+  // If URL clearly matches a different platform, auto-switch (except ytmp3/ytmp4)
+  autoDetect(url);
 
   resultEl.className = '';
   resultEl.innerHTML = '';
-  showStatus('loading', 'Video එක සොයමින්... ටිකක් ඉන්න');
+  showStatus('loading', `${PLATFORMS[currentPlatform].label} video එක සොයමින්... ටිකක් ඉන්න`);
   setLoading(true);
 
   try {
-    const data = await callApi(platform, url);
+    const data = await callApi(currentPlatform, url);
 
+    // Generic failure check
     if (!data || data.status === false) {
       throw new Error(data?.message || data?.error || 'Video එක හමු නොවුණා');
     }
 
     showStatus('none');
-
-    if (platform === 'facebook') {
-      renderFacebook(data);
-    } else {
-      renderInstagram(data);
-    }
+    PLATFORMS[currentPlatform].render(data);
 
   } catch (err) {
     showStatus('error', err.message || 'මොකක්හරි වැරැද්දක් වුණා. ආයෙ උත්සාහ කරන්න');
@@ -560,6 +826,7 @@ pasteBtn.addEventListener('click', async () => {
     const text = await navigator.clipboard.readText();
     if (text) {
       input.value = text.trim();
+      autoDetect(input.value);
       input.focus();
     }
   } catch {
@@ -576,13 +843,10 @@ clearBtn.addEventListener('click', () => {
   showStatus('none');
 });
 
-// live platform highlight
-input.addEventListener('input', () => {
-  const p = detectPlatform(input.value.trim());
-  document.querySelectorAll('.chip').forEach(c => {
-    c.classList.toggle('on', c.dataset.p === p);
-  });
-});
+/* =========================================================
+   INIT
+   ========================================================= */
+setPlatform('facebook');
 </script>
 </body>
 </html>
