@@ -1,1139 +1,519 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="si">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DG STORE — Premium Digital Services</title>
-<link rel="icon" href="https://res.cloudinary.com/divxgmr1g/image/upload/v1791371884/uxgdilvv6rgeqycr4dal.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="style.css">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#070a12">
+<title>Media Downloader</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{
+    --bg:#070a12;
+    --card:rgba(20,26,42,.72);
+    --line:rgba(255,255,255,.09);
+    --txt:#e8ecf5;
+    --mut:#8b95ad;
+    --p1:#6d5efc;
+    --p2:#00d4ff;
+    --ok:#22c55e;
+    --err:#ef4444;
+  }
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans Sinhala',sans-serif;
+    background:var(--bg);color:var(--txt);
+    min-height:100dvh;display:flex;flex-direction:column;
+    padding:18px 16px 32px;position:relative;overflow-x:hidden;
+  }
+  /* background glows */
+  body::before,body::after{
+    content:'';position:fixed;border-radius:50%;filter:blur(90px);opacity:.35;
+    pointer-events:none;z-index:0;
+  }
+  body::before{width:320px;height:320px;background:#5b3df5;top:-120px;left:-100px}
+  body::after{width:300px;height:300px;background:#00b4ff;bottom:-140px;right:-110px;opacity:.22}
+
+  .wrap{position:relative;z-index:1;width:100%;max-width:640px;margin:0 auto;flex:1;display:flex;flex-direction:column}
+
+  /* header */
+  header{text-align:center;margin:14px 0 26px}
+  .logo{
+    display:inline-flex;align-items:center;gap:9px;
+    font-size:21px;font-weight:800;letter-spacing:-.4px;
+  }
+  .logo .dot{
+    width:32px;height:32px;border-radius:10px;
+    background:linear-gradient(135deg,var(--p1),var(--p2));
+    display:grid;place-items:center;font-size:17px;
+    box-shadow:0 6px 20px rgba(109,94,252,.45);
+  }
+  .logo span.grad{
+    background:linear-gradient(135deg,#a99bff,#5fe1ff);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  header p{color:var(--mut);font-size:13px;margin-top:8px}
+
+  /* card */
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:16px;
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 16px 44px rgba(0,0,0,.5);
+  }
+
+  .field{position:relative;display:flex;align-items:center;gap:8px}
+  .field input{
+    flex:1;min-width:0;
+    background:rgba(8,12,22,.85);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:15px 74px 15px 44px;
+    color:var(--txt);font-size:15px;outline:none;
+    transition:border-color .2s, box-shadow .2s;
+    font-family:inherit;
+  }
+  .field input::placeholder{color:#5c6580}
+  .field input:focus{
+    border-color:rgba(109,94,252,.7);
+    box-shadow:0 0 0 3px rgba(109,94,252,.16);
+  }
+  .field .ico{
+    position:absolute;left:15px;font-size:16px;opacity:.55;pointer-events:none;
+  }
+  .field .tools{
+    position:absolute;right:8px;display:flex;gap:4px;
+  }
+  .mini{
+    background:rgba(255,255,255,.07);border:none;color:var(--mut);
+    font-size:11px;font-weight:700;padding:7px 10px;border-radius:9px;
+    cursor:pointer;letter-spacing:.3px;font-family:inherit;
+    transition:background .15s,color .15s;
+  }
+  .mini:active{background:rgba(255,255,255,.16);color:#fff}
+
+  .btn{
+    width:100%;margin-top:12px;
+    padding:16px;border:none;border-radius:14px;
+    background:linear-gradient(135deg,var(--p1),#4d8dff 55%,var(--p2));
+    color:#fff;font-size:16px;font-weight:800;letter-spacing:.2px;
+    cursor:pointer;font-family:inherit;
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    box-shadow:0 10px 26px rgba(91,61,245,.4);
+    transition:transform .12s, opacity .2s;
+  }
+  .btn:active{transform:scale(.975)}
+  .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+
+  /* platform chips */
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px;justify-content:center}
+  .chip{
+    font-size:11px;font-weight:700;padding:6px 12px;border-radius:999px;
+    border:1px solid var(--line);color:var(--mut);
+    background:rgba(255,255,255,.03);
+  }
+  .chip.on{
+    color:#c9c1ff;border-color:rgba(109,94,252,.5);
+    background:rgba(109,94,252,.14);
+  }
+
+  /* status */
+  #status{margin-top:16px;display:none}
+  #status.show{display:block}
+  .box{
+    border-radius:14px;padding:13px 15px;font-size:13.5px;
+    display:flex;align-items:center;gap:10px;line-height:1.45;
+  }
+  .box.load{background:rgba(109,94,252,.12);border:1px solid rgba(109,94,252,.3);color:#c3bcff}
+  .box.err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);color:#ffb3b3}
+  .spinner{
+    width:16px;height:16px;flex:none;border-radius:50%;
+    border:2px solid rgba(255,255,255,.2);border-top-color:#a99bff;
+    animation:spin .7s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* result */
+  #result{margin-top:18px;display:none}
+  #result.show{display:block;animation:up .35s ease}
+  @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  .thumb{
+    position:relative;width:100%;border-radius:16px;overflow:hidden;
+    background:#0d1220;aspect-ratio:16/9;
+    border:1px solid var(--line);
+  }
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .thumb .dur{
+    position:absolute;bottom:9px;right:9px;
+    background:rgba(0,0,0,.78);padding:4px 9px;border-radius:7px;
+    font-size:11.5px;font-weight:700;backdrop-filter:blur(6px);
+  }
+
+  .meta{margin-top:14px}
+  .meta h2{font-size:15px;font-weight:700;line-height:1.45;margin-bottom:6px}
+  .meta .author{font-size:13px;color:var(--mut);display:flex;align-items:center;gap:6px}
+
+  .stats{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;
+  }
+  .stat{
+    background:rgba(255,255,255,.04);border:1px solid var(--line);
+    border-radius:12px;padding:10px 6px;text-align:center;
+  }
+  .stat b{display:block;font-size:15px;font-weight:800}
+  .stat small{font-size:10.5px;color:var(--mut);letter-spacing:.3px}
+
+  .sec-title{
+    font-size:11.5px;font-weight:800;color:var(--mut);
+    letter-spacing:1.2px;text-transform:uppercase;
+    margin:20px 0 10px;
+  }
+
+  .dl{
+    display:flex;align-items:center;gap:12px;
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--line);
+    border-radius:14px;padding:13px 14px;margin-bottom:9px;
+    text-decoration:none;color:var(--txt);
+    transition:background .15s,border-color .15s,transform .12s;
+  }
+  .dl:active{transform:scale(.985);background:rgba(109,94,252,.13);border-color:rgba(109,94,252,.4)}
+  .dl .badge{
+    width:40px;height:40px;flex:none;border-radius:11px;
+    display:grid;place-items:center;font-size:17px;
+    background:linear-gradient(135deg,rgba(109,94,252,.28),rgba(0,212,255,.2));
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .dl .txt{flex:1;min-width:0}
+  .dl .txt b{display:block;font-size:14px;font-weight:700}
+  .dl .txt small{font-size:11.5px;color:var(--mut)}
+  .dl .go{
+    font-size:11px;font-weight:800;color:#a99bff;
+    padding:6px 10px;border-radius:8px;background:rgba(109,94,252,.15);
+    flex:none;
+  }
+
+  footer{
+    text-align:center;font-size:11.5px;color:#4d566e;
+    margin-top:28px;line-height:1.7;
+  }
+</style>
 </head>
 <body>
+<div class="wrap">
 
-<div id="loader">
-  <div class="loader-inner">
-    <div class="loader-ring"></div>
-    <div class="loader-ring"></div>
-    <div class="loader-ring"></div>
-  </div>
-  <div class="loader-text">DG STORE</div>
-  <div class="loader-progress"><div class="bar"></div></div>
-</div>
-
-<header>
-  <div class="brand" onclick="showPage('home')">
-    <img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791371884/uxgdilvv6rgeqycr4dal.png" alt="DG STORE">
-    <h1>DG STORE</h1>
-  </div>
-  <div class="head-right">
-    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button>
-    <button class="icon-btn" onclick="openDrawer()"><i class="fa-solid fa-bars"></i></button>
-  </div>
-</header>
-
-<div id="overlay" onclick="closeDrawer()"></div>
-<aside class="drawer" id="drawer">
-  <div class="drawer-head">
-    <div class="brand">
-      <img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791371884/uxgdilvv6rgeqycr4dal.png" alt="DG">
-      <h1>DG STORE</h1>
+  <header>
+    <div class="logo">
+      <div class="dot">⬇</div>
+      <div>Media<span class="grad">Grab</span></div>
     </div>
-    <button class="close-x" onclick="closeDrawer()"><i class="fa-solid fa-xmark"></i></button>
-  </div>
-  <button class="menu-item" data-nav="home" onclick="showPage('home')"><i class="fa-solid fa-house mi"></i> Home</button>
-  <button class="menu-item" data-nav="profile" onclick="showPage('profile')"><i class="fa-solid fa-user mi"></i> Profile</button>
-  <button class="menu-item" data-nav="payment" onclick="showPage('payment')"><i class="fa-solid fa-wallet mi"></i> Payment Details</button>
-  <button class="menu-item has-sub" id="svcToggle" onclick="toggleSub()">
-    <i class="fa-solid fa-layer-group mi"></i> Service
-    <i class="fa-solid fa-chevron-down caret"></i>
-  </button>
-  <div class="submenu" id="submenu">
-    <button class="menu-item sub" data-nav="social" onclick="showPage('social')"><i class="fa-solid fa-rocket mi"></i> Social Media Boost</button>
-    <button class="menu-item sub" data-nav="srilanka" onclick="showPage('srilanka')"><i class="fa-solid fa-flag mi"></i> SriLanka Boost</button>
-    <button class="menu-item sub" data-nav="webdesign" onclick="showPage('webdesign')"><i class="fa-solid fa-code mi"></i> WebSite Design</button>
-    <button class="menu-item sub" data-nav="freefire" onclick="showPage('freefire')"><i class="fa-solid fa-fire mi"></i> Free Fire TopUp</button>
-    <button class="menu-item sub" data-nav="gbshell" onclick="showPage('gbshell')"><i class="fa-solid fa-wifi mi"></i> 2vary Gb Shell</button>
-    <button class="menu-item sub" data-nav="premium" onclick="showPage('premium')"><i class="fa-solid fa-crown mi"></i> Premium Account</button>
-    <button class="menu-item sub" data-nav="wachannel" onclick="showPage('wachannel')"><i class="fa-brands fa-whatsapp mi"></i> WP Channel Boost</button>
-  </div>
-  <div class="menu-divider"></div>
-  <button class="menu-item" data-nav="reviews" onclick="showPage('reviews')"><i class="fa-solid fa-star mi"></i> All Reviews</button>
-  <button class="menu-item" data-nav="about" onclick="showPage('about')"><i class="fa-solid fa-circle-info mi"></i> About</button>
-</aside>
+    <p>Facebook, Instagram, TikTok, YouTube — එකම තැනකින්</p>
+  </header>
 
-<main>
-
-<!-- HOME -->
-<section class="page active" id="page-home">
-  <div class="slider" id="homeSlider" data-interval="6000">
-    <div class="slide active" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791429267/s9pfpyq5chqaw8duyalq.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791429303/w0l1f5puayjanoess6ky.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791429515/gqpucnz7l4g4t3lz4yat.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791429815/wl3if7ku03941ysjkn85.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791429879/i5nkve78ykrbcqruu30q.png')"></div>
-    <div class="dots" id="homeDots"></div>
-  </div>
-
-  <div class="intro-box">
-    <strong>Welcome to DG STORE</strong><br>
-    Your one-stop digital hub for <strong>Social Media Boosting</strong>, <strong>Sri Lanka Local Boosts</strong>,
-    <strong>Website Design</strong>, <strong>Free Fire Top-Ups</strong>, <strong>V2Ray GB Packages</strong>,
-    and <strong>Premium Account Services</strong>. Fast, safe and 100% trusted delivery.
-  </div>
-
-  <div class="stats-box" id="statsBox">
-    <div class="stat-item"><div class="stat-num" data-target="180">0</div><div class="stat-label">Users</div></div>
-    <div class="stat-item"><div class="stat-num" data-target="99.9" data-suffix="%" data-decimal="1">0</div><div class="stat-label">Success Rate</div></div>
-    <div class="stat-item"><div class="stat-num" id="statTotalOrders" data-target="236">0</div><div class="stat-label">Total Orders</div></div>
-    <div class="stat-item"><div class="stat-num" data-target="100" data-suffix="%">0</div><div class="stat-label">Happy Customers</div></div>
-  </div>
-
-  <button class="btn btn-reviews" onclick="showPage('reviews')"><i class="fa-solid fa-star"></i> ALL REVIEWS</button>
-
-  <h3 class="sec-title">WHY CHOOSE US</h3>
-  <div class="grid3">
-    <div class="feat"><div class="fi"><i class="fa-solid fa-shield-halved"></i></div><h4>100% Trusted Service</h4><p>Thousands of happy customers. Verified, safe and reliable delivery.</p></div>
-    <div class="feat"><div class="fi"><i class="fa-solid fa-bolt-lightning"></i></div><h4>Fastest Service</h4><p>Lightning-quick processing. Most orders start within minutes.</p></div>
-    <div class="feat"><div class="fi"><i class="fa-solid fa-user-shield"></i></div><h4>100% Safe & Secure</h4><p>Your data and account privacy is our top priority.</p></div>
-  </div>
-
-  <footer class="site-footer">
-    <div class="f-top">
-      <div class="f-brand">
-        <img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791371884/uxgdilvv6rgeqycr4dal.png" alt="DG STORE">
-        <div class="f-brand-txt">
-          <h2>DG STORE</h2>
-          <span>#1 Digital Services Platform SL</span>
-        </div>
-      </div>
-      <p class="f-desc">ශ්‍රී ලංකාවේ විශ්වාසනීයම සහ වේගවත්ම Digital Services වෙබ් එක. 100% ක්ෂණික Delivery සහ සුරක්ෂිත ගෙවීම් ක්‍රම සහිතයි.</p>
-      <div class="f-socials">
-        <a class="f-social wa" href="https://wa.me/94743277981" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
-        <a class="f-social tg" href="https://t.me/DasunTECH" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i></a>
-        <a class="f-social yt" href="https://youtube.com/@dassatech17?si=1U_SPbB2kyOBzmC4" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i></a>
-        <a class="f-social tt" href="https://www.tiktok.com/@dassagimhana?_r=1&_t=ZS-9ANsqokus5d" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i></a>
+  <div class="card">
+    <div class="field">
+      <span class="ico">🔗</span>
+      <input id="urlInput" type="url" inputmode="url" autocomplete="off"
+             spellcheck="false" placeholder="Video link එක මෙතන paste කරන්න...">
+      <div class="tools">
+        <button class="mini" id="pasteBtn" type="button">PASTE</button>
+        <button class="mini" id="clearBtn" type="button">✕</button>
       </div>
     </div>
-    <div class="f-sections">
-      <div class="f-col">
-        <h4>Quick Links</h4>
-        <a class="arrow" href="javascript:void(0)" onclick="showPage('home')">Home</a>
-        <a class="arrow" href="javascript:void(0)" onclick="showPage('social')">Social Media Boost</a>
-        <a class="arrow" href="javascript:void(0)" onclick="showPage('srilanka')">Sri Lanka Boost</a>
-        <a class="arrow" href="javascript:void(0)" onclick="showPage('webdesign')">Website Design</a>
-        <a class="arrow" href="javascript:void(0)" onclick="showPage('freefire')">Free Fire Top-Up</a>
-        <a class="arrow" href="javascript:void(0)" onclick="showPage('gbshell')">2vary GB Shell</a>
-        <a class="arrow" href="javascript:void(0)" onclick="showPage('premium')">Premium Accounts</a>
-      </div>
-      <div class="f-col">
-        <h4>Legal & Policies</h4>
-        <a href="javascript:void(0)" onclick="showPage('about')"><i class="fa-solid fa-file-shield"></i> Terms & Conditions</a>
-        <a href="javascript:void(0)" onclick="showPage('about')"><i class="fa-solid fa-user-lock"></i> Privacy Policy</a>
-        <a href="javascript:void(0)" onclick="showPage('about')"><i class="fa-solid fa-rotate-left"></i> Refund Policy</a>
-      </div>
-      <div class="f-col">
-        <h4>Customer Support</h4>
-        <p><i class="fa-brands fa-whatsapp"></i> 074 327 7981</p>
-        <p><i class="fa-solid fa-envelope"></i> gimahandasun@gmail.com</p>
-        <p><i class="fa-brands fa-telegram"></i> t.me/DasunTECH</p>
-        <a class="f-contact-btn" href="https://wa.me/94743277981?text=Hi%20DG%20STORE,%20I%20need%20support" target="_blank" rel="noopener"><i class="fa-solid fa-headset"></i> CONTACT US</a>
-      </div>
+
+    <button class="btn" id="fetchBtn" type="button">
+      <span id="btnIcon">⬇</span><span id="btnText">Download කරන්න</span>
+    </button>
+
+    <div class="chips">
+      <div class="chip on" data-p="facebook">Facebook</div>
+      <div class="chip" data-p="instagram">Instagram</div>
+      <div class="chip" data-p="tiktok">TikTok</div>
+      <div class="chip" data-p="youtube">YouTube</div>
     </div>
-    <div class="f-payments">
-      <div class="fp-title">Secure Payments Accepted Via</div>
-      <div class="f-pay-grid">
-        <div class="f-pay bd"><i class="fa-solid fa-building-columns" style="margin-right:6px"></i>BANK DEPOSIT</div>
-        <div class="f-pay ez"><i class="fa-solid fa-mobile-screen" style="margin-right:6px"></i>EZ Cash</div>
-      </div>
-    </div>
-    <div class="f-bottom">
-      <p>© 2026 <strong>DG STORE</strong>. All rights reserved.</p>
-      <p class="dev">Designed & Developed by <a href="https://wa.me/94743277981" target="_blank" rel="noopener">Dasun Gimhana</a></p>
-    </div>
+  </div>
+
+  <div id="status"></div>
+  <div id="result"></div>
+
+  <footer>
+    MediaGrab · Personal use සඳහා පමණි<br>
+    සියලුම හිමිකම් අදාළ මුල් අයිතිකරුවන් සතුය
   </footer>
-</section>
 
-<!-- PROFILE -->
-<section class="page" id="page-profile">
-  <h3 class="sec-title">MY PROFILE</h3>
+</div>
 
-  <div id="loginView" class="profile-card" style="text-align:center">
-    <div class="profile-pic-wrap">
-      <img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791371884/uxgdilvv6rgeqycr4dal.png" alt="Login">
-    </div>
-    <h4 class="profile-name">Welcome</h4>
-    <p class="profile-email" style="margin-bottom:14px">Sign in with Google to access your profile & orders</p>
-    <div class="glogo-btn" id="googleBtn"></div>
-    <div class="note mt-16"><i class="fa-solid fa-circle-info"></i> Your Google email is only used to create your unique DG ID. We never share your info.</div>
-  </div>
+<script>
+/* =========================================================
+   CONFIG
+   ========================================================= */
+const PROXY_ENDPOINT = '/api/facebook';       // Vercel serverless function
+const DIRECT_ENDPOINT = 'https://api.kcey.online/api/facebook';
+const DIRECT_KEY = 'kcey_3aac11b6ed5c49a5b3b0a2a2922a38de4014'; // fallback (local test only)
 
-  <div id="profileView" style="display:none">
-    <div class="whatsapp-profile">
-      <div class="wp-cover" id="wpCover">
-        <video id="coverVideo" muted loop autoplay playsinline style="display:none"></video>
-        <img id="coverImg" src="" alt="" style="display:none">
-        <button class="wp-cover-edit" onclick="document.getElementById('coverUpload').click()"><i class="fa-solid fa-camera"></i></button>
-        <input type="file" id="coverUpload" accept="image/*,video/*" style="display:none">
-      </div>
-      <div class="wp-profile-body">
-        <div class="wp-avatar-wrap">
-          <img id="userPic" src="" alt="Profile">
-          <label class="wp-avatar-edit" for="picUpload"><i class="fa-solid fa-camera"></i></label>
-          <input type="file" id="picUpload" accept="image/*" style="display:none">
-        </div>
-        <div class="wp-name-row">
-          <div class="wp-name" id="userName">User</div>
-          <button class="wp-name-edit" onclick="editUserName()"><i class="fa-solid fa-pen"></i></button>
-        </div>
-        <div class="wp-email" id="userEmail">email@example.com</div>
-        <div class="wp-id-badge"><i class="fa-solid fa-fingerprint"></i> <span id="userId">DG-00000000</span></div>
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+const input    = document.getElementById('urlInput');
+const fetchBtn = document.getElementById('fetchBtn');
+const pasteBtn = document.getElementById('pasteBtn');
+const clearBtn = document.getElementById('clearBtn');
+const btnIcon  = document.getElementById('btnIcon');
+const btnText  = document.getElementById('btnText');
+const statusEl = document.getElementById('status');
+const resultEl = document.getElementById('result');
 
-        <div class="wp-info-row">
-          <div class="wir-label"><i class="fa-brands fa-whatsapp" style="color:#25d366"></i> WhatsApp</div>
-          <div id="wpNumberDisplay" style="display:flex;align-items:center;gap:8px">
-            <span class="wir-value" id="userWpDisplay">Not verified</span>
+/* =========================================================
+   PLATFORM DETECTION
+   ========================================================= */
+const PATTERNS = {
+  facebook : /(facebook\.com|fb\.watch|fb\.me|m\.facebook\.com)/i,
+  instagram: /(instagram\.com|instagr\.am)/i,
+  tiktok   : /(tiktok\.com|vm\.tiktok\.com)/i,
+  youtube  : /(youtube\.com|youtu\.be)/i
+};
+
+function detectPlatform(url){
+  for (const [name, re] of Object.entries(PATTERNS)) {
+    if (re.test(url)) return name;
+  }
+  return null;
+}
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+function showStatus(type, msg){
+  statusEl.className = 'show';
+  if (type === 'loading') {
+    statusEl.innerHTML = `<div class="box load"><div class="spinner"></div><div>${msg}</div></div>`;
+  } else if (type === 'error') {
+    statusEl.innerHTML = `<div class="box err"><div>⚠️</div><div>${msg}</div></div>`;
+  } else {
+    statusEl.className = '';
+    statusEl.innerHTML = '';
+  }
+}
+
+function setLoading(on){
+  fetchBtn.disabled = on;
+  btnIcon.textContent = on ? '⏳' : '⬇';
+  btnText.textContent = on ? 'සොයමින්...' : 'Download කරන්න';
+}
+
+function fmtNum(n){
+  n = Number(n) || 0;
+  if (n >= 1e9) return (n / 1e9).toFixed(1).replace('.0','') + 'B';
+  if (n >= 1e6) return (n / 1e6).toFixed(1).replace('.0','') + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(1).replace('.0','') + 'K';
+  return String(n);
+}
+
+function esc(str){
+  return String(str ?? '').replace(/[&<>"']/g, c => (
+    {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
+  ));
+}
+
+function qualityLabel(link){
+  const q = String(link.quality || '').toLowerCase();
+  const t = String(link.type || '').toLowerCase();
+
+  if (q.includes('audio') || t.includes('audio'))
+    return { icon:'🎵', title:'Audio Only', sub:'M4A · ශබ්දය පමණයි' };
+
+  if (q === '360' || q.includes('360'))
+    return { icon:'📱', title:'360p Video', sub:'Data අඩුවෙන් · MP4' };
+
+  if (q === '720' || q.includes('720'))
+    return { icon:'🎬', title:'720p HD', sub:'MP4 Video' };
+
+  if (q === '1080' || q.includes('1080'))
+    return { icon:'💎', title:'1080p Full HD', sub:'MP4 Video' };
+
+  if (!q || q === 'video' || q === 'hd' || q.includes('hd'))
+    return { icon:'⚡', title:'HD Video', sub:'Watermark රහිත · MP4' };
+
+  return { icon:'🎞️', title:`Video ${esc(link.quality)}`, sub:'MP4 Video' };
+}
+
+/* =========================================================
+   FETCH FROM API
+   ========================================================= */
+async function callApi(url){
+  // 1) Try the Vercel proxy first (hides the key, no CORS issues)
+  try {
+    const r = await fetch(`${PROXY_ENDPOINT}?url=${encodeURIComponent(url)}`);
+    if (r.ok) {
+      const data = await r.json();
+      if (data && typeof data === 'object') return data;
+    }
+  } catch (_) { /* fall through */ }
+
+  // 2) Fallback: direct call (works when opening the file locally)
+  const direct = `${DIRECT_ENDPOINT}?url=${encodeURIComponent(url)}&key=${DIRECT_KEY}`;
+  const r2 = await fetch(direct);
+  if (!r2.ok) throw new Error('API එකට සම්බන්ධ වෙන්න බැරි වුණා');
+  return await r2.json();
+}
+
+/* =========================================================
+   RENDER RESULT
+   ========================================================= */
+function renderFacebook(data){
+  const md = data.metadata || {};
+  const dl = data.downloads || {};
+  const links = Array.isArray(dl.links) ? dl.links : [];
+
+  const thumb = dl.thumbnail || '';
+  const title = md.title || 'Facebook Video';
+
+  let html = '';
+
+  // thumbnail
+  if (thumb) {
+    html += `
+      <div class="thumb">
+        <img src="${esc(thumb)}" alt="thumbnail" referrerpolicy="no-referrer"
+             onerror="this.parentElement.style.display='none'">
+        ${md.duration ? `<div class="dur">${esc(md.duration)}</div>` : ''}
+      </div>`;
+  }
+
+  // meta
+  html += `<div class="meta">
+    <h2>${esc(title)}</h2>
+    <div class="author">👤 ${esc(md.author || 'Unknown')}</div>
+  </div>`;
+
+  // stats
+  const stats = [];
+  if (md.view_count)    stats.push({ n: fmtNum(md.view_count),    l:'VIEWS' });
+  if (md.like_count)    stats.push({ n: fmtNum(md.like_count),    l:'LIKES' });
+  if (md.comment_count) stats.push({ n: fmtNum(md.comment_count), l:'COMMENTS' });
+  if (md.resolution)    stats.push({ n: esc(md.resolution),       l:'RESOLUTION' });
+
+  if (stats.length) {
+    html += `<div class="stats">` +
+      stats.slice(0, 3).map(s =>
+        `<div class="stat"><b>${s.n}</b><small>${s.l}</small></div>`
+      ).join('') + `</div>`;
+  }
+
+  // downloads
+  if (links.length) {
+    html += `<div class="sec-title">Download Options</div>`;
+    links.forEach(link => {
+      if (!link || !link.url) return;
+      const q = qualityLabel(link);
+      html += `
+        <a class="dl" href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">
+          <div class="badge">${q.icon}</div>
+          <div class="txt">
+            <b>${q.title}</b>
+            <small>${q.sub}</small>
           </div>
-        </div>
+          <div class="go">GET</div>
+        </a>`;
+    });
+  } else {
+    html += `<div class="box err" style="margin-top:14px">
+      <div>⚠️</div><div>Download link කිසිවක් හමු නොවුණා</div></div>`;
+  }
 
-        <div class="wp-info-row" id="wpVerifyRow" style="display:block">
-          <div class="wir-label" style="margin-bottom:6px"><i class="fa-solid fa-shield-halved" style="color:var(--primary)"></i> Verify WhatsApp</div>
-          <div class="wp-verify-input">
-            <input type="tel" id="userWp" placeholder="07XXXXXXXX">
-            <button id="verifyWpBtn" onclick="verifyWpNumber()">Verify</button>
-          </div>
-        </div>
+  resultEl.innerHTML = html;
+  resultEl.className = 'show';
+  resultEl.scrollIntoView({ behavior:'smooth', block:'start' });
+}
 
-        <div class="wp-info-row">
-          <div class="wir-label"><i class="fa-solid fa-clock" style="color:var(--accent)"></i> Last Login</div>
-          <div class="wir-value" id="lastLoginDisplay">—</div>
-        </div>
+/* =========================================================
+   MAIN
+   ========================================================= */
+async function handleFetch(){
+  const url = input.value.trim();
 
-        <div class="profile-actions" style="margin-top:14px">
-          <button class="btn btn-ghost" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
-        </div>
+  if (!url) {
+    showStatus('error', 'කරුණාකර video link එකක් ඇතුළත් කරන්න');
+    input.focus();
+    return;
+  }
+  if (!/^https?:\/\//i.test(url)) {
+    showStatus('error', 'Link එක https:// වලින් පටන් ගන්න ඕනේ');
+    return;
+  }
 
-        <div class="orders-list">
-          <div class="orders-list-head">
-            <h4><i class="fa-solid fa-box-open"></i> My Orders</h4>
-            <span id="ordersCountBadge">0</span>
-          </div>
-          <div id="ordersContainer"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+  const platform = detectPlatform(url);
+  if (!platform) {
+    showStatus('error', 'මේ link එක හඳුනාගන්න බැරි වුණා. Facebook link එකක් උත්සාහ කරන්න');
+    return;
+  }
+  if (platform !== 'facebook') {
+    showStatus('error', `${platform} support තවම add කරලා නෑ — Facebook පමණයි දැනට`);
+    return;
+  }
 
-<!-- PAYMENT -->
-<section class="page" id="page-payment">
-  <h3 class="sec-title">PAYMENT DETAILS</h3>
+  resultEl.className = '';
+  resultEl.innerHTML = '';
+  showStatus('loading', 'Video එක සොයමින්... ටිකක් ඉන්න');
+  setLoading(true);
 
-  <div class="intro-box">
-    <strong>💳 Payment Information</strong><br>
-    Complete your payment using any of the methods below, then upload your receipt when placing your order.
-  </div>
+  try {
+    const data = await callApi(url);
 
-  <div class="card">
-    <div class="box-title" style="color:var(--primary)"><i class="fa-solid fa-mobile-screen-button"></i> EZ CASH NUMBER</div>
-    <div class="copy-row">
-      <div class="copy-row-body">
-        <div class="cl">EZ Number</div>
-        <div class="cv">0762664962</div>
-      </div>
-      <button class="copy-btn" onclick="copyText('0762664962',this)"><i class="fa-regular fa-copy"></i></button>
-    </div>
-  </div>
+    if (!data || data.status === false) {
+      throw new Error(data?.message || data?.error || 'Video එක හමු නොවුණා');
+    }
 
-  <div class="card">
-    <div class="box-title" style="color:var(--accent)"><i class="fa-solid fa-building-columns"></i> BANK DETAILS</div>
-    <div class="copy-row">
-      <div class="copy-row-body">
-        <div class="cl">Bank Name</div>
-        <div class="cv">People's Bank</div>
-      </div>
-    </div>
-    <div class="copy-row">
-      <div class="copy-row-body">
-        <div class="cl">Branch</div>
-        <div class="cv">Maho</div>
-      </div>
-      <button class="copy-btn" onclick="copyText('Maho',this)"><i class="fa-regular fa-copy"></i></button>
-    </div>
-    <div class="copy-row">
-      <div class="copy-row-body">
-        <div class="cl">Account Name</div>
-        <div class="cv">HPG Dasun Gimhana</div>
-      </div>
-      <button class="copy-btn" onclick="copyText('HPG Dasun Gimhana',this)"><i class="fa-regular fa-copy"></i></button>
-    </div>
-    <div class="copy-row">
-      <div class="copy-row-body">
-        <div class="cl">Account Number</div>
-        <div class="cv">052200140105510</div>
-      </div>
-      <button class="copy-btn" onclick="copyText('052200140105510',this)"><i class="fa-regular fa-copy"></i></button>
-    </div>
-  </div>
+    showStatus('none');
+    renderFacebook(data);
 
-  <div class="info-alert">
-    <div class="ia-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
-    <div class="ia-body">
-      <div class="ia-title">Important Notes</div>
-      <p>📸 After payment, please upload your receipt photo when placing the order.</p>
-      <p>💳 When sending money via EZ Cash, please add an extra <strong>LKR 20</strong> for transaction charges.</p>
-    </div>
-  </div>
-</section>
+  } catch (err) {
+    showStatus('error', err.message || 'මොකක්හරි වැරැද්දක් වුණා. ආයෙ උත්සාහ කරන්න');
+  } finally {
+    setLoading(false);
+  }
+}
 
-<!-- SOCIAL MEDIA BOOST -->
-<section class="page" id="page-social">
-  <div class="slider" id="socialSlider" data-interval="6000">
-    <div class="slide active" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791453073/sjctqdkpxxoljx54f0vx.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791453100/ho3d6v3f1lagpub8ovjg.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791453193/t4zq1671yajjkeyztzdy.png')"></div>
-    <div class="dots" id="socialDots"></div>
-  </div>
+/* =========================================================
+   EVENTS
+   ========================================================= */
+fetchBtn.addEventListener('click', handleFetch);
 
-  <h3 class="social-title">DG SOCIAL MEDIA<br>BOOST SERVICE</h3>
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleFetch();
+});
 
-  <div class="prod-section">
-    <div class="prod-section-head"><i class="fa-brands fa-tiktok"></i> TikTok Services <span class="pss-badge">NON DROP</span></div>
-    <div class="product-grid">
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-heart"></i></div><div class="pc-name">Likes 1000</div><div class="pc-price">700</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-eye"></i></div><div class="pc-name">Views 100</div><div class="pc-price">200</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-users"></i></div><div class="pc-name">Followers 1000</div><div class="pc-price">1900</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-bookmark"></i></div><div class="pc-name">Saves 1000</div><div class="pc-price">700</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-share"></i></div><div class="pc-name">Share 1000</div><div class="pc-price">900</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-comment"></i></div><div class="pc-name">Comments 1000</div><div class="pc-price">3500</div><div class="pc-lkr">LKR</div></div>
-    </div>
-  </div>
+pasteBtn.addEventListener('click', async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    if (text) {
+      input.value = text.trim();
+      input.focus();
+    }
+  } catch {
+    input.focus();
+    showStatus('error', 'Clipboard කියවන්න බෑ — අතින් paste කරන්න');
+  }
+});
 
-  <div class="prod-section">
-    <div class="prod-section-head"><i class="fa-brands fa-instagram"></i> Instagram Services <span class="pss-badge">NON DROP</span></div>
-    <div class="product-grid">
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-users"></i></div><div class="pc-name">Followers 1000</div><div class="pc-price">3300</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-heart"></i></div><div class="pc-name">Likes 1000</div><div class="pc-price">350</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-comment"></i></div><div class="pc-name">Comments 1000</div><div class="pc-price">1900</div><div class="pc-lkr">LKR</div></div>
-    </div>
-  </div>
+clearBtn.addEventListener('click', () => {
+  input.value = '';
+  input.focus();
+  resultEl.className = '';
+  resultEl.innerHTML = '';
+  showStatus('none');
+});
 
-  <div class="prod-section">
-    <div class="prod-section-head"><i class="fa-brands fa-facebook"></i> Facebook Services <span class="pss-badge">NON DROP</span></div>
-    <div class="product-grid">
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-users"></i></div><div class="pc-name">Followers 1000</div><div class="pc-price">1200</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-thumbs-up"></i></div><div class="pc-name">Post Likes 1000</div><div class="pc-price">800</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-people-group"></i></div><div class="pc-name">Group Member 1000</div><div class="pc-price">2700</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-comment"></i></div><div class="pc-name">Comments 1000</div><div class="pc-price">3200</div><div class="pc-lkr">LKR</div></div>
-    </div>
-  </div>
-
-  <div class="prod-section">
-    <div class="prod-section-head"><i class="fa-brands fa-youtube"></i> YouTube Services <span class="pss-badge">NON DROP</span></div>
-    <div class="product-grid">
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-thumbs-up"></i></div><div class="pc-name">Likes 1000</div><div class="pc-price">3500</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-eye"></i></div><div class="pc-name">Views 1000</div><div class="pc-price">2400</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-user-plus"></i></div><div class="pc-name">Subscribers 1000</div><div class="pc-price">29600</div><div class="pc-lkr">LKR</div></div>
-    </div>
-  </div>
-
-  <div class="form-card" id="sm-form">
-    <h4 class="form-title">PLACE YOUR ORDER</h4>
-    <div class="form-group"><label>Your Name</label><input class="form-control" id="sm-name" placeholder="Enter your name"></div>
-    <div class="form-group"><label>Your WhatsApp Number</label><input class="form-control" id="sm-wp" type="tel" placeholder="07XXXXXXXX"></div>
-    <div class="form-group">
-      <label><i class="fa-solid fa-cart-plus"></i> Order Items</label>
-      <div id="sm-items"></div>
-      <button type="button" class="add-btn" onclick="addSmItem()"><i class="fa-solid fa-plus"></i> Add Another Service</button>
-    </div>
-    <div class="total-box" id="sm-total-box"><div class="tl">Total Price</div><div class="tv" id="sm-total">LKR 0</div><div class="ez-note">⚡ + LKR 20 EZ Cash charge added</div><div class="ez-sub" id="sm-sub"></div></div>
-    <div class="form-group"><label>Payment Method</label>
-      <select class="form-control" id="sm-pay" onchange="recalcAllTotals()"><option>EZ Cash</option><option>Bank Transfer</option></select>
-    </div>
-    <div class="form-group">
-      <label><i class="fa-solid fa-link"></i> Video / Post Links</label>
-      <div id="sm-links"></div>
-      <button type="button" class="add-btn" onclick="addSmLink()"><i class="fa-solid fa-plus"></i> Add Another Link</button>
-    </div>
-    <div class="form-group"><label>Upload Payment Receipt</label>
-      <label class="file-drop"><div class="fd-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div><div><div class="fd-text">Tap to upload receipt</div><div class="fd-sub">JPG / PNG image</div></div><input type="file" accept="image/*" id="sm-receipt" onchange="previewFile(this,'sm-preview')"></label>
-      <img id="sm-preview" class="preview-img" style="display:none">
-    </div>
-    <button class="btn btn-order btn-block mt-16" onclick="submitSocialOrder(this)"><i class="fa-solid fa-paper-plane"></i> PLACE ORDER NOW</button>
-  </div>
-</section>
-
-<!-- SRILANKA BOOST -->
-<section class="page" id="page-srilanka">
-  <div class="slider" id="slSlider" data-interval="6000">
-    <div class="slide active" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791454022/icgsvzsany4r1dbeskf8.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791454066/yv3ltzszpa68rkva9l6z.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791454148/sbrwhhkt8jidmryizzy8.png')"></div>
-    <div class="dots" id="slDots"></div>
-  </div>
-
-  <div class="intro-box">
-    <strong>🇱🇰 Sri Lanka Local Boost</strong><br>
-    Real Sri Lankan engagement — 100% Facebook Monetization-friendly services.
-  </div>
-
-  <div class="prod-section">
-    <div class="prod-section-head"><i class="fa-brands fa-tiktok"></i> TikTok Service <span class="pss-badge">SL BOOST</span></div>
-    <div class="product-grid">
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-heart"></i></div><div class="pc-name">550 Likes + 1000 Views</div><div class="pc-price">1700</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-heart"></i></div><div class="pc-name">750 Likes + 3000 Views</div><div class="pc-price">1900</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-heart"></i></div><div class="pc-name">900 Likes + 6000 Views</div><div class="pc-price">2000</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-heart"></i></div><div class="pc-name">1K Likes + 12K Views</div><div class="pc-price">3200</div><div class="pc-lkr">LKR</div></div>
-    </div>
-  </div>
-
-  <div class="prod-section">
-    <div class="prod-section-head"><i class="fa-brands fa-facebook"></i> Facebook Followers (Sri Lanka) <span class="pss-badge">SL BOOST</span></div>
-    <div class="product-grid">
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-users"></i></div><div class="pc-name">500 Followers</div><div class="pc-price">1200</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-users"></i></div><div class="pc-name">1K Followers</div><div class="pc-price">1700</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-users"></i></div><div class="pc-name">2K Followers</div><div class="pc-price">2200</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-users"></i></div><div class="pc-name">5K Followers</div><div class="pc-price">3350</div><div class="pc-lkr">LKR</div></div>
-    </div>
-  </div>
-
-  <div class="prod-section">
-    <div class="prod-section-head"><i class="fa-solid fa-circle-check"></i> Monetize ON Followers <span class="pss-badge" style="background:var(--accent)">MONETIZE</span></div>
-    <div class="product-grid">
-      <div class="product-card"><div class="pc-icon" style="background:var(--accent-gradient)"><i class="fa-solid fa-user-plus"></i></div><div class="pc-name">2K Follow</div><div class="pc-price">1700</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:var(--accent-gradient)"><i class="fa-solid fa-user-plus"></i></div><div class="pc-name">3K Follow</div><div class="pc-price">2000</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:var(--accent-gradient)"><i class="fa-solid fa-user-plus"></i></div><div class="pc-name">5K Follow</div><div class="pc-price">2500</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:var(--accent-gradient)"><i class="fa-solid fa-user-plus"></i></div><div class="pc-name">10K Follow</div><div class="pc-price">4500</div><div class="pc-lkr">LKR</div></div>
-    </div>
-  </div>
-
-  <div class="prod-section">
-    <div class="prod-section-head"><i class="fa-solid fa-eye"></i> Facebook Views <span class="pss-badge">SL BOOST</span></div>
-    <div class="product-grid">
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-eye"></i></div><div class="pc-name">15K Views</div><div class="pc-price">2300</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-eye"></i></div><div class="pc-name">55K Views</div><div class="pc-price">3700</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-eye"></i></div><div class="pc-name">75K Views</div><div class="pc-price">4600</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-eye"></i></div><div class="pc-name">150K Views</div><div class="pc-price">6000</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-eye"></i></div><div class="pc-name">300K Views</div><div class="pc-price">11500</div><div class="pc-lkr">LKR</div></div>
-    </div>
-  </div>
-
-  <div class="prod-section">
-    <div class="prod-section-head"><i class="fa-solid fa-comment"></i> FB Comments & Likes <span class="pss-badge">SL BOOST</span></div>
-    <div class="product-grid">
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-comment"></i></div><div class="pc-name">200 Comments</div><div class="pc-price">2400</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-thumbs-up"></i></div><div class="pc-name">500 Likes</div><div class="pc-price">2500</div><div class="pc-lkr">LKR</div></div>
-    </div>
-  </div>
-
-  <div class="form-card" id="sl-form">
-    <h4 class="form-title">PLACE YOUR ORDER</h4>
-    <div class="form-group"><label>Your Name</label><input class="form-control" id="sl-name" placeholder="Enter your name"></div>
-    <div class="form-group"><label>Your WhatsApp Number</label><input class="form-control" id="sl-wp" type="tel" placeholder="07XXXXXXXX"></div>
-    <div class="form-group">
-      <label><i class="fa-solid fa-cart-plus"></i> Order Items</label>
-      <div id="sl-items"></div>
-      <button type="button" class="add-btn" onclick="addSlItem()"><i class="fa-solid fa-plus"></i> Add Another Package</button>
-    </div>
-    <div class="total-box" id="sl-total-box"><div class="tl">Total Price</div><div class="tv" id="sl-total">LKR 0</div><div class="ez-note">⚡ + LKR 20 EZ Cash charge added</div><div class="ez-sub" id="sl-sub"></div></div>
-    <div class="form-group"><label>Payment Method</label>
-      <select class="form-control" id="sl-pay" onchange="recalcAllTotals()"><option>EZ Cash</option><option>Bank Transfer</option></select>
-    </div>
-    <div class="form-group">
-      <label><i class="fa-solid fa-link"></i> Video / Post Links</label>
-      <div id="sl-links"></div>
-      <button type="button" class="add-btn" onclick="addSlLink()"><i class="fa-solid fa-plus"></i> Add Another Link</button>
-    </div>
-    <div class="form-group"><label>Upload Payment Receipt</label>
-      <label class="file-drop"><div class="fd-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div><div><div class="fd-text">Tap to upload receipt</div><div class="fd-sub">JPG / PNG image</div></div><input type="file" accept="image/*" id="sl-receipt" onchange="previewFile(this,'sl-preview')"></label>
-      <img id="sl-preview" class="preview-img" style="display:none">
-    </div>
-    <button class="btn btn-order btn-block mt-16" onclick="submitSLOrder(this)"><i class="fa-solid fa-paper-plane"></i> PLACE ORDER NOW</button>
-  </div>
-</section>
-
-<!-- WEB DESIGN -->
-<section class="page" id="page-webdesign">
-  <div class="slider" id="wdSlider" data-interval="6000">
-    <div class="slide active" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791454768/k9dadjt2d4jf7o34bmew.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791454823/ew31nsl07bvx4fpkjpes.png')"></div>
-    <div class="dots" id="wdDots"></div>
-  </div>
-
-  <div class="intro-box">
-    <strong>💻 Professional Website Design</strong><br>
-    Fast, modern, mobile-friendly websites with stunning animations and dark/light mode.
-  </div>
-
-  <div class="contact-owner-box">
-    <div class="cob-icon"><i class="fa-solid fa-headset"></i></div>
-    <h3>CONTACT THE OWNER</h3>
-    <p>Want a website for your business? Get in touch with me directly on WhatsApp or Telegram for pricing, details, and custom requests.</p>
-    <div class="contact-btns">
-      <a class="contact-btn wa" href="https://wa.me/94743277981?text=Hi%20DG%20STORE,%20I%20want%20a%20website" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WHATSAPP</a>
-      <a class="contact-btn tg" href="https://t.me/DasunTECH" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i> TELEGRAM</a>
-    </div>
-  </div>
-
-  <h3 class="sec-title">MY PROJECTS</h3>
-
-  <div class="projects-list">
-    <a class="proj" href="http://dgsaver.ddns.net" target="_blank" rel="noopener">
-      <div class="pi"><i class="fa-solid fa-download"></i></div>
-      <div class="pt"><h5>Social Media Download Web</h5><span>dgsaver.ddns.net</span></div>
-      <div class="proj-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
-    </a>
-    <a class="proj" href="https://dgui.ddns.net/" target="_blank" rel="noopener">
-      <div class="pi"><i class="fa-solid fa-palette"></i></div>
-      <div class="pt"><h5>Primayam UI Free Download Web</h5><span>dgui.ddns.net</span></div>
-      <div class="proj-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
-    </a>
-    <a class="proj" href="https://dgsubz.ddns.net" target="_blank" rel="noopener">
-      <div class="pi"><i class="fa-solid fa-closed-captioning"></i></div>
-      <div class="pt"><h5>Subtitles Translate & SRT/ASS Convert</h5><span>dgsubz.ddns.net</span></div>
-      <div class="proj-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
-    </a>
-    <a class="proj" href="https://jerrytopup.free.nf/" target="_blank" rel="noopener">
-      <div class="pi"><i class="fa-solid fa-gamepad"></i></div>
-      <div class="pt"><h5>ID Top-Up Web</h5><span>jerrytopup.free.nf</span></div>
-      <div class="proj-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
-    </a>
-    <a class="proj" href="https://dg-1-x-signal.vercel.app" target="_blank" rel="noopener">
-      <div class="pi"><i class="fa-solid fa-chart-line"></i></div>
-      <div class="pt"><h5>1xBet Signal Web</h5><span>dg-1-x-signal.vercel.app</span></div>
-      <div class="proj-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
-    </a>
-    <a class="proj" href="https://dg-modz-store.vercel.app" target="_blank" rel="noopener">
-      <div class="pi"><i class="fa-solid fa-mobile-screen"></i></div>
-      <div class="pt"><h5>ModzApp Download Web</h5><span>dg-modz-store.vercel.app</span></div>
-      <div class="proj-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
-    </a>
-  </div>
-
-  <div class="cta-box">
-    <div class="cta-icon"><i class="fa-solid fa-gift"></i></div>
-    <div class="cta-body">
-      <div class="cta-title">GET YOUR WEBSITE BUILT</div>
-      <p>Custom business websites with modern design, animations, dark/light mode, and full functionality.</p>
-      <p class="cta-highlight">🎁 <strong>FREE</strong> Domain & Hosting included!</p>
-    </div>
-  </div>
-</section>
-
-<!-- FREE FIRE -->
-<section class="page" id="page-freefire">
-  <div class="slider" id="ffSlider" data-interval="6000">
-    <div class="slide active" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791376620/qcwxelecydt1ah5ykc3f.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791376737/middyghmwxprkod7dygd.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791376884/nmcekljoaanljorxhqxz.png')"></div>
-    <div class="dots" id="ffDots"></div>
-  </div>
-  <h3 class="social-title">FREE FIRE TOP-UP</h3>
-
-  <div class="green-box">
-    <div class="box-title" style="color:#d97706"><i class="fa-solid fa-gem"></i> NORMAL DIAMOND</div>
-    <div class="diamond-grid">
-      <div class="diamond-item" onclick="selectFFItem('Normal 200 Diamonds|550')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791377290/faztdeikzvj0ukiniro0.png" alt="diamond"><h5>200 Diamonds</h5><span class="dprice">550 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('Normal 400 Diamonds|1100')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791377290/faztdeikzvj0ukiniro0.png" alt="diamond"><h5>400 Diamonds</h5><span class="dprice">1100 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('Normal 600 Diamonds|1620')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791377290/faztdeikzvj0ukiniro0.png" alt="diamond"><h5>600 Diamonds</h5><span class="dprice">1620 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('Normal 800 Diamonds|2150')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791377290/faztdeikzvj0ukiniro0.png" alt="diamond"><h5>800 Diamonds</h5><span class="dprice">2150 LKR</span></div>
-    </div>
-  </div>
-
-  <div class="blue-box">
-    <div class="box-title" style="color:#2563eb"><i class="fa-solid fa-gem"></i> SPECIAL DIAMOND</div>
-    <div class="diamond-grid">
-      <div class="diamond-item" onclick="selectFFItem('Special 25 Diamonds|120')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791377290/faztdeikzvj0ukiniro0.png" alt="diamond"><h5>25 Diamonds</h5><span class="dprice">120 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('Special 100 Diamonds|350')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791377290/faztdeikzvj0ukiniro0.png" alt="diamond"><h5>100 Diamonds</h5><span class="dprice">350 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('Special 310 Diamonds|990')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791377290/faztdeikzvj0ukiniro0.png" alt="diamond"><h5>310 Diamonds</h5><span class="dprice">990 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('Special 520 Diamonds|1700')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791377290/faztdeikzvj0ukiniro0.png" alt="diamond"><h5>520 Diamonds</h5><span class="dprice">1700 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('Special 5600 Diamonds|16400')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791377290/faztdeikzvj0ukiniro0.png" alt="diamond"><h5>5600 Diamonds</h5><span class="dprice">16400 LKR</span></div>
-    </div>
-  </div>
-
-  <div class="gold-box">
-    <div class="box-title" style="color:#d97706"><i class="fa-solid fa-thumbs-up"></i> FREE FIRE PROFILE LIKES</div>
-    <div class="diamond-grid">
-      <div class="diamond-item" onclick="selectFFItem('FF Profile Like 200|180')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791680367/istba8y444xglbrhuvqm.png" alt="likes"><h5>Like 200</h5><span class="dprice">180 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('FF Profile Like 400|320')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791680367/istba8y444xglbrhuvqm.png" alt="likes"><h5>Like 400</h5><span class="dprice">320 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('FF Profile Like 600|500')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791680367/istba8y444xglbrhuvqm.png" alt="likes"><h5>Like 600</h5><span class="dprice">500 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('FF Profile Like 1400|840')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791680367/istba8y444xglbrhuvqm.png" alt="likes"><h5>Like 1400</h5><span class="dprice">840 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('FF Profile Like 6000|3100')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791680367/istba8y444xglbrhuvqm.png" alt="likes"><h5>Like 6000</h5><span class="dprice">3100 LKR</span></div>
-    </div>
-  </div>
-
-  <div class="pink-box">
-    <div class="box-title" style="color:#db2777"><i class="fa-solid fa-crown"></i> WEEKLY & MONTHLY PASSES</div>
-    <div class="diamond-grid">
-      <div class="diamond-item" onclick="selectFFItem('Weekly Lite|135')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791456165/sdtv22uyyxtxhkgdnxty.png" alt="weekly lite"><h5>Weekly Lite</h5><span class="dprice">135 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('Weekly|560')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791456120/wl7mjfb5uu0nhbs593ly.png" alt="weekly"><h5>Weekly</h5><span class="dprice">560 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('Monthly|2680')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791456194/agftccce74vgdhxhygkx.png" alt="monthly"><h5>Monthly</h5><span class="dprice">2680 LKR</span></div>
-      <div class="diamond-item" onclick="selectFFItem('LV UP Pass|1430')"><img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791456228/rh4twfn7njmvxbu6ogt0.png" alt="lv up"><h5>LV UP Pass</h5><span class="dprice">1430 LKR</span></div>
-    </div>
-  </div>
-
-  <div class="ff-verify-box" id="ff-verify-box">
-    <div class="ffv-head">
-      <div class="ffv-icon"><i class="fa-solid fa-id-card"></i></div>
-      <div class="ffv-title-wrap">
-        <div class="ffv-title">Verify Free Fire ID</div>
-        <div class="ffv-sub">Enter your ID to verify & auto-fill</div>
-      </div>
-    </div>
-    <div class="ffv-input-row">
-      <input type="text" id="ff-verify-id" class="form-control" placeholder="Enter your Free Fire UID" inputmode="numeric" autocomplete="off">
-      <button class="ffv-btn" id="ff-verify-btn" onclick="verifyFFId()"><i class="fa-solid fa-shield-halved"></i> Verify</button>
-    </div>
-    <div id="ff-verify-status" class="ffv-status"></div>
-  </div>
-
-  <div class="form-card" id="ff-form">
-    <h4 class="form-title">FREE FIRE ORDER</h4>
-    <div class="form-group"><label>Full Name</label><input class="form-control" id="ff-name" placeholder="Your full name"></div>
-    <div class="form-group"><label>Your WhatsApp Number</label><input class="form-control" id="ff-wp" type="tel" placeholder="07XXXXXXXX"></div>
-    <div class="form-group">
-      <label>Free Fire Account ID</label>
-      <input class="form-control" id="ff-id" placeholder="Verify your ID first" readonly>
-      <div class="ff-id-note"><i class="fa-solid fa-lock"></i> Verify your FF ID above — this will be filled automatically.</div>
-    </div>
-    <div class="form-group"><label>Select Package</label>
-      <select class="form-control" id="ff-pkg" onchange="ffCalc()">
-        <option value="">Select Package</option>
-        <optgroup label="Normal Diamond">
-          <option value="Normal 200 Diamonds|550">200 Diamonds — 550 LKR</option>
-          <option value="Normal 400 Diamonds|1100">400 Diamonds — 1100 LKR</option>
-          <option value="Normal 600 Diamonds|1620">600 Diamonds — 1620 LKR</option>
-          <option value="Normal 800 Diamonds|2150">800 Diamonds — 2150 LKR</option>
-        </optgroup>
-        <optgroup label="Special Diamond">
-          <option value="Special 25 Diamonds|120">25 Diamonds — 120 LKR</option>
-          <option value="Special 100 Diamonds|350">100 Diamonds — 350 LKR</option>
-          <option value="Special 310 Diamonds|990">310 Diamonds — 990 LKR</option>
-          <option value="Special 520 Diamonds|1700">520 Diamonds — 1700 LKR</option>
-          <option value="Special 5600 Diamonds|16400">5600 Diamonds — 16400 LKR</option>
-        </optgroup>
-        <optgroup label="FF Profile Likes">
-          <option value="FF Profile Like 200|180">Like 200 — 180 LKR</option>
-          <option value="FF Profile Like 400|320">Like 400 — 320 LKR</option>
-          <option value="FF Profile Like 600|500">Like 600 — 500 LKR</option>
-          <option value="FF Profile Like 1400|840">Like 1400 — 840 LKR</option>
-          <option value="FF Profile Like 6000|3100">Like 6000 — 3100 LKR</option>
-        </optgroup>
-        <optgroup label="Passes">
-          <option value="Weekly Lite|135">Weekly Lite — 135 LKR</option>
-          <option value="Weekly|560">Weekly — 560 LKR</option>
-          <option value="Monthly|2680">Monthly — 2680 LKR</option>
-          <option value="LV UP Pass|1430">LV UP Pass — 1430 LKR</option>
-        </optgroup>
-      </select>
-    </div>
-    <div class="form-group"><label>Quantity</label><input class="form-control" id="ff-qty" type="number" min="1" value="1" oninput="ffCalc()"></div>
-    <div class="total-box" id="ff-total-box"><div class="tl">Total Price</div><div class="tv" id="ff-total">LKR 0</div><div class="ez-note">⚡ + LKR 20 EZ Cash charge added</div><div class="ez-sub" id="ff-sub"></div></div>
-    <div class="form-group"><label>Payment Method</label>
-      <select class="form-control" id="ff-pay" onchange="recalcAllTotals()"><option>EZ Cash</option><option>Bank Transfer</option></select>
-    </div>
-    <div class="form-group"><label>Upload Payment Receipt</label>
-      <label class="file-drop"><div class="fd-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div><div><div class="fd-text">Tap to upload receipt</div><div class="fd-sub">JPG / PNG image</div></div><input type="file" accept="image/*" id="ff-receipt" onchange="previewFile(this,'ff-preview')"></label>
-      <img id="ff-preview" class="preview-img" style="display:none">
-    </div>
-    <button class="btn btn-order btn-block mt-16" onclick="submitOrder('ff',this)"><i class="fa-solid fa-paper-plane"></i> PLACE ORDER NOW</button>
-    <div class="order-note">
-      <i class="fa-solid fa-clock"></i>
-      <div>Your order will remain in our system for <strong>5 to 8 minutes</strong>. If not delivered within that time, please contact us so we can add your order manually.</div>
-    </div>
-  </div>
-</section>
-
-<!-- GB SHELL -->
-<section class="page" id="page-gbshell">
-  <div class="slider" id="gbSlider" data-interval="6000">
-    <div class="slide active" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791380645/gntxjzypmnfw6slzftlb.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791380722/trhxxgmvosipcanyyz0w.png')"></div>
-    <div class="dots" id="gbDots"></div>
-  </div>
-  <h3 class="social-title">2VARY GB SHELL SERVICE</h3>
-  <div class="intro-box"><strong>30 / 60 DAYS HIGH-SPEED PAID V2RAY CONFIGS AVAILABLE</strong></div>
-  <div class="grid2" style="margin-top:12px">
-    <div class="feat small"><div class="fi"><i class="fa-solid fa-download"></i></div><h4>High Speed Download</h4><p>Blazing-fast download speeds.</p></div>
-    <div class="feat small"><div class="fi"><i class="fa-solid fa-upload"></i></div><h4>High Speed Upload</h4><p>Fast uploads for gaming & work.</p></div>
-    <div class="feat small"><div class="fi"><i class="fa-solid fa-phone-volume"></i></div><h4>WhatsApp Call</h4><p>Free WhatsApp calling supported.</p></div>
-    <div class="feat small"><div class="fi"><i class="fa-brands fa-youtube"></i></div><h4>YT 4K + Netflix</h4><p>Stream 4K without buffering.</p></div>
-    <div class="feat small"><div class="fi"><i class="fa-solid fa-gamepad"></i></div><h4>Low-Ping Gaming</h4><p>Optimized routing for gaming.</p></div>
-    <div class="feat small"><div class="fi"><i class="fa-solid fa-wifi"></i></div><h4>All Routers</h4><p>SIM + Unlocked routers supported.</p></div>
-  </div>
-  <div class="note" style="margin-top:14px"><i class="fa-solid fa-bolt"></i> Packages below have <strong>NO SPEED LIMIT</strong>. Enjoy unlimited browsing!</div>
-  <h3 class="sec-title">SIM PACKAGES</h3>
-  <div class="price-group"><h4><i class="fa-solid fa-signal"></i> Dialog SIM</h4>
-    <div class="pkg-grid">
-      <div class="pkg-card"><div class="pkg-icon"><i class="fa-brands fa-tiktok"></i></div><div class="pkg-body"><h5>TikTok 297 — 1 Week Unlimited</h5><span class="pkg-price">LKR 297</span></div></div>
-      <div class="pkg-card"><div class="pkg-icon"><i class="fa-brands fa-tiktok"></i></div><div class="pkg-body"><h5>TikTok 997 — 30 Days Unlimited</h5><span class="pkg-price">LKR 997</span></div></div>
-      <div class="pkg-card"><div class="pkg-icon green"><i class="fa-solid fa-share-nodes"></i></div><div class="pkg-body"><h5>Social 348 — 30 Days 20 GB</h5><span class="pkg-price">LKR 348</span></div></div>
-      <div class="pkg-card"><div class="pkg-icon green"><i class="fa-solid fa-share-nodes"></i></div><div class="pkg-body"><h5>Social 1188 — 30 Days Unlimited</h5><span class="pkg-price">LKR 1188</span></div></div>
-    </div>
-  </div>
-  <div class="price-group"><h4><i class="fa-solid fa-router"></i> Dialog ROUTER</h4>
-    <div class="pkg-grid">
-      <div class="pkg-card"><div class="pkg-icon blue"><i class="fa-solid fa-wifi"></i></div><div class="pkg-body"><h5>Router Zoom 298 — 30 Days 30 GB</h5><span class="pkg-price">LKR 298</span></div></div>
-      <div class="pkg-card"><div class="pkg-icon blue"><i class="fa-solid fa-wifi"></i></div><div class="pkg-body"><h5>Router Zoom 724 — 30 Days Unlimited</h5><span class="pkg-price">LKR 724</span></div></div>
-    </div>
-  </div>
-  <div class="price-group"><h4><i class="fa-solid fa-tower-cell"></i> Airtel SIM & Unlock Router</h4>
-    <div class="pkg-grid">
-      <div class="pkg-card"><div class="pkg-icon red"><i class="fa-brands fa-tiktok"></i></div><div class="pkg-body"><h5>TikTok 297 — 1 Week Unlimited</h5><span class="pkg-price">LKR 297</span></div></div>
-      <div class="pkg-card"><div class="pkg-icon red"><i class="fa-brands fa-tiktok"></i></div><div class="pkg-body"><h5>TikTok 997 — 30 Days Unlimited</h5><span class="pkg-price">LKR 997</span></div></div>
-      <div class="pkg-card"><div class="pkg-icon red"><i class="fa-solid fa-globe"></i></div><div class="pkg-body"><h5>Zoom — 30 GB</h5><span class="pkg-price">Contact Us</span></div></div>
-      <div class="pkg-card"><div class="pkg-icon red"><i class="fa-solid fa-bolt"></i></div><div class="pkg-body"><h5>135 — 7 Days Unlimited</h5><span class="pkg-price">LKR 135</span></div></div>
-      <div class="pkg-card"><div class="pkg-icon red"><i class="fa-brands fa-youtube"></i></div><div class="pkg-body"><h5>YouTube 260 — 30 Days Unlimited</h5><span class="pkg-price">LKR 260</span></div></div>
-    </div>
-  </div>
-  <div class="price-group"><h4><i class="fa-solid fa-tower-cell"></i> Hutch SIM & Unlock Router</h4>
-    <div class="pkg-grid">
-      <div class="pkg-card"><div class="pkg-icon purple"><i class="fa-solid fa-globe"></i></div><div class="pkg-body"><h5>Zoom 224 — 30 GB / 30 Days</h5><span class="pkg-price">LKR 224</span></div></div>
-    </div>
-  </div>
-  <div class="price-group"><h4><i class="fa-solid fa-tower-cell"></i> Mobitel SIM & Unlock Router</h4>
-    <div class="pkg-grid">
-      <div class="pkg-card"><div class="pkg-icon orange"><i class="fa-solid fa-globe"></i></div><div class="pkg-body"><h5>Zoom 222 — 25 GB / 30 Days (All IP)</h5><span class="pkg-price">LKR 222</span></div></div>
-    </div>
-  </div>
-  <div class="price-group"><h4><i class="fa-solid fa-house-signal"></i> SLT Fiber & SLT Zoom Router</h4>
-    <div class="pkg-grid">
-      <div class="pkg-card"><div class="pkg-icon"><i class="fa-solid fa-tv"></i></div><div class="pkg-body"><h5>Fiber Netflix 1990 — 30 Days Unlimited</h5><span class="pkg-price">LKR 1990</span></div></div>
-      <div class="pkg-card"><div class="pkg-icon"><i class="fa-solid fa-wifi"></i></div><div class="pkg-body"><h5>SLT Zoom — 195 / 490 / 235</h5><span class="pkg-price">From LKR 195</span></div></div>
-    </div>
-  </div>
-  <div class="note"><i class="fa-solid fa-flask"></i> A <strong>Test</strong> is also available — try before you buy!</div>
-  <h3 class="sec-title">V2RAY PRICE LIST</h3>
-  <div class="pkg-grid">
-    <div class="pkg-card"><div class="pkg-icon green"><i class="fa-solid fa-database"></i></div><div class="pkg-body"><h5>100 GB Data</h5><span class="pkg-price">Rs 350</span></div></div>
-    <div class="pkg-card"><div class="pkg-icon green"><i class="fa-solid fa-database"></i></div><div class="pkg-body"><h5>200 GB Data</h5><span class="pkg-price">Rs 500</span></div></div>
-    <div class="pkg-card"><div class="pkg-icon green"><i class="fa-solid fa-infinity"></i></div><div class="pkg-body"><h5>Unlimited Data</h5><span class="pkg-price">Rs 650</span></div></div>
-  </div>
-  <div class="form-card" id="gb-form">
-    <h4 class="form-title">PLACE YOUR ORDER</h4>
-    <div class="form-group"><label>Your Name</label><input class="form-control" id="gb-name" placeholder="Your name"></div>
-    <div class="form-group"><label>Your WhatsApp Number</label><input class="form-control" id="gb-wp" type="tel" placeholder="07XXXXXXXX"></div>
-    <div class="form-group"><label>Selected SIM / Network</label>
-      <select class="form-control" id="gb-sim"><option>Dialog</option><option>Airtel</option><option>Hutch</option><option>Mobitel</option><option>SLT</option></select>
-    </div>
-    <div class="form-group"><label>Selected Package</label>
-      <select class="form-control" id="gb-pkg">
-        <option value="">Select Package</option>
-        <optgroup label="Dialog SIM">
-          <option value="Dialog TikTok 297 1 Week Unlimited">TikTok 297 — 1 Week Unlimited</option>
-          <option value="Dialog TikTok 997 30 Days Unlimited">TikTok 997 — 30 Days Unlimited</option>
-          <option value="Dialog Social 348 30 Days 20 GB">Social 348 — 30 Days 20 GB</option>
-          <option value="Dialog Social 1188 30 Days Unlimited">Social 1188 — 30 Days Unlimited</option>
-        </optgroup>
-        <optgroup label="Dialog Router">
-          <option value="Dialog Router Zoom 298 30 Days 30 GB">Router Zoom 298 — 30 Days 30 GB</option>
-          <option value="Dialog Router Zoom 724 30 Days Unlimited">Router Zoom 724 — 30 Days Unlimited</option>
-        </optgroup>
-        <optgroup label="Airtel SIM & Router">
-          <option value="Airtel TikTok 297 1 Week Unlimited">TikTok 297 — 1 Week Unlimited</option>
-          <option value="Airtel TikTok 997 30 Days Unlimited">TikTok 997 — 30 Days Unlimited</option>
-          <option value="Airtel Zoom 30 GB">Zoom — 30 GB</option>
-          <option value="Airtel 135 7 Days Unlimited">135 — 7 Days Unlimited</option>
-          <option value="Airtel YouTube 260 30 Days Unlimited">YouTube 260 — 30 Days Unlimited</option>
-        </optgroup>
-        <optgroup label="Hutch SIM & Router">
-          <option value="Hutch Zoom 224 30 GB 30 Days">Zoom 224 — 30 GB / 30 Days</option>
-        </optgroup>
-        <optgroup label="Mobitel SIM & Router">
-          <option value="Mobitel Zoom 222 25 GB 30 Days">Zoom 222 — 25 GB / 30 Days (All IP)</option>
-        </optgroup>
-        <optgroup label="SLT Fiber & Router">
-          <option value="SLT Fiber Netflix 1990 30 Days Unlimited">Fiber Netflix 1990 — 30 Days Unlimited</option>
-          <option value="SLT Zoom 195/490/235">SLT Zoom — 195 / 490 / 235</option>
-        </optgroup>
-      </select>
-    </div>
-    <div class="form-group"><label>Selected GB Count</label>
-      <select class="form-control" id="gb-gb" onchange="gbCalc()">
-        <option value="">Select GB</option>
-        <option value="100 GB|350">100 GB — Rs 350</option>
-        <option value="200 GB|500">200 GB — Rs 500</option>
-        <option value="Unlimited|650">Unlimited — Rs 650</option>
-      </select>
-    </div>
-    <div class="total-box" id="gb-total-box"><div class="tl">Total Price</div><div class="tv" id="gb-total">LKR 0</div><div class="ez-note">⚡ + LKR 20 EZ Cash charge added</div><div class="ez-sub" id="gb-sub"></div></div>
-    <div class="form-group"><label>Payment Method</label>
-      <select class="form-control" id="gb-pay" onchange="recalcAllTotals()"><option>EZ Cash</option><option>Bank Transfer</option></select>
-    </div>
-    <div class="form-group"><label>Upload Payment Receipt</label>
-      <label class="file-drop"><div class="fd-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div><div><div class="fd-text">Tap to upload receipt</div><div class="fd-sub">JPG / PNG image</div></div><input type="file" accept="image/*" id="gb-receipt" onchange="previewFile(this,'gb-preview')"></label>
-      <img id="gb-preview" class="preview-img" style="display:none">
-    </div>
-    <button class="btn btn-order btn-block mt-16" onclick="submitOrder('gb',this)"><i class="fa-solid fa-paper-plane"></i> PLACE ORDER NOW</button>
-  </div>
-</section>
-
-<!-- PREMIUM -->
-<section class="page" id="page-premium">
-  <div class="slider" id="prSlider" data-interval="6000">
-    <div class="slide active" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791385095/c0r3temxroa2y0izs5ue.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791385254/ch5cgwcwdlg2gcuq8awo.png')"></div>
-    <div class="dots" id="prDots"></div>
-  </div>
-  <h3 class="social-title">PREMIUM ACCOUNTS</h3>
-  <div class="intro-box"><strong>🔥 PREMIUM ACCOUNTS AVAILABLE</strong><br>Get instant access to premium subscriptions at the best prices in Sri Lanka.</div>
-  <div class="app-grid">
-    <div class="app-card">
-      <div class="app-head"><div class="app-logo tv"><i class="fa-solid fa-chart-line"></i></div><div><h4>TradingView</h4><span>Charting Platform</span></div></div>
-      <div class="app-row"><span class="ar-name">1 Month — Shared</span><span class="ar-price">LKR 1,400</span></div>
-      <div class="app-row"><span class="ar-name">3 Months — Shared</span><span class="ar-price">LKR 3,700</span></div>
-      <div class="app-row"><span class="ar-name">6 Months — Shared</span><span class="ar-price">LKR 6,700</span></div>
-      <div class="app-row"><span class="ar-name">1 Month — Private</span><span class="ar-price">LKR 3,500</span></div>
-    </div>
-    <div class="app-card">
-      <div class="app-head"><div class="app-logo gm"><i class="fa-solid fa-robot"></i></div><div><h4>Gemini AI</h4><span>Google AI Pro</span></div></div>
-      <div class="app-row"><span class="ar-name">18 Months — Owner Mail</span><span class="ar-price">LKR 1,800</span></div>
-    </div>
-    <div class="app-card">
-      <div class="app-head"><div class="app-logo cp"><i class="fa-solid fa-film"></i></div><div><h4>CapCut Pro</h4><span>Video Editor</span></div></div>
-      <div class="app-row"><span class="ar-name">1 Month — Private</span><span class="ar-price">LKR 1,200</span></div>
-      <div class="app-row"><span class="ar-name">3 Months — Private</span><span class="ar-price">LKR 2,900</span></div>
-    </div>
-    <div class="app-card">
-      <div class="app-head"><div class="app-logo yt"><i class="fa-brands fa-youtube"></i></div><div><h4>YouTube Premium</h4><span>No Ads • Background Play</span></div></div>
-      <div class="app-row"><span class="ar-name">1 Month — Private</span><span class="ar-price">LKR 900</span></div>
-      <div class="app-row"><span class="ar-name">3 Months — Private</span><span class="ar-price">LKR 2,800</span></div>
-      <div class="app-row"><span class="ar-name">6 Months — Private</span><span class="ar-price">LKR 3,900</span></div>
-    </div>
-    <div class="app-card">
-      <div class="app-head"><div class="app-logo sp"><i class="fa-brands fa-spotify"></i></div><div><h4>Spotify Premium</h4><span>Music Streaming</span></div></div>
-      <div class="app-row"><span class="ar-name">1 Month — Private</span><span class="ar-price">LKR 900</span></div>
-      <div class="app-row"><span class="ar-name">3 Months — Private</span><span class="ar-price">LKR 1,800</span></div>
-      <div class="app-row"><span class="ar-name">6 Months — Private</span><span class="ar-price">LKR 2,400</span></div>
-    </div>
-    <div class="app-card">
-      <div class="app-head"><div class="app-logo cl"><i class="fa-solid fa-brain"></i></div><div><h4>Claude AI</h4><span>Anthropic API</span></div></div>
-      <div class="app-row"><span class="ar-name">$100 API — 30 Days</span><span class="ar-price">LKR 2,150</span></div>
-    </div>
-    <div class="app-card">
-      <div class="app-head"><div class="app-logo lv"><i class="fa-solid fa-code"></i></div><div><h4>Lovable</h4><span>AI Web Builder</span></div></div>
-      <div class="app-row"><span class="ar-name">Lifetime — Unlimited</span><span class="ar-price">LKR 1,800</span></div>
-    </div>
-    <div class="app-card">
-      <div class="app-head"><div class="app-logo td"><i class="fa-solid fa-music"></i></div><div><h4>TIDAL</h4><span>Hi-Fi Music</span></div></div>
-      <div class="app-row"><span class="ar-name">Individual — 1 Month</span><span class="ar-price">LKR 700</span></div>
-      <div class="app-row"><span class="ar-name">Family (up to 5) — 1 Month</span><span class="ar-price">LKR 1,500</span></div>
-    </div>
-  </div>
-  <div class="form-card" id="pr-form">
-    <h4 class="form-title">PLACE YOUR ORDER</h4>
-    <div class="form-group"><label>Your Name</label><input class="form-control" id="pr-name" placeholder="Your name"></div>
-    <div class="form-group"><label>Your WhatsApp Number</label><input class="form-control" id="pr-wp" type="tel" placeholder="07XXXXXXXX"></div>
-    <div class="form-group">
-      <label><i class="fa-solid fa-cart-plus"></i> Selected Services (tap to select)</label>
-      <div class="svc-select-grid" id="pr-svc-grid">
-        <div class="svc-opt" data-value="TradingView 1M Shared|1400" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">TradingView 1M — Shared</div><div class="so-price">LKR 1,400</div></div></div>
-        <div class="svc-opt" data-value="TradingView 3M Shared|3700" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">TradingView 3M — Shared</div><div class="so-price">LKR 3,700</div></div></div>
-        <div class="svc-opt" data-value="TradingView 6M Shared|6700" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">TradingView 6M — Shared</div><div class="so-price">LKR 6,700</div></div></div>
-        <div class="svc-opt" data-value="TradingView 1M Private|3500" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">TradingView 1M — Private</div><div class="so-price">LKR 3,500</div></div></div>
-        <div class="svc-opt" data-value="Gemini 18M Owner|1800" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">Gemini 18M — Owner</div><div class="so-price">LKR 1,800</div></div></div>
-        <div class="svc-opt" data-value="CapCut 1M|1200" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">CapCut Pro 1M</div><div class="so-price">LKR 1,200</div></div></div>
-        <div class="svc-opt" data-value="CapCut 3M|2900" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">CapCut Pro 3M</div><div class="so-price">LKR 2,900</div></div></div>
-        <div class="svc-opt" data-value="YT Premium 1M|900" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">YouTube 1M</div><div class="so-price">LKR 900</div></div></div>
-        <div class="svc-opt" data-value="YT Premium 3M|2800" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">YouTube 3M</div><div class="so-price">LKR 2,800</div></div></div>
-        <div class="svc-opt" data-value="YT Premium 6M|3900" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">YouTube 6M</div><div class="so-price">LKR 3,900</div></div></div>
-        <div class="svc-opt" data-value="Spotify 1M|900" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">Spotify 1M</div><div class="so-price">LKR 900</div></div></div>
-        <div class="svc-opt" data-value="Spotify 3M|1800" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">Spotify 3M</div><div class="so-price">LKR 1,800</div></div></div>
-        <div class="svc-opt" data-value="Spotify 6M|2400" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">Spotify 6M</div><div class="so-price">LKR 2,400</div></div></div>
-        <div class="svc-opt" data-value="Claude API|2150" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">Claude $100 API</div><div class="so-price">LKR 2,150</div></div></div>
-        <div class="svc-opt" data-value="Lovable Lifetime|1800" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">Lovable Lifetime</div><div class="so-price">LKR 1,800</div></div></div>
-        <div class="svc-opt" data-value="Tidal Individual 1M|700" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">TIDAL Individual 1M</div><div class="so-price">LKR 700</div></div></div>
-        <div class="svc-opt" data-value="Tidal Family 1M|1500" onclick="togglePrSvc(this)"><div class="so-check"><i class="fa-solid fa-check"></i></div><div class="so-body"><div class="so-name">TIDAL Family 1M</div><div class="so-price">LKR 1,500</div></div></div>
-      </div>
-    </div>
-    <div class="total-box" id="pr-total-box"><div class="tl">Total Price</div><div class="tv" id="pr-total">LKR 0</div><div class="ez-note">⚡ + LKR 20 EZ Cash charge added</div><div class="ez-sub" id="pr-sub"></div></div>
-    <div class="form-group"><label>Payment Method</label>
-      <select class="form-control" id="pr-pay" onchange="recalcAllTotals()"><option>EZ Cash</option><option>Bank Transfer</option></select>
-    </div>
-    <div class="form-group"><label>Upload Payment Receipt</label>
-      <label class="file-drop"><div class="fd-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div><div><div class="fd-text">Tap to upload receipt</div><div class="fd-sub">JPG / PNG image</div></div><input type="file" accept="image/*" id="pr-receipt" onchange="previewFile(this,'pr-preview')"></label>
-      <img id="pr-preview" class="preview-img" style="display:none">
-    </div>
-    <button class="btn btn-order btn-block mt-16" onclick="submitOrder('pr',this)"><i class="fa-solid fa-paper-plane"></i> PLACE ORDER NOW</button>
-  </div>
-</section>
-
-<!-- WHATSAPP CHANNEL BOOST -->
-<section class="page" id="page-wachannel">
-  <div class="slider" id="waSlider" data-interval="6000">
-    <div class="slide active" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791469033/csgkrevlcix5c0aakwfe.png')"></div>
-    <div class="slide" style="background-image:url('https://res.cloudinary.com/divxgmr1g/image/upload/v1791469081/txu499d150esftm4z8lx.png')"></div>
-    <div class="dots" id="waDots"></div>
-  </div>
-  <h3 class="social-title">WHATSAPP CHANNEL<br>BOOST SERVICE</h3>
-  <div class="intro-box">
-    <strong>💬 WhatsApp Channel Boost</strong><br>
-    Grow your WhatsApp Channel with real, active followers from Sri Lanka.
-  </div>
-  <div class="prod-section">
-    <div class="prod-section-head"><i class="fa-brands fa-whatsapp"></i> Channel Boost Packages <span class="pss-badge">AVAILABLE</span></div>
-    <div class="product-grid">
-      <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#25d366,#128c7e)"><i class="fa-solid fa-users"></i></div><div class="pc-name">500+ Followers</div><div class="pc-price">400</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#25d366,#128c7e)"><i class="fa-solid fa-users"></i></div><div class="pc-name">1000+ Followers</div><div class="pc-price">800</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#25d366,#128c7e)"><i class="fa-solid fa-users"></i></div><div class="pc-name">2000+ Followers</div><div class="pc-price">1400</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:linear-gradient(135deg,#25d366,#128c7e)"><i class="fa-solid fa-users"></i></div><div class="pc-name">5000+ Followers</div><div class="pc-price">2900</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon" style="background:var(--accent-gradient)"><i class="fa-solid fa-heart"></i></div><div class="pc-name">One Month React</div><div class="pc-price">250</div><div class="pc-lkr">LKR</div></div>
-    </div>
-  </div>
-  <div class="prod-section">
-    <div class="prod-section-head"><i class="fa-solid fa-square-poll-vertical"></i> Poll Votes <span class="pss-badge">NEW</span></div>
-    <div class="product-grid">
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-check-to-slot"></i></div><div class="pc-name">100 Votes</div><div class="pc-price">500</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-check-to-slot"></i></div><div class="pc-name">200 Votes</div><div class="pc-price">900</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-check-to-slot"></i></div><div class="pc-name">500 Votes</div><div class="pc-price">1950</div><div class="pc-lkr">LKR</div></div>
-      <div class="product-card"><div class="pc-icon"><i class="fa-solid fa-check-to-slot"></i></div><div class="pc-name">1000 Votes</div><div class="pc-price">3700</div><div class="pc-lkr">LKR</div></div>
-    </div>
-  </div>
-  <div class="form-card" id="wa-form">
-    <h4 class="form-title">PLACE YOUR ORDER</h4>
-    <div class="form-group"><label>Your Name</label><input class="form-control" id="wa-name" placeholder="Enter your name"></div>
-    <div class="form-group"><label>Your WhatsApp Number</label><input class="form-control" id="wa-wp" type="tel" placeholder="07XXXXXXXX"></div>
-    <div class="form-group"><label>Selected Service</label>
-      <select class="form-control" id="wa-svc" onchange="waCalc()">
-        <option value="">Select Service</option>
-        <optgroup label="Channel Followers">
-          <option value="500+ Followers|400">500+ Followers — LKR 400</option>
-          <option value="1000+ Followers|800">1000+ Followers — LKR 800</option>
-          <option value="2000+ Followers|1400">2000+ Followers — LKR 1400</option>
-          <option value="5000+ Followers|2900">5000+ Followers — LKR 2900</option>
-        </optgroup>
-        <optgroup label="Reactions">
-          <option value="One Month React|250">One Month React — LKR 250</option>
-        </optgroup>
-        <optgroup label="Poll Votes">
-          <option value="100 Votes|500">100 Votes — LKR 500</option>
-          <option value="200 Votes|900">200 Votes — LKR 900</option>
-          <option value="500 Votes|1950">500 Votes — LKR 1950</option>
-          <option value="1000 Votes|3700">1000 Votes — LKR 3700</option>
-        </optgroup>
-      </select>
-    </div>
-    <div class="total-box" id="wa-total-box"><div class="tl">Total Price</div><div class="tv" id="wa-total">LKR 0</div><div class="ez-note">⚡ + LKR 20 EZ Cash charge added</div><div class="ez-sub" id="wa-sub"></div></div>
-    <div class="form-group"><label>Payment Method</label>
-      <select class="form-control" id="wa-pay" onchange="recalcAllTotals()"><option>EZ Cash</option><option>Bank Transfer</option></select>
-    </div>
-    <div class="form-group"><label>WhatsApp Channel Link / React Post Link</label>
-      <input class="form-control" id="wa-link" placeholder="Paste your channel or post link here">
-    </div>
-    <div class="form-group"><label>Upload Payment Receipt</label>
-      <label class="file-drop"><div class="fd-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div><div><div class="fd-text">Tap to upload receipt</div><div class="fd-sub">JPG / PNG image</div></div><input type="file" accept="image/*" id="wa-receipt" onchange="previewFile(this,'wa-preview')"></label>
-      <img id="wa-preview" class="preview-img" style="display:none">
-    </div>
-    <button class="btn btn-order btn-block mt-16" onclick="submitWAOrder(this)"><i class="fa-solid fa-paper-plane"></i> PLACE ORDER NOW</button>
-    <div class="order-note">
-      <i class="fa-solid fa-clock"></i>
-      <div>Your order will remain in our system for <strong>5 to 8 minutes</strong>. If not delivered within that time, please contact us so we can add your order manually.</div>
-    </div>
-  </div>
-</section>
-
-<!-- REVIEWS -->
-<section class="page" id="page-reviews">
-  <div class="reviews-header">
-    <div class="rh-left">
-      <h3 class="rh-title">Community Reviews</h3>
-      <p class="rh-sub">Real-time reviews — visible to everyone across all devices</p>
-    </div>
-    <div class="rh-stats">
-      <div class="rhs-item">
-        <div class="rhs-icon"><i class="fa-solid fa-comments"></i></div>
-        <div>
-          <div class="rhs-num" id="reviewsCountTop">0</div>
-          <div class="rhs-label">Reviews</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="reviewComposerWrap"></div>
-
-  <div class="reviews-feed" id="reviewsFeed">
-    <div class="loading-reviews">
-      <div class="lr-spinner"></div>
-      <p>Loading reviews...</p>
-    </div>
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section class="page" id="page-about">
-  <div class="about-hero">
-    <img src="https://res.cloudinary.com/divxgmr1g/image/upload/v1791469767/kzzmqle92jzvirfauxue.png" alt="DG STORE">
-  </div>
-  <div class="about-intro">
-    <div class="ai-badge"><i class="fa-solid fa-store"></i> ABOUT DG STORE</div>
-    <br>
-    <strong>DG STORE</strong> is Sri Lanka's trusted digital services platform — delivering premium social media boosts, top-ups, web design and much more. With <strong>thousands of successful orders</strong> and a <strong>99.9% success rate</strong>, we're committed to giving you the fastest, safest and most reliable service in the country.
-    <br><br>
-    Whether you're a content creator, business owner or gamer — we've got the digital solutions you need. All delivered with <strong>100% trust</strong> and <strong>instant response</strong>.
-
-    <div class="about-stats-grid">
-      <div class="about-stat-card"><div class="asc-icon"><i class="fa-solid fa-users"></i></div><h5>180+</h5><p>Users</p></div>
-      <div class="about-stat-card"><div class="asc-icon"><i class="fa-solid fa-trophy"></i></div><h5>99.9%</h5><p>Success</p></div>
-      <div class="about-stat-card"><div class="asc-icon"><i class="fa-solid fa-box"></i></div><h5>236</h5><p>Orders</p></div>
-      <div class="about-stat-card"><div class="asc-icon"><i class="fa-solid fa-heart"></i></div><h5>100%</h5><p>Happy</p></div>
-    </div>
-  </div>
-  <h3 class="sec-title">OUR SERVICES</h3>
-  <div class="service-info-list">
-    <div class="svc-info-card">
-      <div class="svc-info-head"><div class="svc-info-icon"><i class="fa-solid fa-rocket"></i></div><div><h4>Social Media Boost</h4><span>Global Platforms</span></div></div>
-      <p class="svc-info-body">Grow your <strong>TikTok, Instagram, Facebook & YouTube</strong> with real engagement — likes, views, followers, comments and more.</p>
-      <button class="how-order-btn" onclick="openHowToOrder('social')"><i class="fa-solid fa-circle-question"></i> HOW TO ORDER</button>
-    </div>
-    <div class="svc-info-card">
-      <div class="svc-info-head"><div class="svc-info-icon sl"><i class="fa-solid fa-flag"></i></div><div><h4>Sri Lanka Boost</h4><span>Local Audience</span></div></div>
-      <p class="svc-info-body">Get <strong>100% Sri Lankan audience engagement</strong> — perfect for Facebook monetization. Real followers, likes, views and comments.</p>
-      <button class="how-order-btn" onclick="openHowToOrder('srilanka')"><i class="fa-solid fa-circle-question"></i> HOW TO ORDER</button>
-    </div>
-    <div class="svc-info-card">
-      <div class="svc-info-head"><div class="svc-info-icon web"><i class="fa-solid fa-code"></i></div><div><h4>Website Design</h4><span>Custom Websites</span></div></div>
-      <p class="svc-info-body">Get a <strong>professional, modern website</strong> for your business — with animations, dark/light mode and full functionality. <strong>FREE domain & hosting</strong>!</p>
-      <button class="how-order-btn" onclick="openHowToOrder('webdesign')"><i class="fa-solid fa-circle-question"></i> HOW TO ORDER</button>
-    </div>
-    <div class="svc-info-card">
-      <div class="svc-info-head"><div class="svc-info-icon ff"><i class="fa-solid fa-fire"></i></div><div><h4>Free Fire Top-Up</h4><span>Instant Delivery</span></div></div>
-      <p class="svc-info-body">Top-up <strong>Free Fire Diamonds</strong> instantly! Normal Diamonds, Special Diamonds, Passes, Profile Likes and more at the best prices.</p>
-      <button class="how-order-btn" onclick="openHowToOrder('freefire')"><i class="fa-solid fa-circle-question"></i> HOW TO ORDER</button>
-    </div>
-    <div class="svc-info-card">
-      <div class="svc-info-head"><div class="svc-info-icon gb"><i class="fa-solid fa-wifi"></i></div><div><h4>2vary GB Shell</h4><span>Unlimited Data</span></div></div>
-      <p class="svc-info-body">Get <strong>high-speed V2Ray configs</strong> for all networks. Enjoy unlimited browsing, YouTube 4K, Netflix and low-ping gaming.</p>
-      <button class="how-order-btn" onclick="openHowToOrder('gbshell')"><i class="fa-solid fa-circle-question"></i> HOW TO ORDER</button>
-    </div>
-    <div class="svc-info-card">
-      <div class="svc-info-head"><div class="svc-info-icon pr"><i class="fa-solid fa-crown"></i></div><div><h4>Premium Accounts</h4><span>Subscription Service</span></div></div>
-      <p class="svc-info-body">Get instant access to <strong>TradingView, Gemini AI, CapCut Pro, YouTube Premium, Spotify, Claude AI, TIDAL</strong> at the lowest prices.</p>
-      <button class="how-order-btn" onclick="openHowToOrder('premium')"><i class="fa-solid fa-circle-question"></i> HOW TO ORDER</button>
-    </div>
-    <div class="svc-info-card">
-      <div class="svc-info-head"><div class="svc-info-icon wa"><i class="fa-brands fa-whatsapp"></i></div><div><h4>WP Channel Boost</h4><span>Channel Growth</span></div></div>
-      <p class="svc-info-body">Grow your <strong>WhatsApp Channel</strong> with real, active followers. Also includes Poll Votes & React services.</p>
-      <button class="how-order-btn" onclick="openHowToOrder('wachannel')"><i class="fa-solid fa-circle-question"></i> HOW TO ORDER</button>
-    </div>
-  </div>
-  <div class="contact-me-section">
-    <div class="contact-me-card">
-      <h3 class="contact-me-title">GET IN TOUCH</h3>
-      <p class="contact-me-sub">Have a question or need custom service? Reach out to me directly.</p>
-      <div class="contact-methods">
-        <a class="contact-method" href="https://wa.me/94743277981" target="_blank" rel="noopener">
-          <div class="cm-icon wa"><i class="fa-brands fa-whatsapp"></i></div>
-          <div class="cm-body"><div class="cm-label">WhatsApp</div><div class="cm-value">074 327 7981</div></div>
-        </a>
-        <a class="contact-method" href="mailto:gimahandasun@gmail.com">
-          <div class="cm-icon em"><i class="fa-solid fa-envelope"></i></div>
-          <div class="cm-body"><div class="cm-label">Email</div><div class="cm-value">gimahandasun@gmail.com</div></div>
-        </a>
-        <a class="contact-method" href="https://t.me/DasunTECH" target="_blank" rel="noopener">
-          <div class="cm-icon tg"><i class="fa-brands fa-telegram"></i></div>
-          <div class="cm-body"><div class="cm-label">Telegram</div><div class="cm-value">t.me/DasunTECH</div></div>
-        </a>
-        <a class="contact-method" href="https://youtube.com/@dassatech17?si=1U_SPbB2kyOBzmC4" target="_blank" rel="noopener">
-          <div class="cm-icon yt"><i class="fa-brands fa-youtube"></i></div>
-          <div class="cm-body"><div class="cm-label">YouTube</div><div class="cm-value">@dassatech17</div></div>
-        </a>
-      </div>
-      <div class="join-btns">
-        <a class="join-btn channel" href="https://whatsapp.com/channel/0029VbDH8O7CBtx5W9zxK029" target="_blank" rel="noopener">
-          <div class="jb-icon"><i class="fa-brands fa-whatsapp"></i></div>
-          <div class="jb-text"><small>Join Our</small><span>WhatsApp Channel</span></div>
-          <i class="fa-solid fa-arrow-right"></i>
-        </a>
-        <a class="join-btn group" href="https://chat.whatsapp.com/GltIUGj2JeN7d5OV10BlJx" target="_blank" rel="noopener">
-          <div class="jb-icon"><i class="fa-solid fa-users"></i></div>
-          <div class="jb-text"><small>Join Our</small><span>WhatsApp Group</span></div>
-          <i class="fa-solid fa-arrow-right"></i>
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-</main>
-
-<!-- MODALS -->
-<div class="modal-overlay" id="howtoModal" onclick="if(event.target===this)closeHowToOrder()">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeHowToOrder()"><i class="fa-solid fa-xmark"></i></button>
-    <div class="modal-header">
-      <div class="modal-icon" id="modalIcon"><i class="fa-solid fa-circle-question"></i></div>
-      <div>
-        <div class="modal-title" id="modalTitle">How to Order</div>
-        <div class="modal-subtitle" id="modalSubtitle">Simple Steps</div>
-      </div>
-    </div>
-    <ol class="modal-steps" id="modalSteps"></ol>
-    <div class="modal-note">
-      <i class="fa-solid fa-circle-check"></i>
-      <div>Simply <strong>click the ORDER BUTTON</strong> — your order will be submitted automatically. <strong>No need to type anything manually!</strong></div>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="successModal" onclick="if(event.target===this)closeSuccessModal()">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeSuccessModal()"><i class="fa-solid fa-xmark"></i></button>
-    <div class="success-box">
-      <div class="success-icon-wrap"><div class="success-icon"><i class="fa-solid fa-check"></i></div></div>
-      <div class="success-title">ORDER SUCCESSFUL!</div>
-      <p class="success-sub">Your order has been sent to our team.<br>Please wait for the confirmation time.</p>
-      <div class="success-time-badge"><i class="fa-solid fa-clock"></i> 5 - 8 MINUTES</div>
-      <p class="success-sub" style="margin-top:0;margin-bottom:0">If you don't receive a response within this time,<br>please contact us directly to add your order.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">
-        <a class="contact-btn wa" href="https://wa.me/94743277981" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-        <a class="contact-btn tg" href="https://t.me/DasunTECH" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i> Telegram</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="orderDetailModal" onclick="if(event.target===this)closeOrderDetail()">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeOrderDetail()"><i class="fa-solid fa-xmark"></i></button>
-    <div class="modal-order-detail" id="orderDetailContent"></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="nameEditModal" onclick="if(event.target===this)closeNameEdit()">
-  <div class="modal-box" style="max-width:360px">
-    <button class="modal-close" onclick="closeNameEdit()"><i class="fa-solid fa-xmark"></i></button>
-    <div class="modal-header">
-      <div class="modal-icon"><i class="fa-solid fa-user-pen"></i></div>
-      <div>
-        <div class="modal-title">Edit Display Name</div>
-        <div class="modal-subtitle">Change Name</div>
-      </div>
-    </div>
-    <div class="form-group"><label>New Name</label><input class="form-control" id="nameEditInput" placeholder="Enter name" maxlength="30"></div>
-    <button class="btn btn-primary btn-block" onclick="saveNameEdit()"><i class="fa-solid fa-floppy-disk"></i> Save Name</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="ffVerifyModal" onclick="if(event.target===this)closeFFVerify()">
-  <div class="modal-box" style="max-width:420px">
-    <button class="modal-close" onclick="closeFFVerify()"><i class="fa-solid fa-xmark"></i></button>
-    <div class="modal-header">
-      <div class="modal-icon"><i class="fa-solid fa-circle-check"></i></div>
-      <div>
-        <div class="modal-title">Free Fire Verified</div>
-        <div class="modal-subtitle">Account Details</div>
-      </div>
-    </div>
-    <div id="ffVerifyContent"></div>
-  </div>
-</div>
-
-<div id="toast"><div class="toast-check"><i class="fa-solid fa-check"></i></div><div class="toast-text">Done!</div></div>
-
-<script src="script.js"></script>
+// live platform highlight
+input.addEventListener('input', () => {
+  const p = detectPlatform(input.value.trim());
+  document.querySelectorAll('.chip').forEach(c => {
+    c.classList.toggle('on', c.dataset.p === p);
+  });
+});
+</script>
 </body>
 </html>
