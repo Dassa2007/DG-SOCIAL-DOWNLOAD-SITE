@@ -210,7 +210,7 @@
       <div class="dot">⬇</div>
       <div>Media<span class="grad">Grab</span></div>
     </div>
-    <p>Facebook, Instagram, TikTok, YouTube — එකම තැනකින්</p>
+    <p>Facebook, Instagram — එකම තැනකින්</p>
   </header>
 
   <div class="card">
@@ -230,7 +230,7 @@
 
     <div class="chips">
       <div class="chip on" data-p="facebook">Facebook</div>
-      <div class="chip" data-p="instagram">Instagram</div>
+      <div class="chip on" data-p="instagram">Instagram</div>
       <div class="chip" data-p="tiktok">TikTok</div>
       <div class="chip" data-p="youtube">YouTube</div>
     </div>
@@ -250,8 +250,16 @@
 /* =========================================================
    CONFIG
    ========================================================= */
-const PROXY_ENDPOINT = '/api/facebook';       // Vercel serverless function
-const DIRECT_ENDPOINT = 'https://api.kcey.online/api/facebook';
+const PROXY_ENDPOINTS = {
+  facebook : '/api/facebook',
+  instagram: '/api/instagram'
+};
+
+const DIRECT_ENDPOINTS = {
+  facebook : 'https://api.kcey.online/api/facebook',
+  instagram: 'https://api.kcey.online/api/instagram'
+};
+
 const DIRECT_KEY = 'kcey_3aac11b6ed5c49a5b3b0a2a2922a38de4014'; // fallback (local test only)
 
 /* =========================================================
@@ -343,25 +351,31 @@ function qualityLabel(link){
 /* =========================================================
    FETCH FROM API
    ========================================================= */
-async function callApi(url){
+async function callApi(platform, url){
   // 1) Try the Vercel proxy first (hides the key, no CORS issues)
   try {
-    const r = await fetch(`${PROXY_ENDPOINT}?url=${encodeURIComponent(url)}`);
-    if (r.ok) {
-      const data = await r.json();
-      if (data && typeof data === 'object') return data;
+    const proxy = PROXY_ENDPOINTS[platform];
+    if (proxy) {
+      const r = await fetch(`${proxy}?url=${encodeURIComponent(url)}`);
+      if (r.ok) {
+        const data = await r.json();
+        if (data && typeof data === 'object') return data;
+      }
     }
   } catch (_) { /* fall through */ }
 
   // 2) Fallback: direct call (works when opening the file locally)
-  const direct = `${DIRECT_ENDPOINT}?url=${encodeURIComponent(url)}&key=${DIRECT_KEY}`;
+  const directBase = DIRECT_ENDPOINTS[platform];
+  if (!directBase) throw new Error('මේ platform එකට API එකක් නෑ');
+
+  const direct = `${directBase}?url=${encodeURIComponent(url)}&key=${DIRECT_KEY}`;
   const r2 = await fetch(direct);
   if (!r2.ok) throw new Error('API එකට සම්බන්ධ වෙන්න බැරි වුණා');
   return await r2.json();
 }
 
 /* =========================================================
-   RENDER RESULT
+   RENDER: FACEBOOK
    ========================================================= */
 function renderFacebook(data){
   const md = data.metadata || {};
@@ -430,6 +444,56 @@ function renderFacebook(data){
 }
 
 /* =========================================================
+   RENDER: INSTAGRAM
+   ========================================================= */
+function renderInstagram(data){
+  const md = data.metadata || {};
+  const dl = data.downloads || {};
+
+  const thumb = dl.thumbnail || '';
+  const videoUrl = dl.video || '';
+  const username = md.username || 'Instagram User';
+  const caption = md.caption || '';
+
+  let html = '';
+
+  // thumbnail
+  if (thumb) {
+    html += `
+      <div class="thumb">
+        <img src="${esc(thumb)}" alt="thumbnail" referrerpolicy="no-referrer"
+             onerror="this.parentElement.style.display='none'">
+      </div>`;
+  }
+
+  // meta
+  html += `<div class="meta">
+    <h2>${caption ? esc(caption.substring(0, 120)) + (caption.length > 120 ? '...' : '') : 'Instagram Video'}</h2>
+    <div class="author">👤 @${esc(username)}</div>
+  </div>`;
+
+  // downloads
+  if (videoUrl) {
+    html += `<div class="sec-title">Download Options</div>
+      <a class="dl" href="${esc(videoUrl)}" target="_blank" rel="noopener noreferrer">
+        <div class="badge">⚡</div>
+        <div class="txt">
+          <b>HD Video</b>
+          <small>Watermark රහිත · MP4</small>
+        </div>
+        <div class="go">GET</div>
+      </a>`;
+  } else {
+    html += `<div class="box err" style="margin-top:14px">
+      <div>⚠️</div><div>Download link එකක් හමු නොවුණා</div></div>`;
+  }
+
+  resultEl.innerHTML = html;
+  resultEl.className = 'show';
+  resultEl.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+/* =========================================================
    MAIN
    ========================================================= */
 async function handleFetch(){
@@ -447,11 +511,11 @@ async function handleFetch(){
 
   const platform = detectPlatform(url);
   if (!platform) {
-    showStatus('error', 'මේ link එක හඳුනාගන්න බැරි වුණා. Facebook link එකක් උත්සාහ කරන්න');
+    showStatus('error', 'මේ link එක හඳුනාගන්න බැරි වුණා. Facebook හෝ Instagram link එකක් උත්සාහ කරන්න');
     return;
   }
-  if (platform !== 'facebook') {
-    showStatus('error', `${platform} support තවම add කරලා නෑ — Facebook පමණයි දැනට`);
+  if (platform !== 'facebook' && platform !== 'instagram') {
+    showStatus('error', `${platform} support තවම add කරලා නෑ — Facebook සහ Instagram පමණයි දැනට`);
     return;
   }
 
@@ -461,14 +525,19 @@ async function handleFetch(){
   setLoading(true);
 
   try {
-    const data = await callApi(url);
+    const data = await callApi(platform, url);
 
     if (!data || data.status === false) {
       throw new Error(data?.message || data?.error || 'Video එක හමු නොවුණා');
     }
 
     showStatus('none');
-    renderFacebook(data);
+
+    if (platform === 'facebook') {
+      renderFacebook(data);
+    } else {
+      renderInstagram(data);
+    }
 
   } catch (err) {
     showStatus('error', err.message || 'මොකක්හරි වැරැද්දක් වුණා. ආයෙ උත්සාහ කරන්න');
