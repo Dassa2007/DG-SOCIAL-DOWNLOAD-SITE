@@ -338,6 +338,8 @@ const API_KEY = 'kcey_3aac11b6ed5c49a5b3b0a2a2922a38de4014';
 const TIKTOK_API_BASE = 'https://dg-tiktok-audio-download-api.vercel.app';
 const DARKSHAN_BASE   = 'https://api-dark-shan-yt.koyeb.app';
 const DARKSHAN_KEY    = '7ef68a8f38185a67';
+const ZANTA_BASE      = 'https://api.zanta-mini.store';
+const ZANTA_KEY       = 'zanta_JatdaWBTIbi4uSdilQ1q6gE3';
 
 const PLATFORMS = {
   facebook: {
@@ -371,9 +373,9 @@ const PLATFORMS = {
   pinterest: {
     label: 'Pinterest',
     icon:  '📌',
-    method:'GET',
-    proxy: '/api/pinterestv2',
-    direct:'https://api.kcey.online/api/pinterestv2',
+    method:'ZANTA',
+    type:  'pinterest',
+    proxy: '/api/pinterest',
     pattern: /(pinterest\.com|pin\.it)/i,
     placeholder: 'https://pin.it/... හෝ pinterest link එක paste කරන්න',
     render: renderPinterest
@@ -391,8 +393,8 @@ const PLATFORMS = {
   ytmp4: {
     label: 'YouTube MP4',
     icon:  '🎬',
-    method:'DARKSHAN',
-    type:  'ytmp4',
+    method:'ZANTA',
+    type:  'ytmp4-v2',
     proxy: '/api/ytmp4',
     pattern: /(youtube\.com|youtu\.be)/i,
     placeholder: 'https://youtu.be/... හෝ youtube link එක paste කරන්න',
@@ -439,8 +441,6 @@ function setPlatform(name){
     b.classList.toggle('active', b.dataset.p === name);
   });
   input.placeholder = PLATFORMS[name].placeholder || 'Link එක මෙතන paste කරන්න...';
-
-  // Show/hide quality row
   qualityRow.classList.toggle('show', !!PLATFORMS[name].showQuality);
 }
 
@@ -453,7 +453,6 @@ grid.addEventListener('click', e => {
   showStatus('none');
 });
 
-/* Quality chips */
 qualityChips.addEventListener('click', e => {
   const btn = e.target.closest('.qchip');
   if (!btn) return;
@@ -634,7 +633,7 @@ function renderInstagram(data){
 }
 
 /* =========================================================
-   RENDER: TIKTOK (Custom API)
+   RENDER: TIKTOK
    ========================================================= */
 function renderTikTok(data){
   if (!data || data.success === false) {
@@ -693,57 +692,44 @@ function renderTikTok(data){
 }
 
 /* =========================================================
-   RENDER: PINTEREST
+   RENDER: PINTEREST (ZANTA API)
+   Response: { success, result: { url, thumbnail, downloadUrl, quality } }
    ========================================================= */
 function renderPinterest(data){
-  const md = data.metadata || data.data || {};
-  const dl = data.downloads || data.data || {};
+  if (!data || data.success === false || !data.result) {
+    showResult(`<div class="box err">
+      <div>⚠️</div>
+      <div>${esc(data?.message || data?.error || 'Pinterest link එක ලබා ගැනීමට නොහැකි විය')}</div>
+    </div>`);
+    return;
+  }
 
-  const thumb    = dl.thumbnail || dl.image || md.image || md.thumbnail || md.cover || '';
-  const videoUrl = (dl.links && dl.links[0]?.url)
-                || dl.video || dl.mp4 || dl.download
-                || md.video || md.download || '';
-  const imageUrl = dl.image || md.image || thumb;
-  const title    = md.title || md.description || md.caption || 'Pinterest Pin';
-  const author   = md.author || md.username || md.uploader || 'Pinterest User';
+  const r = data.result || {};
+  const thumb      = r.thumbnail || '';
+  const videoUrl   = r.downloadUrl || r.video || r.url || '';
+  const quality    = r.quality || 'HD';
+  const sourceUrl  = r.url || '';
 
   let html = thumbBlock(thumb, '');
 
   html += `<div class="meta">
-    <h2>${esc(String(title).substring(0, 160))}</h2>
-    <div class="author">👤 @${esc(author)}</div>
+    <h2>Pinterest Video</h2>
+    <div class="author">📌 ${esc(quality)}${sourceUrl ? ` · ${esc(sourceUrl.replace(/^https?:\/\//,'').substring(0, 40))}` : ''}</div>
   </div>`;
 
-  const rows = [];
+  html += statBlock([
+    quality ? { n: esc(quality), l:'QUALITY' } : null
+  ]);
 
   if (videoUrl) {
-    rows.push({
-      href: videoUrl, icon: '💎',
-      title: 'HD Video', sub: 'High Quality · MP4'
-    });
-  }
-
-  if (Array.isArray(dl.links)) {
-    dl.links.forEach(link => {
-      if (!link || !link.url) return;
-      if (link.url === videoUrl) return;
-      const q = qualityLabel(link);
-      rows.push({ href: link.url, icon: q.icon, title: q.title, sub: q.sub });
-    });
-  }
-
-  if (!videoUrl && imageUrl) {
-    rows.push({
-      href: imageUrl, icon: '🖼️',
-      title: 'Image', sub: 'Full Resolution · JPG'
-    });
-  }
-
-  if (rows.length) {
     html += `<div class="sec-title">Download Options</div>`;
-    rows.forEach(r => {
-      html += dlRow(r.href, r.icon, r.title, r.sub);
-    });
+    // Detect if video or image
+    const isVideo = /\.mp4($|\?)/i.test(videoUrl) || /video/i.test(videoUrl);
+    if (isVideo) {
+      html += dlRow(videoUrl, '💎', `${esc(quality)} Video`, 'MP4 · Fast Download');
+    } else {
+      html += dlRow(videoUrl, '🖼️', 'Image', 'Full Resolution');
+    }
   } else {
     html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link එකක් හමු නොවුණා</div></div>`;
   }
@@ -793,10 +779,11 @@ function renderYtmp3(data){
 }
 
 /* =========================================================
-   RENDER: YOUTUBE MP4 (New Darkshan API)
+   RENDER: YOUTUBE MP4 (ZANTA API)
+   Handles multiple possible structures
    ========================================================= */
 function renderYtmp4(data){
-  if (!data || data.status === false || !data.data) {
+  if (!data || data.success === false) {
     showResult(`<div class="box err">
       <div>⚠️</div>
       <div>${esc(data?.message || data?.error || 'YouTube video එක ලබා ගැනීමට නොහැකි විය')}</div>
@@ -804,18 +791,21 @@ function renderYtmp4(data){
     return;
   }
 
-  const d = data.data || {};
-  const thumb    = d.thumbnail || '';
-  const title    = d.title || 'YouTube Video';
-  const videoUrl = d.download || d.url || '';
-  const quality  = d.quality || 'HD';
-  const duration = d.duration || 0;
+  // Zanta returns: { success, result: {...} }  or  { status, data: {...} }
+  const d = data.result || data.data || data;
+
+  const thumb    = d.thumbnail || d.image || d.cover || '';
+  const title    = d.title || d.name || 'YouTube Video';
+  const videoUrl = d.downloadUrl || d.download || d.url || d.video || d.mp4 || '';
+  const quality  = d.quality || (d.qualityLabel) || `${currentQuality}p`;
+  const duration = d.duration || d.length || 0;
+  const author   = d.author || d.channel || d.uploader || 'YouTube';
 
   let html = thumbBlock(thumb, fmtDur(duration));
 
   html += `<div class="meta">
-    <h2>${esc(title)}</h2>
-    <div class="author">🎬 YouTube Video</div>
+    <h2>${esc(String(title).substring(0, 160))}</h2>
+    <div class="author">👤 ${esc(author)}</div>
   </div>`;
 
   html += statBlock([
@@ -834,7 +824,7 @@ function renderYtmp4(data){
 }
 
 /* =========================================================
-   RENDER: SPOTIFY (New Darkshan API)
+   RENDER: SPOTIFY
    ========================================================= */
 function renderSpotify(data){
   if (!data || data.status === false) {
@@ -845,14 +835,13 @@ function renderSpotify(data){
     return;
   }
 
-  // Handle multiple possible structures
   const d = data.data || data.result || data;
 
   const thumb    = d.thumbnail || d.image || d.cover || d.album_art || '';
   const title    = d.title || d.name || d.track || 'Spotify Track';
   const artist   = d.artist || d.artists || d.author || d.uploader || 'Spotify';
   const album    = d.album || '';
-  const duration = d.duration || d.duration_ms ? Math.round((d.duration_ms || 0) / 1000) : 0;
+  const duration = d.duration || (d.duration_ms ? Math.round(d.duration_ms / 1000) : 0);
 
   const audioUrl = d.download || d.downloadUrl || d.url || d.audio || d.mp3 || d.link || '';
 
@@ -864,9 +853,9 @@ function renderSpotify(data){
   </div>`;
 
   html += statBlock([
-    d.quality ? { n: esc(d.quality),     l:'FORMAT' }   : null,
-    duration  ? { n: fmtDur(duration),   l:'DURATION' } : null,
-    d.bitrate ? { n: esc(d.bitrate),     l:'BITRATE' }  : null
+    d.quality ? { n: esc(d.quality),   l:'FORMAT' }   : null,
+    duration  ? { n: fmtDur(duration), l:'DURATION' } : null,
+    d.bitrate ? { n: esc(d.bitrate),   l:'BITRATE' }  : null
   ]);
 
   if (audioUrl) {
@@ -894,9 +883,8 @@ async function callTikTokApi(url){
 
 async function callDarkshanApi(type, url, quality){
   // 1) Try Vercel proxy first
-  const proxyPath = type === 'ytmp4' ? '/api/ytmp4' : `/api/${type}`;
   try {
-    let purl = `${proxyPath}?url=${encodeURIComponent(url)}`;
+    let purl = `/api/${type}?url=${encodeURIComponent(url)}`;
     if (type === 'ytmp4' && quality) purl += `&quality=${quality}`;
     const r = await fetch(purl);
     if (r.ok) {
@@ -905,9 +893,30 @@ async function callDarkshanApi(type, url, quality){
     }
   } catch (_) { /* fall through */ }
 
-  // 2) Direct fallback
+  // 2) Direct
   let direct = `${DARKSHAN_BASE}/download/${type}?url=${encodeURIComponent(url)}&api_key=${DARKSHAN_KEY}`;
   if (type === 'ytmp4' && quality) direct += `&quality=${quality}`;
+  const r2 = await fetch(direct);
+  if (!r2.ok) throw new Error('API එකට සම්බන්ධ වෙන්න බැරි වුණා');
+  return await r2.json();
+}
+
+async function callZantaApi(type, url, quality){
+  // 1) Try Vercel proxy first
+  const proxyPath = type === 'ytmp4-v2' ? '/api/ytmp4' : `/api/${type}`;
+  try {
+    let purl = `${proxyPath}?url=${encodeURIComponent(url)}`;
+    if (type === 'ytmp4-v2' && quality) purl += `&quality=${quality}`;
+    const r = await fetch(purl);
+    if (r.ok) {
+      const data = await r.json();
+      if (data && typeof data === 'object') return data;
+    }
+  } catch (_) { /* fall through */ }
+
+  // 2) Direct fallback
+  let direct = `${ZANTA_BASE}/api/${type}?apiKey=${ZANTA_KEY}&url=${encodeURIComponent(url)}`;
+  if (type === 'ytmp4-v2' && quality) direct += `&quality=${quality}`;
 
   const r2 = await fetch(direct);
   if (!r2.ok) throw new Error('API එකට සම්බන්ධ වෙන්න බැරි වුණා');
@@ -926,6 +935,10 @@ async function callApi(platformKey, url){
     return await callDarkshanApi(p.type, url, currentQuality);
   }
 
+  if (p.method === 'ZANTA') {
+    return await callZantaApi(p.type, url, currentQuality);
+  }
+
   // 1) Vercel proxy
   if (p.proxy) {
     try {
@@ -937,7 +950,7 @@ async function callApi(platformKey, url){
     } catch (_) { /* fall through */ }
   }
 
-  // 2) Direct fallback
+  // 2) Direct
   const direct = `${p.direct}?url=${encodeURIComponent(url)}&key=${API_KEY}`;
   const r2 = await fetch(direct);
   if (!r2.ok) throw new Error('API එකට සම්බන්ධ වෙන්න බැරි වුණා');
@@ -997,6 +1010,10 @@ async function handleFetch(){
     if (currentPlatform === 'tiktok') {
       if (!data || data.success === false) {
         throw new Error(data?.error || 'TikTok video එක හමු නොවුණා');
+      }
+    } else if (PLATFORMS[currentPlatform].method === 'ZANTA') {
+      if (!data || data.success === false) {
+        throw new Error(data?.message || data?.error || 'Video එක හමු නොවුණා');
       }
     } else if (PLATFORMS[currentPlatform].method === 'DARKSHAN') {
       if (!data || data.status === false) {
