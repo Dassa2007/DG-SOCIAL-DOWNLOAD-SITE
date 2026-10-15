@@ -289,11 +289,13 @@
    CONFIG
    ========================================================= */
 const API_KEY = 'kcey_3aac11b6ed5c49a5b3b0a2a2922a38de4014';
+const TIKTOK_API_BASE = 'https://dg-tiktok-audio-download-api.vercel.app';
 
 const PLATFORMS = {
   facebook: {
     label: 'Facebook',
     icon:  '📘',
+    method:'GET',
     proxy: '/api/facebook',
     direct:'https://api.kcey.online/api/facebook',
     pattern: /(facebook\.com|fb\.watch|fb\.me|m\.facebook\.com)/i,
@@ -303,6 +305,7 @@ const PLATFORMS = {
   instagram: {
     label: 'Instagram',
     icon:  '📷',
+    method:'GET',
     proxy: '/api/instagram',
     direct:'https://api.kcey.online/api/instagram',
     pattern: /(instagram\.com|instagr\.am)/i,
@@ -312,8 +315,7 @@ const PLATFORMS = {
   tiktok: {
     label: 'TikTok',
     icon:  '🎵',
-    proxy: '/api/tiktok',
-    direct:'https://api.kcey.online/api/tiktok',
+    method:'CUSTOM_TIKTOK',
     pattern: /(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)/i,
     placeholder: 'https://vt.tiktok.com/... link එක paste කරන්න',
     render: renderTikTok
@@ -321,8 +323,9 @@ const PLATFORMS = {
   pinterest: {
     label: 'Pinterest',
     icon:  '📌',
-    proxy: '/api/pinterest',
-    direct:'https://api.kcey.online/api/pinterest',
+    method:'GET',
+    proxy: '/api/pinterestv2',
+    direct:'https://api.kcey.online/api/pinterestv2',
     pattern: /(pinterest\.com|pin\.it)/i,
     placeholder: 'https://pin.it/... හෝ pinterest link එක paste කරන්න',
     render: renderPinterest
@@ -330,6 +333,7 @@ const PLATFORMS = {
   ytmp3: {
     label: 'YouTube MP3',
     icon:  '🎧',
+    method:'GET',
     proxy: '/api/ytmp3',
     direct:'https://api.kcey.online/api/ytmp3',
     pattern: /(youtube\.com|youtu\.be)/i,
@@ -339,6 +343,7 @@ const PLATFORMS = {
   ytmp4: {
     label: 'YouTube MP4',
     icon:  '🎬',
+    method:'GET',
     proxy: '/api/ytmp4',
     direct:'https://api.kcey.online/api/ytmp4',
     pattern: /(youtube\.com|youtu\.be)/i,
@@ -554,82 +559,132 @@ function renderInstagram(data){
 }
 
 /* =========================================================
-   RENDER: TIKTOK
+   RENDER: TIKTOK (Custom API)
    ========================================================= */
 function renderTikTok(data){
-  const md = data.metadata || data.data || {};
-  const dl = data.downloads || data.data || {};
+  if (!data || data.success === false) {
+    showResult(`<div class="box err">
+      <div>⚠️</div>
+      <div>${esc(data?.error || 'TikTok video එක ලබා ගැනීමට නොහැකි විය')}</div>
+    </div>`);
+    return;
+  }
 
-  const thumb    = dl.thumbnail || dl.cover || md.cover || '';
-  const videoUrl = (dl.links && dl.links[0]?.url) || dl.video || dl.play || dl.no_watermark || dl.download || '';
-  const title    = md.title || md.desc || md.description || 'TikTok Video';
-  const author   = md.author || md.username || md.nickname || 'TikTok User';
+  const d = data.data || {};
+  const thumb     = d.cover || d.thumbnail || '';
+  const title     = d.title || d.description || 'TikTok Video';
+  const videoHD   = d.videoHD || d.videoHd || '';
+  const videoSD   = d.videoNormal || d.videoSD || d.videoSd || d.video || '';
+  const audioUrl  = d.audioUrl || d.audio || d.mp3 || '';
+  const author    = d.author || d.username || d.nickname || '';
 
-  let html = thumbBlock(thumb, md.duration ? fmtDur(md.duration) : '');
+  let html = thumbBlock(thumb, '');
 
   html += `<div class="meta">
-    <h2>${esc(String(title).substring(0, 140))}</h2>
-    <div class="author">👤 @${esc(author)}</div>
+    <h2>${esc(String(title).substring(0, 160))}</h2>
+    ${author ? `<div class="author">👤 @${esc(author)}</div>` : '<div class="author">🎵 TikTok</div>'}
   </div>`;
 
-  html += statBlock([
-    md.play_count    ? { n: fmtNum(md.play_count),    l:'VIEWS' }    : null,
-    md.digg_count    ? { n: fmtNum(md.digg_count),    l:'LIKES' }    : null,
-    md.comment_count ? { n: fmtNum(md.comment_count), l:'COMMENTS' } : null
-  ]);
+  // Build proxied download links (through your API)
+  const proxyVideo = (u) => `${TIKTOK_API_BASE}/api/proxy-download?url=${encodeURIComponent(u)}&type=video`;
+  const proxyAudio = (u) => `${TIKTOK_API_BASE}/api/proxy-download?url=${encodeURIComponent(u)}&type=audio`;
 
-  if (videoUrl) {
+  const rows = [];
+
+  if (videoHD) rows.push({
+    href: proxyVideo(videoHD),
+    icon: '💎',
+    title: 'HD Video',
+    sub: 'High Quality · Watermark රහිත · MP4'
+  });
+
+  if (videoSD && videoSD !== videoHD) rows.push({
+    href: proxyVideo(videoSD),
+    icon: '📱',
+    title: 'SD Video',
+    sub: 'Data අඩුවෙන් · MP4'
+  });
+
+  if (audioUrl) rows.push({
+    href: proxyAudio(audioUrl),
+    icon: '🎵',
+    title: 'Audio (MP3)',
+    sub: 'ශබ්දය පමණයි · Fast Download'
+  });
+
+  if (rows.length) {
     html += `<div class="sec-title">Download Options</div>`;
-    html += dlRow(videoUrl, '⚡', 'HD Video', 'Watermark රහිත · MP4');
-
-    // Extra links (audio / hd if present)
-    if (Array.isArray(dl.links)) {
-      dl.links.slice(1).forEach(link => {
-        if (!link || !link.url) return;
-        const q = qualityLabel(link);
-        html += dlRow(link.url, q.icon, q.title, q.sub);
-      });
-    }
+    rows.forEach(r => {
+      html += dlRow(r.href, r.icon, r.title, r.sub);
+    });
   } else {
-    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link එකක් හමු නොවුණා</div></div>`;
+    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link කිසිවක් හමු නොවුණා</div></div>`;
   }
 
   showResult(html);
 }
 
 /* =========================================================
-   RENDER: PINTEREST
+   RENDER: PINTEREST (v2)
    ========================================================= */
 function renderPinterest(data){
   const md = data.metadata || data.data || {};
   const dl = data.downloads || data.data || {};
 
-  const thumb    = dl.thumbnail || dl.image || md.image || md.thumbnail || '';
-  const videoUrl = (dl.links && dl.links[0]?.url) || dl.video || dl.mp4 || dl.download || '';
-  const title    = md.title || md.description || 'Pinterest Pin';
-  const author   = md.author || md.username || 'Pinterest User';
+  const thumb    = dl.thumbnail || dl.image || md.image || md.thumbnail || md.cover || '';
+  const videoUrl = (dl.links && dl.links[0]?.url)
+                || dl.video || dl.mp4 || dl.download
+                || md.video || md.download || '';
+  const imageUrl = dl.image || md.image || thumb;
+  const title    = md.title || md.description || md.caption || 'Pinterest Pin';
+  const author   = md.author || md.username || md.uploader || 'Pinterest User';
 
   let html = thumbBlock(thumb, '');
 
   html += `<div class="meta">
-    <h2>${esc(String(title).substring(0, 140))}</h2>
+    <h2>${esc(String(title).substring(0, 160))}</h2>
     <div class="author">👤 @${esc(author)}</div>
   </div>`;
 
-  if (videoUrl) {
-    html += `<div class="sec-title">Download Options</div>`;
-    html += dlRow(videoUrl, '⚡', 'Video', 'HD · MP4');
+  const rows = [];
 
-    if (Array.isArray(dl.links)) {
-      dl.links.slice(1).forEach(link => {
-        if (!link || !link.url) return;
-        const q = qualityLabel(link);
-        html += dlRow(link.url, q.icon, q.title, q.sub);
+  if (videoUrl) {
+    rows.push({
+      href: videoUrl,
+      icon: '💎',
+      title: 'HD Video',
+      sub: 'High Quality · MP4'
+    });
+  }
+
+  if (Array.isArray(dl.links)) {
+    dl.links.forEach(link => {
+      if (!link || !link.url) return;
+      if (link.url === videoUrl) return;
+      const q = qualityLabel(link);
+      rows.push({
+        href: link.url,
+        icon: q.icon,
+        title: q.title,
+        sub: q.sub
       });
-    }
-  } else if (thumb) {
+    });
+  }
+
+  if (!videoUrl && imageUrl) {
+    rows.push({
+      href: imageUrl,
+      icon: '🖼️',
+      title: 'Image',
+      sub: 'Full Resolution · JPG'
+    });
+  }
+
+  if (rows.length) {
     html += `<div class="sec-title">Download Options</div>`;
-    html += dlRow(thumb, '🖼️', 'Image', 'Full Resolution · JPG');
+    rows.forEach(r => {
+      html += dlRow(r.href, r.icon, r.title, r.sub);
+    });
   } else {
     html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link එකක් හමු නොවුණා</div></div>`;
   }
@@ -641,7 +696,6 @@ function renderPinterest(data){
    RENDER: YOUTUBE MP3
    ========================================================= */
 function renderYtmp3(data){
-  // Handle error response
   if (!data || data.ok === false || (!data.download && !data.raw)) {
     showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || 'මේ video එකට MP3 හමු නොවුණා')}</div></div>`);
     return;
@@ -663,14 +717,15 @@ function renderYtmp3(data){
   </div>`;
 
   html += statBlock([
-    quality ? { n: esc(quality),   l:'FORMAT' }  : null,
-    bitrate ? { n: esc(bitrate),   l:'BITRATE' } : null,
-    duration? { n: fmtDur(duration), l:'DURATION' } : null
+    quality  ? { n: esc(quality),     l:'FORMAT' }   : null,
+    bitrate  ? { n: esc(bitrate),     l:'BITRATE' }  : null,
+    duration ? { n: fmtDur(duration), l:'DURATION' } : null
   ]);
 
   if (audioUrl) {
     html += `<div class="sec-title">Download Options</div>`;
-    html += dlRow(audioUrl, '🎵', 'MP3 / M4A Audio', bitrate ? `ශබ්දය පමණයි · ${bitrate}` : 'ශබ්දය පමණයි');
+    html += dlRow(audioUrl, '🎵', 'MP3 / M4A Audio',
+      bitrate ? `ශබ්දය පමණයි · ${bitrate}` : 'ශබ්දය පමණයි');
   } else {
     html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Audio link එකක් හමු නොවුණා</div></div>`;
   }
@@ -682,7 +737,6 @@ function renderYtmp3(data){
    RENDER: YOUTUBE MP4
    ========================================================= */
 function renderYtmp4(data){
-  // The API currently returns a "no worker" message — handle gracefully
   if (!data || data.ok === false || data.message || (!data.download && !data.raw)) {
     const msg = data?.message || 'මේ API එක තවම වැඩ කරන්නේ නෑ';
     showResult(`<div class="box err">
@@ -696,7 +750,6 @@ function renderYtmp4(data){
     return;
   }
 
-  // Generic handler (if API later works)
   const dl = data.downloads || data.data || data;
   const thumb = dl.thumbnail || dl.image || data.thumbnail || '';
   const videoUrl = (dl.links && dl.links[0]?.url) || dl.video || dl.download || data.download || '';
@@ -723,9 +776,24 @@ function renderYtmp4(data){
 /* =========================================================
    API CALL
    ========================================================= */
+async function callTikTokApi(url){
+  const r = await fetch(`${TIKTOK_API_BASE}/api/download/tiktok`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url })
+  });
+  if (!r.ok) throw new Error('TikTok API එකට සම්බන්ධ වෙන්න බැරි වුණා');
+  return await r.json();
+}
+
 async function callApi(platformKey, url){
   const p = PLATFORMS[platformKey];
   if (!p) throw new Error('මේ platform එක support කරන්නේ නෑ');
+
+  // Custom TikTok API (POST)
+  if (p.method === 'CUSTOM_TIKTOK') {
+    return await callTikTokApi(url);
+  }
 
   // 1) Vercel proxy (recommended)
   if (p.proxy) {
@@ -749,7 +817,6 @@ async function callApi(platformKey, url){
    AUTO-DETECT ON INPUT
    ========================================================= */
 function autoDetect(url){
-  // YouTube needs priority because ytmp3/ytmp4 share same pattern
   if (/(youtube\.com|youtu\.be)/i.test(url)) {
     if (currentPlatform !== 'ytmp3' && currentPlatform !== 'ytmp4') {
       setPlatform('ytmp3');
@@ -786,7 +853,6 @@ async function handleFetch(){
     return;
   }
 
-  // If URL clearly matches a different platform, auto-switch (except ytmp3/ytmp4)
   autoDetect(url);
 
   resultEl.className = '';
@@ -797,9 +863,15 @@ async function handleFetch(){
   try {
     const data = await callApi(currentPlatform, url);
 
-    // Generic failure check
-    if (!data || data.status === false) {
-      throw new Error(data?.message || data?.error || 'Video එක හමු නොවුණා');
+    // TikTok has its own success field
+    if (currentPlatform === 'tiktok') {
+      if (!data || data.success === false) {
+        throw new Error(data?.error || 'TikTok video එක හමු නොවුණා');
+      }
+    } else {
+      if (!data || data.status === false) {
+        throw new Error(data?.message || data?.error || 'Video එක හමු නොවුණා');
+      }
     }
 
     showStatus('none');
