@@ -61,7 +61,6 @@
     box-shadow:0 16px 44px rgba(0,0,0,.5);
   }
 
-  /* Platform selector */
   .platform-grid{
     display:grid;
     grid-template-columns:repeat(4, 1fr);
@@ -124,7 +123,6 @@
   }
   .mini:active{background:rgba(255,255,255,.16);color:#fff}
 
-  /* Quality selector */
   .quality-row{
     display:none;
     margin-top:12px;
@@ -263,7 +261,6 @@
 
   <div class="card">
 
-    <!-- Platform Selector -->
     <div class="platform-grid" id="platformGrid">
       <button class="pbtn" data-p="facebook" type="button">
         <span class="picon">📘</span>
@@ -305,11 +302,11 @@
       </div>
     </div>
 
-    <!-- Quality Selector (YT MP4 only) -->
     <div class="quality-row" id="qualityRow">
       <div class="qlabel">🎬 Video Quality</div>
       <div class="quality-chips" id="qualityChips">
         <button class="qchip" data-q="360" type="button">360p</button>
+        <button class="qchip" data-q="480" type="button">480p</button>
         <button class="qchip active" data-q="720" type="button">720p HD</button>
         <button class="qchip" data-q="1080" type="button">1080p Full HD</button>
       </div>
@@ -338,8 +335,8 @@ const API_KEY = 'kcey_3aac11b6ed5c49a5b3b0a2a2922a38de4014';
 const TIKTOK_API_BASE = 'https://dg-tiktok-audio-download-api.vercel.app';
 const DARKSHAN_BASE   = 'https://api-dark-shan-yt.koyeb.app';
 const DARKSHAN_KEY    = '7ef68a8f38185a67';
-const ZANTA_BASE      = 'https://api.zanta-mini.store';
-const ZANTA_KEY       = 'zanta_JatdaWBTIbi4uSdilQ1q6gE3';
+const SASA_BASE       = 'https://sasa-dev-api.xyz';
+const SASA_KEY        = 'Sasa_Dev_Api_7e9cf42bd33607b3503c016dd49720fec6d22b63';
 
 const PLATFORMS = {
   facebook: {
@@ -373,12 +370,12 @@ const PLATFORMS = {
   pinterest: {
     label: 'Pinterest',
     icon:  '📌',
-    method:'ZANTA',
+    method:'SASA',
     type:  'pinterest',
-    proxy: '/api/pinterest',
+    proxy: '/api/sasa-pinterest',
     pattern: /(pinterest\.com|pin\.it)/i,
     placeholder: 'https://pin.it/... හෝ pinterest link එක paste කරන්න',
-    render: renderPinterest
+    render: renderSasaPinterest
   },
   ytmp3: {
     label: 'YouTube MP3',
@@ -393,12 +390,12 @@ const PLATFORMS = {
   ytmp4: {
     label: 'YouTube MP4',
     icon:  '🎬',
-    method:'ZANTA',
-    type:  'ytmp4-v2',
-    proxy: '/api/ytmp4',
+    method:'SASA',
+    type:  'ytmp4',
+    proxy: '/api/sasa-ytmp4',
     pattern: /(youtube\.com|youtu\.be)/i,
     placeholder: 'https://youtu.be/... හෝ youtube link එක paste කරන්න',
-    render: renderYtmp4,
+    render: renderSasaYtmp4,
     showQuality: true
   },
   spotify: {
@@ -692,11 +689,11 @@ function renderTikTok(data){
 }
 
 /* =========================================================
-   RENDER: PINTEREST (ZANTA API)
-   Response: { success, result: { url, thumbnail, downloadUrl, quality } }
+   RENDER: PINTEREST (Sasa Dev API)
+   Response: { status, result: { kind, title, author, cover, total, items: [{ type, quality, url, ext, direct, download }] } }
    ========================================================= */
-function renderPinterest(data){
-  if (!data || data.success === false || !data.result) {
+function renderSasaPinterest(data){
+  if (!data || data.status === false || !data.result) {
     showResult(`<div class="box err">
       <div>⚠️</div>
       <div>${esc(data?.message || data?.error || 'Pinterest link එක ලබා ගැනීමට නොහැකි විය')}</div>
@@ -705,40 +702,48 @@ function renderPinterest(data){
   }
 
   const r = data.result || {};
-  const thumb      = r.thumbnail || '';
-  const videoUrl   = r.downloadUrl || r.video || r.url || '';
-  const quality    = r.quality || 'HD';
-  const sourceUrl  = r.url || '';
+  const cover  = r.cover || '';
+  const title  = r.title || 'Pinterest Pin';
+  const author = r.author || 'Pinterest User';
+  const items  = Array.isArray(r.items) ? r.items : [];
 
-  let html = thumbBlock(thumb, '');
+  let html = thumbBlock(cover, '');
 
   html += `<div class="meta">
-    <h2>Pinterest Video</h2>
-    <div class="author">📌 ${esc(quality)}${sourceUrl ? ` · ${esc(sourceUrl.replace(/^https?:\/\//,'').substring(0, 40))}` : ''}</div>
+    <h2>${esc(String(title).substring(0, 160))}</h2>
+    <div class="author">👤 @${esc(author)}</div>
   </div>`;
 
   html += statBlock([
-    quality ? { n: esc(quality), l:'QUALITY' } : null
+    items.length ? { n: items.length, l:'ITEMS' } : null
   ]);
 
-  if (videoUrl) {
+  if (items.length) {
     html += `<div class="sec-title">Download Options</div>`;
-    // Detect if video or image
-    const isVideo = /\.mp4($|\?)/i.test(videoUrl) || /video/i.test(videoUrl);
-    if (isVideo) {
-      html += dlRow(videoUrl, '💎', `${esc(quality)} Video`, 'MP4 · Fast Download');
-    } else {
-      html += dlRow(videoUrl, '🖼️', 'Image', 'Full Resolution');
-    }
+    items.forEach(item => {
+      if (!item) return;
+      const isVideo = item.type === 'video' || /\.mp4($|\?)/i.test(item.url || '');
+      const isImage = item.type === 'image' || item.ext === 'jpg' || item.ext === 'png' || item.ext === 'webp';
+      const icon = isVideo ? '🎬' : (isImage ? '🖼️' : '📎');
+      const title2 = isVideo ? `${esc(item.quality || 'Video')} Video`
+                    : isImage ? `${esc(item.quality || 'Image')} Image`
+                    : 'File';
+      const sub = isVideo ? 'MP4 · Fast Download'
+                  : isImage ? `${esc(item.ext || 'JPG').toUpperCase()} · Full Resolution`
+                  : 'File';
+      const href = item.download || item.direct || item.url || '';
+      if (!href) return;
+      html += dlRow(href, icon, title2, sub);
+    });
   } else {
-    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link එකක් හමු නොවුණා</div></div>`;
+    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link කිසිවක් හමු නොවුණා</div></div>`;
   }
 
   showResult(html);
 }
 
 /* =========================================================
-   RENDER: YOUTUBE MP3
+   RENDER: YOUTUBE MP3 (KCeY)
    ========================================================= */
 function renderYtmp3(data){
   if (!data || data.ok === false || (!data.download && !data.raw)) {
@@ -779,11 +784,11 @@ function renderYtmp3(data){
 }
 
 /* =========================================================
-   RENDER: YOUTUBE MP4 (ZANTA API)
-   Handles multiple possible structures
+   RENDER: YOUTUBE MP4 (Sasa Dev API)
+   Response: { status, result: { videoId, title, author, quality, format, download } }
    ========================================================= */
-function renderYtmp4(data){
-  if (!data || data.success === false) {
+function renderSasaYtmp4(data){
+  if (!data || data.status === false || !data.result) {
     showResult(`<div class="box err">
       <div>⚠️</div>
       <div>${esc(data?.message || data?.error || 'YouTube video එක ලබා ගැනීමට නොහැකි විය')}</div>
@@ -791,17 +796,15 @@ function renderYtmp4(data){
     return;
   }
 
-  // Zanta returns: { success, result: {...} }  or  { status, data: {...} }
-  const d = data.result || data.data || data;
+  const r = data.result || {};
+  const videoId = r.videoId || '';
+  const thumb = videoId ? `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` : '';
+  const title = r.title || 'YouTube Video';
+  const author = r.author || 'YouTube';
+  const quality = r.quality || `${currentQuality}p`;
+  const videoUrl = r.download || '';
 
-  const thumb    = d.thumbnail || d.image || d.cover || '';
-  const title    = d.title || d.name || 'YouTube Video';
-  const videoUrl = d.downloadUrl || d.download || d.url || d.video || d.mp4 || '';
-  const quality  = d.quality || (d.qualityLabel) || `${currentQuality}p`;
-  const duration = d.duration || d.length || 0;
-  const author   = d.author || d.channel || d.uploader || 'YouTube';
-
-  let html = thumbBlock(thumb, fmtDur(duration));
+  let html = thumbBlock(thumb, '');
 
   html += `<div class="meta">
     <h2>${esc(String(title).substring(0, 160))}</h2>
@@ -809,8 +812,8 @@ function renderYtmp4(data){
   </div>`;
 
   html += statBlock([
-    quality  ? { n: esc(quality),     l:'QUALITY' }  : null,
-    duration ? { n: fmtDur(duration), l:'DURATION' } : null
+    quality ? { n: esc(quality), l:'QUALITY' } : null,
+    r.format ? { n: esc(r.format).toUpperCase(), l:'FORMAT' } : null
   ]);
 
   if (videoUrl) {
@@ -882,7 +885,6 @@ async function callTikTokApi(url){
 }
 
 async function callDarkshanApi(type, url, quality){
-  // 1) Try Vercel proxy first
   try {
     let purl = `/api/${type}?url=${encodeURIComponent(url)}`;
     if (type === 'ytmp4' && quality) purl += `&quality=${quality}`;
@@ -893,7 +895,6 @@ async function callDarkshanApi(type, url, quality){
     }
   } catch (_) { /* fall through */ }
 
-  // 2) Direct
   let direct = `${DARKSHAN_BASE}/download/${type}?url=${encodeURIComponent(url)}&api_key=${DARKSHAN_KEY}`;
   if (type === 'ytmp4' && quality) direct += `&quality=${quality}`;
   const r2 = await fetch(direct);
@@ -901,12 +902,12 @@ async function callDarkshanApi(type, url, quality){
   return await r2.json();
 }
 
-async function callZantaApi(type, url, quality){
+async function callSasaApi(type, url, quality){
   // 1) Try Vercel proxy first
-  const proxyPath = type === 'ytmp4-v2' ? '/api/ytmp4' : `/api/${type}`;
+  const proxyPath = type === 'ytmp4' ? '/api/sasa-ytmp4' : `/api/sasa-${type}`;
   try {
     let purl = `${proxyPath}?url=${encodeURIComponent(url)}`;
-    if (type === 'ytmp4-v2' && quality) purl += `&quality=${quality}`;
+    if (type === 'ytmp4' && quality) purl += `&quality=${quality}`;
     const r = await fetch(purl);
     if (r.ok) {
       const data = await r.json();
@@ -915,8 +916,14 @@ async function callZantaApi(type, url, quality){
   } catch (_) { /* fall through */ }
 
   // 2) Direct fallback
-  let direct = `${ZANTA_BASE}/api/${type}?apiKey=${ZANTA_KEY}&url=${encodeURIComponent(url)}`;
-  if (type === 'ytmp4-v2' && quality) direct += `&quality=${quality}`;
+  let direct;
+  if (type === 'ytmp4') {
+    direct = `${SASA_BASE}/api/yt/mp4-dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}&quality=${quality || '720'}`;
+  } else if (type === 'pinterest') {
+    direct = `${SASA_BASE}/api/pinterest/dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}`;
+  } else {
+    throw new Error('මේ type එක support කරන්නේ නෑ');
+  }
 
   const r2 = await fetch(direct);
   if (!r2.ok) throw new Error('API එකට සම්බන්ධ වෙන්න බැරි වුණා');
@@ -935,8 +942,8 @@ async function callApi(platformKey, url){
     return await callDarkshanApi(p.type, url, currentQuality);
   }
 
-  if (p.method === 'ZANTA') {
-    return await callZantaApi(p.type, url, currentQuality);
+  if (p.method === 'SASA') {
+    return await callSasaApi(p.type, url, currentQuality);
   }
 
   // 1) Vercel proxy
@@ -1011,8 +1018,8 @@ async function handleFetch(){
       if (!data || data.success === false) {
         throw new Error(data?.error || 'TikTok video එක හමු නොවුණා');
       }
-    } else if (PLATFORMS[currentPlatform].method === 'ZANTA') {
-      if (!data || data.success === false) {
+    } else if (PLATFORMS[currentPlatform].method === 'SASA') {
+      if (!data || data.status === false) {
         throw new Error(data?.message || data?.error || 'Video එක හමු නොවුණා');
       }
     } else if (PLATFORMS[currentPlatform].method === 'DARKSHAN') {
