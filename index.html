@@ -10,38 +10,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root,[data-theme="dark"]{
-  --bg:#07080f;--bg-2:#0d0f1a;--bg-3:#131726;
-  --card:rgba(18,22,36,.75);--card-solid:#12162a;
-  --line:rgba(255,255,255,.07);--line-2:rgba(255,255,255,.14);
-  --txt:#f0f3fb;--txt-2:#c2cbe0;--mut:#7c87a1;--txt-dim:#535d75;
-  --p1:#7c5cff;--p2:#00d9ff;--p3:#ff4d8d;--ok:#22c55e;--err:#ff4d6a;
-  --shadow:0 24px 60px rgba(0,0,0,.55);
-  --shadow-soft:0 8px 24px rgba(0,0,0,.35);
-  --nav-bg:rgba(9,11,20,.75);
-  --input-bg:rgba(6,9,18,.85);
-  --chip-bg:rgba(255,255,255,.04);
-  --chip-bg-2:rgba(255,255,255,.08);
-  --icon-bg:#141a2b;
-  --aurora-op:.55;
-}
-[data-theme="light"]{
-  --bg:#f5f6fb;--bg-2:#ffffff;--bg-3:#f0f2f9;
-  --card:rgba(255,255,255,.88);--card-solid:#ffffff;
-  --line:rgba(15,23,42,.08);--line-2:rgba(15,23,42,.16);
-  --txt:#0a0f1e;--txt-2:#334155;--mut:#64748b;--txt-dim:#94a3b8;
-  --p1:#6d5efc;--p2:#0099cc;--p3:#e11d63;--ok:#16a34a;--err:#e11d48;
-  --shadow:0 24px 60px rgba(15,23,42,.1);
-  --shadow-soft:0 8px 24px rgba(15,23,42,.06);
-  --nav-bg:rgba(255,255,255,.78);
-  --input-bg:#ffffff;
-  --chip-bg:rgba(15,23,42,.04);
-  --chip-bg-2:rgba(15,23,42,.08);
-  --icon-bg:#f0f2f9;
-  --aurora-op:.35;
-}
-html{scroll-behavior:smooth}
-html,body{height:100%}
+:root,[data-theme="dark"]{--bg:#07080f;--bg-3:#131726;--card:rgba(18,22,36,.75);--card-solid:#12162a;--line:rgba(255,255,255,.07);--line-2:rgba(255,255,255,.14);--txt:#f0f3fb;--txt-2:#c2cbe0;--mut:#7c87a1;--txt-dim:#535d75;--p1:#7c5cff;--p2:#00d9ff;--p3:#ff4d8d;--ok:#22c55e;--err:#ff4d6a;--shadow:0 24px 60px rgba(0,0,0,.55);--shadow-soft:0 8px 24px rgba(0,0,0,.35);--nav-bg:rgba(9,11,20,.75);--input-bg:rgba(6,9,18,.85);--chip-bg:rgba(255,255,255,.04);--chip-bg-2:rgba(255,255,255,.08);--icon-bg:#141a2b;--aurora-op:.55}
+[data-theme="light"]{--bg:#f5f6fb;--bg-3:#f0f2f9;--card:rgba(255,255,255,.88);--card-solid:#ffffff;--line:rgba(15,23,42,.08);--line-2:rgba(15,23,42,.16);--txt:#0a0f1e;--txt-2:#334155;--mut:#64748b;--txt-dim:#94a3b8;--p1:#6d5efc;--p2:#0099cc;--p3:#e11d63;--ok:#16a34a;--err:#e11d48;--shadow:0 24px 60px rgba(15,23,42,.1);--shadow-soft:0 8px 24px rgba(15,23,42,.06);--nav-bg:rgba(255,255,255,.78);--input-bg:#ffffff;--chip-bg:rgba(15,23,42,.04);--chip-bg-2:rgba(15,23,42,.08);--icon-bg:#f0f2f9;--aurora-op:.35}
+html{scroll-behavior:smooth}html,body{height:100%}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--txt);min-height:100dvh;position:relative;overflow-x:hidden;padding-top:64px;transition:background .4s ease,color .4s ease;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
 .aurora{position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0;will-change:transform;opacity:var(--aurora-op);transition:opacity .4s}
 .aurora-1{width:420px;height:420px;background:radial-gradient(circle,#7c5cff 0%,transparent 70%);top:-160px;left:-140px;animation:float1 16s ease-in-out infinite}
@@ -58,7 +29,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 .theme-btn{width:38px;height:38px;border-radius:11px;background:var(--chip-bg);border:1px solid var(--line);display:grid;place-items:center;cursor:pointer;color:var(--txt);transition:all .25s cubic-bezier(.4,0,.2,1)}
 .theme-btn:hover{background:var(--chip-bg-2);border-color:var(--line-2);transform:rotate(20deg)}
 .theme-btn:active{transform:scale(.92) rotate(20deg)}
-.theme-btn svg{width:17px;height:17px;transition:opacity .25s}
+.theme-btn svg{width:17px;height:17px}
 .theme-btn .icon-sun{display:block}.theme-btn .icon-moon{display:none}
 [data-theme="light"] .theme-btn .icon-sun{display:none}
 [data-theme="light"] .theme-btn .icon-moon{display:block}
@@ -67,7 +38,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 .hero h1{font-family:'Sora',sans-serif;font-size:clamp(24px,5.2vw,34px);font-weight:800;line-height:1.2;letter-spacing:-.9px;color:var(--txt);margin-bottom:12px}
 .hero h1 .grad{background:linear-gradient(90deg,#7c5cff,#4d8dff,#00d9ff);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gradFlow 5s linear infinite}
 .hero .subtitle{color:var(--mut);font-size:14px;line-height:1.6;max-width:440px;margin:0 auto;font-weight:500}
-.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);box-shadow:var(--shadow);transition:background .4s ease,border-color .4s ease,box-shadow .4s ease;position:relative}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);box-shadow:var(--shadow);position:relative}
 .card::before{content:'';position:absolute;top:0;left:20px;right:20px;height:1px;background:linear-gradient(90deg,transparent,rgba(124,92,255,.5),rgba(0,217,255,.5),transparent);pointer-events:none}
 .input-field{position:relative;display:flex;align-items:center}
 .input-field input{width:100%;background:var(--input-bg);border:1px solid var(--line);border-radius:15px;padding:16px 90px 16px 46px;color:var(--txt);font-size:14.5px;font-weight:500;outline:none;font-family:inherit;transition:all .25s cubic-bezier(.4,0,.2,1);letter-spacing:-.01em}
@@ -90,7 +61,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 .platform-name{font-size:10px;font-weight:700;color:var(--mut);letter-spacing:.2px;transition:color .25s;white-space:nowrap}
 .platform-btn:hover .platform-icon{border-color:var(--line-2);transform:translateY(-2px)}
 .platform-btn:hover .platform-icon svg{transform:scale(1.12)}
-.platform-btn:hover .platform-name{color:var(--txt-2)}
 .platform-btn.active .platform-icon{background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;border-color:transparent;box-shadow:0 8px 24px rgba(124,92,255,.45),0 0 0 4px rgba(124,92,255,.12)}
 .platform-btn.active .platform-name{color:var(--txt);font-weight:800}
 .download-btn{width:100%;padding:17px;border:none;border-radius:15px;background:linear-gradient(135deg,#7c5cff 0%,#4d8dff 50%,#00d9ff 100%);color:#fff;font-size:15.5px;font-weight:800;letter-spacing:.3px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden;box-shadow:0 12px 32px rgba(91,61,245,.45),0 1px 0 rgba(255,255,255,.35) inset;transition:transform .15s cubic-bezier(.4,0,.2,1),box-shadow .25s;margin-top:4px}
@@ -120,33 +90,29 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 .meta h2{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;line-height:1.4;margin-bottom:7px;letter-spacing:-.3px;color:var(--txt)}
 .meta .author{font-size:12.5px;color:var(--mut);display:flex;align-items:center;gap:6px;font-weight:500}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
-.stat{background:var(--chip-bg);border:1px solid var(--line);border-radius:13px;padding:12px 6px;text-align:center;transition:all .2s}
-.stat:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.stat{background:var(--chip-bg);border:1px solid var(--line);border-radius:13px;padding:12px 6px;text-align:center}
 .stat b{display:block;font-size:15px;font-weight:800;letter-spacing:-.2px;color:var(--txt)}
 .stat small{font-size:9.5px;color:var(--mut);letter-spacing:1px;font-weight:700;text-transform:uppercase;margin-top:3px;display:block}
 .sec-title{font-size:11px;font-weight:800;color:var(--mut);letter-spacing:1.5px;text-transform:uppercase;margin:22px 0 12px;display:flex;align-items:center;gap:10px}
 .sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
 .dl{display:flex;align-items:center;gap:13px;background:var(--chip-bg);border:1px solid var(--line);border-radius:15px;padding:13px 15px;margin-bottom:9px;text-decoration:none;color:var(--txt);transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;cursor:pointer}
 .dl::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#7c5cff,#00d9ff);opacity:0;transition:opacity .25s}
-.dl::after{content:'';position:absolute;top:0;left:-120%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(124,92,255,.08),transparent);transition:left .6s;pointer-events:none}
 .dl:hover{background:var(--chip-bg-2);border-color:rgba(124,92,255,.4);transform:translateX(4px);box-shadow:0 10px 30px rgba(124,92,255,.18)}
 .dl:hover::before{opacity:1}
-.dl:hover::after{left:130%}
 .dl:active{transform:translateX(4px) scale(.985)}
-.dl .badge{width:42px;height:42px;flex:none;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(124,92,255,.22),rgba(0,217,255,.14));border:1px solid rgba(124,92,255,.2);color:var(--p1);transition:transform .3s;position:relative}
+.dl .badge{width:42px;height:42px;flex:none;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(124,92,255,.22),rgba(0,217,255,.14));border:1px solid rgba(124,92,255,.2);color:var(--p1);transition:transform .3s}
 [data-theme="light"] .dl .badge{color:#6d5efc}
 .dl .badge svg{width:19px;height:19px}
 .dl:hover .badge{transform:scale(1.08) rotate(-3deg)}
 .dl .txt{flex:1;min-width:0}
 .dl .txt b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.1px;margin-bottom:2px;color:var(--txt)}
 .dl .txt small{font-size:11px;color:var(--mut);font-weight:500;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.dl .go{font-size:10.5px;font-weight:800;color:#fff;padding:7px 12px;border-radius:9px;background:linear-gradient(135deg,#7c5cff,#4d8dff);flex:none;letter-spacing:.6px;display:inline-flex;align-items:center;gap:5px;box-shadow:0 4px 14px rgba(124,92,255,.4);transition:all .2s}
+.dl .go{font-size:10.5px;font-weight:800;color:#fff;padding:7px 12px;border-radius:9px;background:linear-gradient(135deg,#7c5cff,#4d8dff);flex:none;letter-spacing:.6px;display:inline-flex;align-items:center;gap:5px;box-shadow:0 4px 14px rgba(124,92,255,.4);transition:all .2s;min-width:64px;justify-content:center}
 .dl .go svg{width:11px;height:11px}
 .dl:hover .go{box-shadow:0 6px 20px rgba(124,92,255,.6);transform:translateY(-1px)}
-.dl.downloading{pointer-events:none}
+.dl.downloading{pointer-events:none;background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(34,197,94,.04));border-color:rgba(34,197,94,.35)}
 .dl.downloading .go{background:linear-gradient(135deg,#22c55e,#16a34a)}
-.dl.downloading .badge{animation:pulse 1.2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.dl.done .go{background:linear-gradient(135deg,#22c55e,#16a34a)}
 .tag{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:800;letter-spacing:.4px;padding:2px 6px;border-radius:5px;text-transform:uppercase}
 .tag.audio{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3)}
 .tag.mute{background:rgba(255,77,106,.13);color:#ff8fa3;border:1px solid rgba(255,77,106,.3)}
@@ -156,7 +122,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 .howto .lead{text-align:center;color:var(--mut);font-size:13.5px;margin-bottom:28px;font-weight:500;line-height:1.6}
 .steps{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 @media(max-width:520px){.steps{grid-template-columns:1fr;gap:10px}}
-.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;position:relative;transition:all .3s cubic-bezier(.4,0,.2,1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;transition:all .3s cubic-bezier(.4,0,.2,1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .step:hover{border-color:rgba(124,92,255,.4);transform:translateY(-3px);box-shadow:0 12px 32px rgba(124,92,255,.15)}
 .step-num{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,#7c5cff,#00d9ff);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;margin-bottom:12px;letter-spacing:-1px}
 .step h3{font-family:'Sora',sans-serif;font-size:14.5px;font-weight:700;letter-spacing:-.2px;margin-bottom:6px;color:var(--txt)}
@@ -167,7 +133,7 @@ footer p{font-size:11.5px;color:var(--txt-dim);line-height:1.7;font-weight:500}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card-solid);border:1px solid rgba(124,92,255,.4);color:var(--txt);padding:12px 20px;border-radius:14px;font-size:13px;font-weight:600;z-index:9999;backdrop-filter:blur(20px);box-shadow:0 16px 40px rgba(0,0,0,.35),0 0 24px rgba(124,92,255,.22);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:9px;max-width:calc(100vw - 32px)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast svg{width:16px;height:16px;color:var(--ok);flex:none}
-.dl .go .spinner{width:11px;height:11px;border-width:2px;border-top-color:#fff}
+.dl .go .spinner{width:11px;height:11px;border-width:2px;border-top-color:#fff;border-color:rgba(255,255,255,.3);border-top-color:#fff}
 </style>
 </head>
 <body>
@@ -175,9 +141,7 @@ footer p{font-size:11.5px;color:var(--txt-dim);line-height:1.7;font-weight:500}
 <nav class="navbar">
   <div class="nav-inner">
     <div class="brand">
-      <div class="brand-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </div>
+      <div class="brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
       <div class="brand-name">DG<span>&nbsp;SAVER</span></div>
     </div>
     <button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle theme">
@@ -198,46 +162,20 @@ footer p{font-size:11.5px;color:var(--txt-dim);line-height:1.7;font-weight:500}
 
   <div class="card">
     <div class="input-field">
-      <span class="input-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-      </span>
+      <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
       <input id="urlInput" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Paste your link here...">
-      <button class="paste-btn" id="pasteBtn" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
-        PASTE
-      </button>
+      <button class="paste-btn" id="pasteBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>PASTE</button>
     </div>
 
     <div class="platforms-label">Choose Platform</div>
     <div class="platforms" id="platforms">
-      <button class="platform-btn" data-p="facebook" type="button">
-        <div class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></div>
-        <span class="platform-name">Facebook</span>
-      </button>
-      <button class="platform-btn" data-p="instagram" type="button">
-        <div class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></div>
-        <span class="platform-name">Instagram</span>
-      </button>
-      <button class="platform-btn" data-p="tiktok" type="button">
-        <div class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></div>
-        <span class="platform-name">TikTok</span>
-      </button>
-      <button class="platform-btn" data-p="pinterest" type="button">
-        <div class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg></div>
-        <span class="platform-name">Pinterest</span>
-      </button>
-      <button class="platform-btn" data-p="ytmp3" type="button">
-        <div class="platform-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
-        <span class="platform-name">YT MP3</span>
-      </button>
-      <button class="platform-btn" data-p="ytmp4" type="button">
-        <div class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div>
-        <span class="platform-name">YT MP4</span>
-      </button>
-      <button class="platform-btn" data-p="spotify" type="button">
-        <div class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.301.421-1.02.599-1.56.3z"/></svg></div>
-        <span class="platform-name">Spotify</span>
-      </button>
+      <button class="platform-btn" data-p="facebook" type="button"><div class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></div><span class="platform-name">Facebook</span></button>
+      <button class="platform-btn" data-p="instagram" type="button"><div class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></div><span class="platform-name">Instagram</span></button>
+      <button class="platform-btn" data-p="tiktok" type="button"><div class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></div><span class="platform-name">TikTok</span></button>
+      <button class="platform-btn" data-p="pinterest" type="button"><div class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg></div><span class="platform-name">Pinterest</span></button>
+      <button class="platform-btn" data-p="ytmp3" type="button"><div class="platform-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><span class="platform-name">YT MP3</span></button>
+      <button class="platform-btn" data-p="ytmp4" type="button"><div class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div><span class="platform-name">YT MP4</span></button>
+      <button class="platform-btn" data-p="spotify" type="button"><div class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.301.421-1.02.599-1.56.3z"/></svg></div><span class="platform-name">Spotify</span></button>
     </div>
 
     <button class="download-btn" id="downloadBtn" type="button">
@@ -268,10 +206,8 @@ footer p{font-size:11.5px;color:var(--txt-dim);line-height:1.7;font-weight:500}
 
 <script>
 /* =========================================================
-   DG SAVER — JavaScript
+   DG SAVER — JavaScript (fixed)
    ========================================================= */
-
-/* ============ CONFIG ============ */
 const API_KEY = 'kcey_3aac11b6ed5c49a5b3b0a2a2922a38de4014';
 const TIKTOK_API_BASE = 'https://tiktok-api-new-vercel.vercel.app';
 const DARKSHAN_BASE   = 'https://api-dark-shan-yt.koyeb.app';
@@ -280,33 +216,33 @@ const SASA_BASE       = 'https://sasa-dev-api.xyz';
 const SASA_KEY        = 'Sasa_Dev_Api_7e9cf42bd33607b3503c016dd49720fec6d22b63';
 const ZANTA_BASE      = 'https://api.zanta-mini.store';
 const ZANTA_KEY       = 'zanta_JatdaWBTIbi4uSdilQ1q6gE3';
-
 const YTMP4_BASE = 'https://supunofc.site/api/download/ytmp4-down';
 const YTMP4_KEY  = 'supun-6senhznz07sw1zzfkn8yf768';
-
 const PINTEREST_BASE = 'https://supunofc.site/api/download/down/pin/dl';
 const PINTEREST_KEY  = 'supun-6senhznz07sw1zzfkn8yf768';
 
-/* CORS proxy chain — used to bypass CORS when direct fetch fails */
+/* CORS proxies — reordered for reliability */
 const CORS_PROXIES = [
-  (u) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
-  (u) => `https://corsproxy.io/?url=${encodeURIComponent(u)}`,
   (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-  (u) => `https://cors.eu.org/${u}`
+  (u) => `https://corsproxy.io/?url=${encodeURIComponent(u)}`,
+  (u) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+  (u) => `https://cors.eu.org/${u}`,
+  (u) => `https://thingproxy.freeboard.io/fetch/${u}`
 ];
 
-/* ============ PLATFORM CONFIG ============ */
+/* Hosts known to block CORS (skip direct fetch) */
+const CORS_BLOCKED_HOSTS = ['googlevideo.com','pinimg.com','fbcdn.net','cdninstagram.com','tiktokcdn.com','scdn.co','akamaized.net','ytimg.com'];
+
 const PLATFORMS = {
-  facebook:  { label:'Facebook',    method:'KCEY_SOCIAL', type:'facebook',  pattern:/(facebook\.com|fb\.watch|fb\.me|m\.facebook\.com)/i, render:renderFacebook },
-  instagram: { label:'Instagram',   method:'KCEY_SOCIAL', type:'instagram', pattern:/(instagram\.com|instagr\.am)/i, render:renderInstagram },
-  tiktok:    { label:'TikTok',      method:'CUSTOM_TIKTOK', pattern:/(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)/i, render:renderTikTok },
-  pinterest: { label:'Pinterest',   method:'PINTEREST_NEW', pattern:/(pinterest\.com|pin\.it)/i, render:renderPinterest },
-  ytmp3:     { label:'YouTube MP3', method:'YTMP3_FALLBACK', pattern:/(youtube\.com|youtu\.be)/i, render:renderYtmp3 },
-  ytmp4:     { label:'YouTube MP4', method:'YTMP4_NEW', pattern:/(youtube\.com|youtu\.be)/i, render:renderYtmp4 },
-  spotify:   { label:'Spotify',     method:'DARKSHAN', type:'spotify', pattern:/(spotify\.com|spoti\.fi)/i, render:renderSpotify }
+  facebook:  { label:'Facebook',    method:'KCEY_SOCIAL', type:'facebook',  render:renderFacebook },
+  instagram: { label:'Instagram',   method:'KCEY_SOCIAL', type:'instagram', render:renderInstagram },
+  tiktok:    { label:'TikTok',      method:'CUSTOM_TIKTOK', render:renderTikTok },
+  pinterest: { label:'Pinterest',   method:'PINTEREST_NEW', render:renderPinterest },
+  ytmp3:     { label:'YouTube MP3', method:'YTMP3_FALLBACK', render:renderYtmp3 },
+  ytmp4:     { label:'YouTube MP4', method:'YTMP4_NEW', render:renderYtmp4 },
+  spotify:   { label:'Spotify',     method:'DARKSHAN', render:renderSpotify }
 };
 
-/* ============ ELEMENTS ============ */
 const htmlEl       = document.documentElement;
 const themeBtn     = document.getElementById('themeBtn');
 const input        = document.getElementById('urlInput');
@@ -317,11 +253,9 @@ const statusEl     = document.getElementById('status');
 const resultEl     = document.getElementById('result');
 const platformsEl  = document.getElementById('platforms');
 
-/* ============ STATE ============ */
 let currentPlatform = 'facebook';
 const platformUrls = { facebook:'', instagram:'', tiktok:'', pinterest:'', ytmp3:'', ytmp4:'', spotify:'' };
 
-/* ============ SVG ICONS ============ */
 const SVG_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>';
 const SVG_HD    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M10 12h4M8 9v6M16 9v6"/></svg>';
 const SVG_SD    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>';
@@ -330,462 +264,301 @@ const SVG_VIDEO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 const SVG_IMAGE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
 const SVG_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
-/* =========================================================
-   THEME
-   ========================================================= */
-function setTheme(theme){
-  htmlEl.setAttribute('data-theme', theme);
-  localStorage.setItem('dgsaver-theme', theme);
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', theme === 'light' ? '#f5f6fb' : '#07080f');
-}
-function initTheme(){
-  const saved = localStorage.getItem('dgsaver-theme');
-  if (saved === 'light' || saved === 'dark') { setTheme(saved); return; }
-  setTheme(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-}
-themeBtn.addEventListener('click', () => {
-  setTheme(htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-});
+/* ============ THEME ============ */
+function setTheme(t){htmlEl.setAttribute('data-theme',t);localStorage.setItem('dgsaver-theme',t);const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='light'?'#f5f6fb':'#07080f');}
+function initTheme(){const s=localStorage.getItem('dgsaver-theme');if(s==='light'||s==='dark'){setTheme(s);return;}setTheme(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');}
+themeBtn.addEventListener('click',()=>setTheme(htmlEl.getAttribute('data-theme')==='dark'?'light':'dark'));
+
+/* ============ PLATFORM SWITCH ============ */
+function setPlatform(name,skipSave){if(!PLATFORMS[name])return;if(!skipSave&&currentPlatform)platformUrls[currentPlatform]=input.value;currentPlatform=name;input.value=platformUrls[name]||'';platformsEl.querySelectorAll('.platform-btn').forEach(b=>b.classList.toggle('active',b.dataset.p===name));resultEl.className='';resultEl.innerHTML='';showStatus('none');}
+platformsEl.addEventListener('click',e=>{const btn=e.target.closest('.platform-btn');if(!btn)return;if(btn.dataset.p===currentPlatform)return;setPlatform(btn.dataset.p);input.focus();});
+input.addEventListener('input',()=>{platformUrls[currentPlatform]=input.value;});
+
+/* ============ HELPERS ============ */
+function showStatus(type,msg){if(!type||type==='none'){statusEl.className='';statusEl.innerHTML='';return;}statusEl.className='show';if(type==='loading')statusEl.innerHTML=`<div class="status-box load"><div class="spinner"></div><div>${msg}</div></div>`;else if(type==='error')statusEl.innerHTML=`<div class="status-box err"><div>⚠️</div><div>${msg}</div></div>`;}
+function setLoading(on){downloadBtn.disabled=on;downloadBtn.classList.toggle('loading',on);downloadBtnText.textContent=on?'Loading...':'Download';}
+function fmtNum(n){n=Number(n)||0;if(n>=1e9)return (n/1e9).toFixed(1).replace('.0','')+'B';if(n>=1e6)return (n/1e6).toFixed(1).replace('.0','')+'M';if(n>=1e3)return (n/1e3).toFixed(1).replace('.0','')+'K';return String(n);}
+function fmtDur(s){s=Number(s)||0;if(!s)return '';const m=Math.floor(s/60),ss=Math.floor(s%60);return `${m}:${String(ss).padStart(2,'0')}`;}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function qualityIcon(q){const s=String(q||'').toLowerCase();if(s.includes('1080')||s.includes('4k')||s.includes('2k')||s.includes('720'))return SVG_HD;if(s.includes('480')||s.includes('360')||s.includes('240')||s.includes('144'))return SVG_SD;if(s.includes('audio')||s.includes('mp3')||s.includes('m4a'))return SVG_AUDIO;return SVG_VIDEO;}
+function thumbBlock(url,dur){if(!url)return '';return `<div class="thumb"><img src="${esc(url)}" alt="thumbnail" referrerpolicy="no-referrer" onerror="this.parentElement.style.display='none'">${dur?`<div class="dur">${esc(dur)}</div>`:''}</div>`;}
+function statBlock(list){const items=list.filter(Boolean).slice(0,3);if(!items.length)return '';return `<div class="stats">`+items.map(s=>`<div class="stat"><b>${s.n}</b><small>${s.l}</small></div>`).join('')+`</div>`;}
+function dlRow(href,iconSvg,title,sub,cta){return `<a class="dl" href="${esc(href)}" data-direct-dl="1" rel="noopener"><div class="badge">${iconSvg}</div><div class="txt"><b>${title}</b><small>${sub}</small></div><div class="go">${SVG_ARROW}<span>${cta||'GET'}</span></div></a>`;}
+function showResult(html){resultEl.innerHTML=html;resultEl.className='show';setTimeout(()=>resultEl.scrollIntoView({behavior:'smooth',block:'start'}),80);}
+function getYouTubeId(url){if(!url)return null;const m=String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/|live\/))([\w-]{11})/);return m?m[1]:null;}
+function hasAudioTrack(url){if(!url)return false;const s=String(url);if(/[?&]itag=18([&]|$)/.test(s))return true;if(/[?&]itag=22([&]|$)/.test(s))return true;if(/ratebypass=yes/.test(s))return true;return false;}
+
+function toast(msg,ok){const el=document.createElement('div');el.className='toast';el.innerHTML=(ok?SVG_CHECK:'⚠️')+`<span>${esc(msg)}</span>`;document.body.appendChild(el);requestAnimationFrame(()=>el.classList.add('show'));setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),320);},2600);}
 
 /* =========================================================
-   PLATFORM SWITCHING
+   DOWNLOAD HELPERS (NEW)
    ========================================================= */
-function setPlatform(name, skipSave){
-  if (!PLATFORMS[name]) return;
-  if (!skipSave && currentPlatform) platformUrls[currentPlatform] = input.value;
-  currentPlatform = name;
-  input.value = platformUrls[name] || '';
-  platformsEl.querySelectorAll('.platform-btn').forEach(b => b.classList.toggle('active', b.dataset.p === name));
-  resultEl.className = ''; resultEl.innerHTML = '';
-  showStatus('none');
+function needsProxy(url){
+  try{const host=new URL(url).hostname.toLowerCase();return CORS_BLOCKED_HOSTS.some(h=>host.includes(h));}catch(_){return false;}
 }
-platformsEl.addEventListener('click', e => {
-  const btn = e.target.closest('.platform-btn');
-  if (!btn) return;
-  if (btn.dataset.p === currentPlatform) return;
-  setPlatform(btn.dataset.p);
-  input.focus();
-});
-input.addEventListener('input', () => { platformUrls[currentPlatform] = input.value; });
-
-/* =========================================================
-   HELPERS
-   ========================================================= */
-function showStatus(type, msg){
-  if (!type || type === 'none') { statusEl.className = ''; statusEl.innerHTML = ''; return; }
-  statusEl.className = 'show';
-  if (type === 'loading') statusEl.innerHTML = `<div class="status-box load"><div class="spinner"></div><div>${msg}</div></div>`;
-  else if (type === 'error') statusEl.innerHTML = `<div class="status-box err"><div>⚠️</div><div>${msg}</div></div>`;
+function guessFilename(url,fallback){
+  try{
+    const u=new URL(url);
+    const mime=(u.searchParams.get('mime')||'').toLowerCase();
+    const base=(fallback||`DG_SAVER_${Date.now()}`).replace(/\.[a-z0-9]+$/i,'');
+    if(mime.includes('mp4'))return base+'.mp4';
+    if(mime.includes('webm'))return base+'.webm';
+    if(mime.includes('mpeg')||mime.includes('mp3'))return base+'.mp3';
+    if(mime.includes('audio'))return base+'.m4a';
+    const last=u.pathname.split('/').filter(Boolean).pop()||'';
+    if(last&&/\.(mp4|mp3|m4a|webm|jpg|jpeg|png|gif|webp)$/i.test(last))return decodeURIComponent(last);
+  }catch(_){}
+  return (fallback||`DG_SAVER_${Date.now()}`)+'.mp4';
 }
-function setLoading(on){
-  downloadBtn.disabled = on;
-  downloadBtn.classList.toggle('loading', on);
-  downloadBtnText.textContent = on ? 'Loading...' : 'Download';
+function downloadBlob(blob,filename){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;a.style.display='none';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),120000);
 }
-function fmtNum(n){
-  n = Number(n) || 0;
-  if (n >= 1e9) return (n / 1e9).toFixed(1).replace('.0','') + 'B';
-  if (n >= 1e6) return (n / 1e6).toFixed(1).replace('.0','') + 'M';
-  if (n >= 1e3) return (n / 1e3).toFixed(1).replace('.0','') + 'K';
-  return String(n);
+async function fetchWithTimeout(url,opts={},timeout=15000){
+  const ctrl=new AbortController();
+  const t=setTimeout(()=>ctrl.abort(),timeout);
+  try{const res=await fetch(url,{...opts,signal:ctrl.signal});clearTimeout(t);return res;}
+  catch(e){clearTimeout(t);throw e;}
 }
-function fmtDur(sec){
-  sec = Number(sec) || 0;
-  if (!sec) return '';
-  const m = Math.floor(sec / 60);
-  const s = Math.floor(sec % 60);
-  return `${m}:${String(s).padStart(2,'0')}`;
-}
-function esc(str){
-  return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function qualityIcon(q){
-  const s = String(q || '').toLowerCase();
-  if (s.includes('1080') || s.includes('4k') || s.includes('2k') || s.includes('720')) return SVG_HD;
-  if (s.includes('480') || s.includes('360') || s.includes('240') || s.includes('144')) return SVG_SD;
-  if (s.includes('audio') || s.includes('mp3') || s.includes('m4a')) return SVG_AUDIO;
-  return SVG_VIDEO;
-}
-function thumbBlock(url, duration){
-  if (!url) return '';
-  return `<div class="thumb"><img src="${esc(url)}" alt="thumbnail" referrerpolicy="no-referrer" onerror="this.parentElement.style.display='none'">${duration ? `<div class="dur">${esc(duration)}</div>` : ''}</div>`;
-}
-function statBlock(list){
-  const items = list.filter(Boolean).slice(0, 3);
-  if (!items.length) return '';
-  return `<div class="stats">` + items.map(s => `<div class="stat"><b>${s.n}</b><small>${s.l}</small></div>`).join('') + `</div>`;
-}
-function dlRow(href, iconSvg, title, sub, cta){
-  const safeHref = esc(href);
-  return `<a class="dl" href="${safeHref}" data-direct-dl="1" rel="noopener"><div class="badge">${iconSvg}</div><div class="txt"><b>${title}</b><small>${sub}</small></div><div class="go">${SVG_ARROW}<span>${cta || 'GET'}</span></div></a>`;
-}
-function showResult(html){
-  resultEl.innerHTML = html;
-  resultEl.className = 'show';
-  setTimeout(() => resultEl.scrollIntoView({ behavior:'smooth', block:'start' }), 80);
-}
-function getYouTubeId(url){
-  if (!url) return null;
-  const m = String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/|live\/))([\w-]{11})/);
-  return m ? m[1] : null;
-}
-function hasAudioTrack(url){
-  if (!url) return false;
-  const s = String(url);
-  if (/[?&]itag=18([&]|$)/.test(s)) return true;
-  if (/[?&]itag=22([&]|$)/.test(s)) return true;
-  if (/ratebypass=yes/.test(s)) return true;
-  return false;
-}
-
-/* =========================================================
-   TOAST
-   ========================================================= */
-function toast(msg, ok){
-  const el = document.createElement('div');
-  el.className = 'toast';
-  el.innerHTML = (ok ? SVG_CHECK : '⚠️') + `<span>${esc(msg)}</span>`;
-  document.body.appendChild(el);
-  requestAnimationFrame(() => el.classList.add('show'));
-  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 320); }, 2600);
-}
-
-/* =========================================================
-   FILENAME DETECTION
-   ========================================================= */
-function guessFilename(url, fallback){
-  try {
-    const u = new URL(url);
-    // Check mime parameter (googlevideo URLs use this)
-    const mime = (u.searchParams.get('mime') || '').toLowerCase();
-    const base = fallback || `DG_SAVER_${Date.now()}`;
-    if (mime.includes('mp4')) return base + '.mp4';
-    if (mime.includes('webm')) return base + '.webm';
-    if (mime.includes('mpeg') || mime.includes('mp3')) return base + '.mp3';
-    if (mime.includes('audio')) return base + '.m4a';
-
-    // Check pathname
-    const last = u.pathname.split('/').filter(Boolean).pop() || '';
-    if (last && /\.(mp4|mp3|m4a|webm|jpg|jpeg|png|gif|webp)$/i.test(last)) return decodeURIComponent(last);
-  } catch(_){}
-  return (fallback || `DG_SAVER_${Date.now()}`) + '.mp4';
-}
-
-/* =========================================================
-   BLOB DOWNLOAD HELPER
-   ========================================================= */
-function downloadBlob(blob, filename){
-  const blobUrl = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = blobUrl;
-  a.download = filename;
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-}
-
-/* =========================================================
-   FETCH AS BLOB — direct + CORS proxy fallback
-   ========================================================= */
-async function fetchAsBlob(url, onStage){
-  // Stage 1: Direct fetch
-  try {
-    if (onStage) onStage('Connecting...');
-    const res = await fetch(url, { mode: 'cors', credentials: 'omit' });
-    if (res.ok) {
-      const blob = await res.blob();
-      if (blob && blob.size > 200) return blob;
-    }
-  } catch(_) {}
-
-  // Stage 2: Try each proxy
-  for (let i = 0; i < CORS_PROXIES.length; i++){
-    try {
-      if (onStage) onStage(`Proxy ${i + 1}/${CORS_PROXIES.length}...`);
-      const proxyUrl = CORS_PROXIES[i](url);
-      const res = await fetch(proxyUrl, { credentials: 'omit' });
-      if (!res.ok) continue;
-      const blob = await res.blob();
-      if (blob && blob.size > 200) return blob;
-    } catch(_) { continue; }
+async function fetchAsBlob(url){
+  // Direct fetch (skip if host known to block CORS)
+  if(!needsProxy(url)){
+    try{
+      const res=await fetchWithTimeout(url,{mode:'cors',credentials:'omit'},8000);
+      if(res.ok){const b=await res.blob();if(b&&b.size>200)return b;}
+    }catch(_){}
   }
-
+  // Try proxies with timeout per attempt
+  for(let i=0;i<CORS_PROXIES.length;i++){
+    try{
+      const pUrl=CORS_PROXIES[i](url);
+      const res=await fetchWithTimeout(pUrl,{credentials:'omit'},20000);
+      if(!res.ok)continue;
+      const b=await res.blob();
+      if(b&&b.size>200)return b;
+    }catch(_){continue;}
+  }
   throw new Error('All download methods failed');
 }
+async function directDownload(url,rowEl,fallbackName){
+  if(rowEl&&rowEl.classList.contains('downloading'))return;
+  const filename=guessFilename(url,fallbackName);
 
-/* =========================================================
-   DIRECT DOWNLOAD — main handler
-   ========================================================= */
-async function directDownload(url, rowEl, fallbackName){
-  if (rowEl && rowEl.classList.contains('downloading')) return;
+  const setState=(icon,text)=>{if(!rowEl)return;const go=rowEl.querySelector('.go');if(go)go.innerHTML=icon?`${icon}<span>${text}</span>`:`<div class="spinner"></div><span>${text}</span>`;};
 
-  const filename = guessFilename(url, fallbackName);
-
-  if (rowEl) {
-    rowEl.classList.add('downloading');
-    const go = rowEl.querySelector('.go');
-    if (go) go.innerHTML = '<div class="spinner"></div><span>WAIT</span>';
-  }
-
-  const setStage = (text) => {
-    if (!rowEl) return;
-    const go = rowEl.querySelector('.go');
-    if (go) go.innerHTML = `<div class="spinner"></div><span>${text}</span>`;
-  };
-
-  try {
-    const blob = await fetchAsBlob(url, setStage);
-    setStage('Saving...');
-    downloadBlob(blob, filename);
-    toast('Download started ✓', true);
-  } catch(e) {
-    // Last resort: open in new tab so user can manually save
-    try {
-      toast('Opening link in new tab...', false);
-      window.open(url, '_blank', 'noopener');
-    } catch(_) {
-      toast('Download failed. Try again.', false);
-    }
-  } finally {
-    if (rowEl) {
+  if(rowEl){rowEl.classList.add('downloading');setState(null,'...');}
+  try{
+    const blob=await fetchAsBlob(url);
+    setState(null,'Save');
+    downloadBlob(blob,filename);
+    toast('Download started ✓',true);
+    if(rowEl){
       rowEl.classList.remove('downloading');
-      const go = rowEl.querySelector('.go');
-      if (go) go.innerHTML = SVG_ARROW + '<span>GET</span>';
+      rowEl.classList.add('done');
+      setState(SVG_CHECK,'Done');
+      setTimeout(()=>{rowEl.classList.remove('done');setState(SVG_ARROW,'GET');},2200);
     }
+  }catch(e){
+    if(rowEl){rowEl.classList.remove('downloading');setState(SVG_ARROW,'GET');}
+    // Fallback: open in new tab
+    toast('Opening in new tab...',false);
+    try{window.open(url,'_blank','noopener');}catch(_){}
   }
 }
-
-/* Delegated click handler for all download rows */
-document.addEventListener('click', e => {
-  const link = e.target.closest('a[data-direct-dl]');
-  if (!link) return;
+document.addEventListener('click',e=>{
+  const link=e.target.closest('a[data-direct-dl]');
+  if(!link)return;
   e.preventDefault();
-  const rowTitle = link.querySelector('.txt b')?.textContent || '';
-  const safeName = rowTitle.replace(/[^\w\s-]/g, '').replace(/\s+/g, '_').substring(0, 60) || 'DG_SAVER';
-  directDownload(link.href, link, safeName);
+  const title=link.querySelector('.txt b')?.textContent||'';
+  const safe=title.replace(/[^\w\s-]/g,'').replace(/\s+/g,'_').substring(0,60)||'DG_SAVER';
+  directDownload(link.href,link,safe);
 });
 
 /* =========================================================
-   RENDER: FACEBOOK
+   RENDERERS
    ========================================================= */
 function renderFacebook(data){
-  const md = data.metadata || {};
-  const dl = data.downloads || {};
-  const links = Array.isArray(dl.links) ? dl.links : [];
-  const thumb = dl.thumbnail || '';
-  const title = md.title || 'Facebook Video';
-  let html = thumbBlock(thumb, md.duration);
-  html += `<div class="meta"><h2>${esc(title)}</h2><div class="author">👤 ${esc(md.author || 'Unknown')}</div></div>`;
-  html += statBlock([
-    md.view_count ? { n: fmtNum(md.view_count), l:'Views' } : null,
-    md.like_count ? { n: fmtNum(md.like_count), l:'Likes' } : null,
-    md.comment_count ? { n: fmtNum(md.comment_count), l:'Comments' } : null,
-    md.resolution ? { n: esc(md.resolution), l:'Resolution' } : null
+  const md=data.metadata||{},dl=data.downloads||{};
+  const links=Array.isArray(dl.links)?dl.links:[];
+  let html=thumbBlock(dl.thumbnail||'',md.duration);
+  html+=`<div class="meta"><h2>${esc(md.title||'Facebook Video')}</h2><div class="author">👤 ${esc(md.author||'Unknown')}</div></div>`;
+  html+=statBlock([
+    md.view_count?{n:fmtNum(md.view_count),l:'Views'}:null,
+    md.like_count?{n:fmtNum(md.like_count),l:'Likes'}:null,
+    md.comment_count?{n:fmtNum(md.comment_count),l:'Comments'}:null,
+    md.resolution?{n:esc(md.resolution),l:'Resolution'}:null
   ]);
-  if (links.length) {
-    html += `<div class="sec-title">Download Options</div>`;
-    links.forEach(link => {
-      if (!link || !link.url) return;
-      const q = String(link.quality || 'HD');
-      html += dlRow(link.url, qualityIcon(q), `${esc(q)} Video`, 'MP4 · Watermark-free');
-    });
-  } else {
-    html += `<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No download links found</div></div>`;
-  }
+  if(links.length){html+=`<div class="sec-title">Download Options</div>`;links.forEach(l=>{if(!l||!l.url)return;const q=String(l.quality||'HD');html+=dlRow(l.url,qualityIcon(q),`${esc(q)} Video`,'MP4 · Watermark-free');});}
+  else html+=`<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No download links found</div></div>`;
   showResult(html);
 }
-
-/* =========================================================
-   RENDER: INSTAGRAM
-   ========================================================= */
 function renderInstagram(data){
-  const md = data.metadata || {};
-  const dl = data.downloads || {};
-  const thumb    = dl.thumbnail || md.thumbnail || '';
-  const videoUrl = dl.video || dl.videoUrl || (dl.links && dl.links[0]?.url) || '';
-  const username = md.username || md.author || 'instagram';
-  const caption  = md.caption || md.title || '';
-  let html = thumbBlock(thumb, md.duration);
-  html += `<div class="meta"><h2>${caption ? esc(caption.substring(0, 140)) + (caption.length > 140 ? '...' : '') : 'Instagram Video'}</h2><div class="author">👤 @${esc(username)}</div></div>`;
-  if (videoUrl) {
-    html += `<div class="sec-title">Download Options</div>`;
-    html += dlRow(videoUrl, SVG_HD, 'HD Video', 'MP4 · Watermark-free');
-  } else {
-    html += `<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No download link found</div></div>`;
-  }
+  const md=data.metadata||{},dl=data.downloads||{};
+  const thumb=dl.thumbnail||md.thumbnail||'';
+  const videoUrl=dl.video||dl.videoUrl||(dl.links&&dl.links[0]?.url)||'';
+  const caption=md.caption||md.title||'';
+  let html=thumbBlock(thumb,md.duration);
+  html+=`<div class="meta"><h2>${caption?esc(caption.substring(0,140))+(caption.length>140?'...':''):'Instagram Video'}</h2><div class="author">👤 @${esc(md.username||md.author||'instagram')}</div></div>`;
+  if(videoUrl){html+=`<div class="sec-title">Download Options</div>`;html+=dlRow(videoUrl,SVG_HD,'HD Video','MP4 · Watermark-free');}
+  else html+=`<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No download link found</div></div>`;
   showResult(html);
 }
-
-/* =========================================================
-   RENDER: TIKTOK
-   ========================================================= */
 function renderTikTok(data){
-  if (!data || data.success === false) {
-    showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.error || 'Could not fetch TikTok video')}</div></div>`);
-    return;
-  }
-  const d = data.data || {};
-  const thumb     = d.cover || d.thumbnail || '';
-  const title     = d.title || d.description || 'TikTok Video';
-  const videoHD   = d.videoHD || d.videoHd || d.hd || '';
-  const videoSD   = d.videoNormal || d.videoSD || d.videoSd || d.sd || d.video || '';
-  const audioUrl  = d.audioUrl || d.audio || d.mp3 || '';
-  const author    = d.author || d.username || d.nickname || d.unique_id || '';
-  let html = thumbBlock(thumb, '');
-  html += `<div class="meta"><h2>${esc(String(title).substring(0, 160))}</h2>${author ? `<div class="author">👤 @${esc(author)}</div>` : '<div class="author">🎵 TikTok</div>'}</div>`;
-  const proxyVideo = (u, q) => `${TIKTOK_API_BASE}/api/proxy-download?url=${encodeURIComponent(u)}&q=${q}`;
-  const proxyAudio = (u) => `${TIKTOK_API_BASE}/api/proxy-download?url=${encodeURIComponent(u)}&type=audio`;
-  const rows = [];
-  if (videoHD) rows.push({ href: proxyVideo(videoHD, 'hd'), icon: SVG_HD, title: 'HD Video (1080p/720p)', sub: 'High quality · MP4' });
-  if (videoSD && videoSD !== videoHD) rows.push({ href: proxyVideo(videoSD, 'sd'), icon: SVG_SD, title: 'SD Video (360p)', sub: 'Lower data · MP4' });
-  if (audioUrl) rows.push({ href: proxyAudio(audioUrl), icon: SVG_AUDIO, title: 'Audio (MP3)', sub: 'Audio only · MP3' });
-  if (rows.length) {
-    html += `<div class="sec-title">Download Options</div>`;
-    rows.forEach(r => { html += dlRow(r.href, r.icon, r.title, r.sub); });
-  } else {
-    html += `<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No download links found</div></div>`;
-  }
+  if(!data||data.success===false){showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.error||'Could not fetch TikTok video')}</div></div>`);return;}
+  const d=data.data||{};
+  const videoHD=d.videoHD||d.videoHd||d.hd||'';
+  const videoSD=d.videoNormal||d.videoSD||d.videoSd||d.sd||d.video||'';
+  const audioUrl=d.audioUrl||d.audio||d.mp3||'';
+  const author=d.author||d.username||d.nickname||d.unique_id||'';
+  let html=thumbBlock(d.cover||d.thumbnail||'','');
+  html+=`<div class="meta"><h2>${esc(String(d.title||d.description||'TikTok Video').substring(0,160))}</h2>${author?`<div class="author">👤 @${esc(author)}</div>`:'<div class="author">🎵 TikTok</div>'}</div>`;
+  const pv=(u,q)=>`${TIKTOK_API_BASE}/api/proxy-download?url=${encodeURIComponent(u)}&q=${q}`;
+  const pa=(u)=>`${TIKTOK_API_BASE}/api/proxy-download?url=${encodeURIComponent(u)}&type=audio`;
+  const rows=[];
+  if(videoHD)rows.push({href:pv(videoHD,'hd'),icon:SVG_HD,title:'HD Video (1080p/720p)',sub:'High quality · MP4'});
+  if(videoSD&&videoSD!==videoHD)rows.push({href:pv(videoSD,'sd'),icon:SVG_SD,title:'SD Video (360p)',sub:'Lower data · MP4'});
+  if(audioUrl)rows.push({href:pa(audioUrl),icon:SVG_AUDIO,title:'Audio (MP3)',sub:'Audio only · MP3'});
+  if(rows.length){html+=`<div class="sec-title">Download Options</div>`;rows.forEach(r=>{html+=dlRow(r.href,r.icon,r.title,r.sub);});}
+  else html+=`<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No download links found</div></div>`;
   showResult(html);
 }
 
 /* =========================================================
-   RENDER: PINTEREST
+   PINTEREST — fixed detection & prioritization
    ========================================================= */
 function renderPinterest(data){
-  if (!data || data.success === false) {
-    showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.message || data?.error || 'Could not fetch Pinterest pin')}</div></div>`);
-    return;
+  if(!data||data.success===false){showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.message||data?.error||'Could not fetch Pinterest pin')}</div></div>`);return;}
+  const r=data.result||data.data||data;
+
+  const thumb = r.thumbnail||r.cover||r.image||'';
+  const author = r.author||r.username||'';
+
+  // Collect items from every possible array field
+  let items=[];
+  if(Array.isArray(r.downloads))items=items.concat(r.downloads);
+  if(Array.isArray(r.items))items=items.concat(r.items);
+  if(Array.isArray(r.medias))items=items.concat(r.medias);
+  if(Array.isArray(r.videos))items=items.concat(r.videos);
+  if(Array.isArray(r.images))items=items.concat(r.images);
+
+  // Also check for a single direct video URL
+  const directVid = r.video||r.videoUrl||r.mp4||'';
+  if(directVid)items.push({url:directVid,type:'MP4',mediaType:'video',quality:r.quality||'HD'});
+
+  const videos=[];
+  const images=[];
+  items.forEach(item=>{
+    if(!item)return;
+    const url=item.url||item.download||item.downloadUrl||item.direct||item.link||item.src||'';
+    if(!url)return;
+    const type=String(item.type||item.ext||'').toUpperCase();
+    const mt=String(item.mediaType||item.media_type||'').toLowerCase();
+    const isVideo =
+      type==='MP4'||type==='WEBM'||type==='MOV'||type==='VIDEO'||
+      mt==='video'||
+      /\.(mp4|webm|mov)(\?|$)/i.test(url)||
+      /\/videos?\//i.test(url)||
+      /v1\.pinimg\.com\/videos/i.test(url);
+    if(isVideo)videos.push({url,...item});
+    else images.push({url,...item});
+  });
+
+  // Parse "736p (64.64 kb)" → sort descending
+  const parseRes=(q)=>{const m=String(q||'').match(/(\d{3,4})/);return m?parseInt(m[1],10):0;};
+  images.sort((a,b)=>parseRes(b.quality||b.type)-parseRes(a.quality||a.type));
+  videos.sort((a,b)=>parseRes(b.quality)-parseRes(a.quality));
+
+  let html=thumbBlock(thumb,'');
+  html+=`<div class="meta"><h2>Pinterest Media</h2><div class="author">${author?`👤 @${esc(author)}`:'📌 Pinterest'}</div></div>`;
+
+  if(videos.length){
+    html+=`<div class="sec-title">Video Download</div>`;
+    videos.forEach(item=>{
+      const q=item.quality||item.type||'HD';
+      const sub = item.size ? `MP4 · ${esc(item.size)}` : 'MP4 · Direct download';
+      html+=dlRow(item.url,SVG_VIDEO,`${esc(q)} Video`,sub);
+    });
   }
-  const r = data.result || {};
-  const thumb    = r.thumbnail || '';
-  const author   = r.author || '';
-  const downloads = Array.isArray(r.downloads) ? r.downloads : [];
-  let html = thumbBlock(thumb, '');
-  html += `<div class="meta"><h2>Pinterest Media</h2><div class="author">${author ? `👤 @${esc(author)}` : '📌 Pinterest'}</div></div>`;
-  if (downloads.length) {
-    const videos = downloads.filter(x => String(x.mediaType || '').toLowerCase() === 'video' || /\.mp4/i.test(x.url || ''));
-    const images = downloads.filter(x => !videos.includes(x));
-    if (videos.length) {
-      html += `<div class="sec-title">Video Download</div>`;
-      videos.forEach(item => {
-        if (!item.url) return;
-        const q = item.quality || item.type || 'HD';
-        html += dlRow(item.url, SVG_VIDEO, `${esc(q)} Video`, 'MP4 · Direct download');
-      });
-    }
-    if (images.length) {
-      html += `<div class="sec-title">Image Download</div>`;
-      images.forEach(item => {
-        if (!item.url) return;
-        const q = item.quality || item.type || 'Original';
-        const ext = String(item.type || 'JPG').toUpperCase();
-        html += dlRow(item.url, SVG_IMAGE, `${esc(q)} Image`, `${ext} · Full resolution`);
-      });
-    }
-  } else {
-    html += `<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No download links found</div></div>`;
+  if(images.length){
+    html+=`<div class="sec-title">Image Download</div>`;
+    images.forEach(item=>{
+      const q=item.quality||item.type||'Original';
+      const type=String(item.type||item.ext||'JPG').toUpperCase();
+      const ext=type==='JPG'||type==='JPEG'||type==='PNG'||type==='WEBP'?type:'JPG';
+      html+=dlRow(item.url,SVG_IMAGE,`${esc(q)} Image`,`${ext} · Full resolution`);
+    });
+  }
+  if(!videos.length&&!images.length){
+    html+=`<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No download links found</div></div>`;
   }
   showResult(html);
 }
 
-/* =========================================================
-   RENDER: YOUTUBE MP3
-   ========================================================= */
 function renderYtmp3(data){
-  const title    = data.title || 'YouTube Audio';
-  const thumb    = data.thumbnail || '';
-  const audioUrl = data.download || '';
-  const duration = data.duration || 0;
-  const quality  = data.quality || 'M4A Audio';
-  const bitrate  = data.bitrate ? (data.bitrate > 1000 ? Math.round(data.bitrate / 1000) + ' kbps' : data.bitrate + ' kbps') : '';
-  if (!audioUrl) {
-    showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.message || 'Could not fetch audio')}</div></div>`);
-    return;
-  }
-  let html = thumbBlock(thumb, fmtDur(duration));
-  html += `<div class="meta"><h2>${esc(title)}</h2><div class="author">🎧 YouTube Audio</div></div>`;
-  html += statBlock([
-    quality  ? { n: esc(quality), l:'Format' } : null,
-    bitrate  ? { n: esc(bitrate), l:'Bitrate' } : null,
-    duration ? { n: fmtDur(duration), l:'Duration' } : null
+  const audioUrl=data.download||'';
+  const bitrate=data.bitrate?(data.bitrate>1000?Math.round(data.bitrate/1000)+' kbps':data.bitrate+' kbps'):'';
+  if(!audioUrl){showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.message||'Could not fetch audio')}</div></div>`);return;}
+  let html=thumbBlock(data.thumbnail||'',fmtDur(data.duration||0));
+  html+=`<div class="meta"><h2>${esc(data.title||'YouTube Audio')}</h2><div class="author">🎧 YouTube Audio</div></div>`;
+  html+=statBlock([
+    data.quality?{n:esc(data.quality),l:'Format'}:null,
+    bitrate?{n:esc(bitrate),l:'Bitrate'}:null,
+    data.duration?{n:fmtDur(data.duration),l:'Duration'}:null
   ]);
-  html += `<div class="sec-title">Download Options</div>`;
-  html += dlRow(audioUrl, SVG_AUDIO, 'MP3 / M4A Audio', bitrate ? `Audio only · ${bitrate}` : 'Audio only');
+  html+=`<div class="sec-title">Download Options</div>`;
+  html+=dlRow(audioUrl,SVG_AUDIO,'MP3 / M4A Audio',bitrate?`Audio only · ${bitrate}`:'Audio only');
   showResult(html);
 }
 
-/* =========================================================
-   RENDER: YOUTUBE MP4
-   ========================================================= */
 function renderYtmp4(data){
-  const results = data.result || [];
-  const info    = data._info || {};
-  const query   = data.query || input.value;
-  if (!results.length) {
-    showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.message || 'No download links found')}</div></div>`);
-    return;
-  }
-  const videoId = getYouTubeId(query);
-  const thumb   = info.thumbnail_url || (videoId ? `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` : '');
-  const title   = info.title || 'YouTube Video';
-  const author  = info.author_name || 'YouTube';
-  let html = thumbBlock(thumb, '');
-  html += `<div class="meta"><h2>${esc(title)}</h2><div class="author">👤 ${esc(author)}</div></div>`;
-  const enriched = results.map(item => ({ ...item, _hasAudio: hasAudioTrack(item.downloadUrl || '') }));
-  enriched.sort((a, b) => (b._hasAudio ? 1 : 0) - (a._hasAudio ? 1 : 0));
-  const audioCount = enriched.filter(x => x._hasAudio).length;
-  html += statBlock([
-    { n: String(results.length), l:'Qualities' },
-    { n: String(audioCount), l:'With Audio' },
-    { n: 'MP4', l:'Format' }
+  const results=data.result||[];
+  const info=data._info||{};
+  const query=data.query||input.value;
+  if(!results.length){showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.message||'No download links found')}</div></div>`);return;}
+  const videoId=getYouTubeId(query);
+  const thumb=info.thumbnail_url||(videoId?`https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`:'');
+  let html=thumbBlock(thumb,'');
+  html+=`<div class="meta"><h2>${esc(info.title||'YouTube Video')}</h2><div class="author">👤 ${esc(info.author_name||'YouTube')}</div></div>`;
+  const enriched=results.map(item=>({...item,_hasAudio:hasAudioTrack(item.downloadUrl||'')}));
+  enriched.sort((a,b)=>(b._hasAudio?1:0)-(a._hasAudio?1:0));
+  const audioCount=enriched.filter(x=>x._hasAudio).length;
+  html+=statBlock([
+    {n:String(results.length),l:'Qualities'},
+    {n:String(audioCount),l:'With Audio'},
+    {n:'MP4',l:'Format'}
   ]);
-  html += `<div class="sec-title">Download Options</div>`;
-  enriched.forEach(item => {
-    const res  = item.resolution || 'Video';
-    const size = item.size && item.size !== 'N/A' ? item.size : '';
-    const url  = item.downloadUrl || '';
-    if (!url) return;
-    const icon = qualityIcon(res);
-    const audioTag = item._hasAudio
-      ? '<span class="tag audio">🎵 Audio</span>'
-      : '<span class="tag mute">🔇 Mute</span>';
-    const sub = (size ? `MP4 · ${size}` : 'MP4 · Video') + ' ' + audioTag;
-    html += dlRow(url, icon, `${esc(res)} Video`, sub);
+  html+=`<div class="sec-title">Download Options</div>`;
+  enriched.forEach(item=>{
+    const res=item.resolution||'Video';
+    const size=item.size&&item.size!=='N/A'?item.size:'';
+    const url=item.downloadUrl||'';
+    if(!url)return;
+    const icon=qualityIcon(res);
+    const tag=item._hasAudio?'<span class="tag audio">🎵 Audio</span>':'<span class="tag mute">🔇 Mute</span>';
+    const sub=(size?`MP4 · ${size}`:'MP4 · Video')+' '+tag;
+    html+=dlRow(url,icon,`${esc(res)} Video`,sub);
   });
   showResult(html);
 }
 
-/* =========================================================
-   RENDER: SPOTIFY
-   ========================================================= */
 function renderSpotify(data){
-  if (!data || data.status === false) {
-    showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.message || data?.error || 'Could not fetch Spotify track')}</div></div>`);
-    return;
-  }
-  const d = data.data || data.result || data;
-  const thumb    = d.thumbnail || d.image || d.cover || d.album_art || '';
-  const title    = d.title || d.name || d.track || 'Spotify Track';
-  const artist   = d.artist || d.artists || d.author || d.uploader || 'Spotify';
-  const album    = d.album || '';
-  const duration = d.duration || (d.duration_ms ? Math.round(d.duration_ms / 1000) : 0);
-  const audioUrl = d.download || d.downloadUrl || d.url || d.audio || d.mp3 || d.link || '';
-  let html = thumbBlock(thumb, fmtDur(duration));
-  html += `<div class="meta"><h2>${esc(String(title).substring(0, 160))}</h2><div class="author">🎤 ${esc(artist)}${album ? ` · ${esc(album)}` : ''}</div></div>`;
-  html += statBlock([
-    d.quality ? { n: esc(d.quality), l:'Format' } : null,
-    duration  ? { n: fmtDur(duration), l:'Duration' } : null,
-    d.bitrate ? { n: esc(d.bitrate), l:'Bitrate' } : null
+  if(!data||data.status===false){showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.message||data?.error||'Could not fetch Spotify track')}</div></div>`);return;}
+  const d=data.data||data.result||data;
+  const thumb=d.thumbnail||d.image||d.cover||d.album_art||'';
+  const duration=d.duration||(d.duration_ms?Math.round(d.duration_ms/1000):0);
+  const audioUrl=d.download||d.downloadUrl||d.url||d.audio||d.mp3||d.link||'';
+  let html=thumbBlock(thumb,fmtDur(duration));
+  html+=`<div class="meta"><h2>${esc(String(d.title||d.name||d.track||'Spotify Track').substring(0,160))}</h2><div class="author">🎤 ${esc(d.artist||d.artists||d.author||d.uploader||'Spotify')}${d.album?' · '+esc(d.album):''}</div></div>`;
+  html+=statBlock([
+    d.quality?{n:esc(d.quality),l:'Format'}:null,
+    duration?{n:fmtDur(duration),l:'Duration'}:null,
+    d.bitrate?{n:esc(d.bitrate),l:'Bitrate'}:null
   ]);
-  if (audioUrl) {
-    html += `<div class="sec-title">Download Options</div>`;
-    html += dlRow(audioUrl, SVG_AUDIO, 'Spotify Audio', 'MP3 · High quality');
-  } else {
-    html += `<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No audio link found</div></div>`;
-  }
+  if(audioUrl){html+=`<div class="sec-title">Download Options</div>`;html+=dlRow(audioUrl,SVG_AUDIO,'Spotify Audio','MP3 · High quality');}
+  else html+=`<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No audio link found</div></div>`;
   showResult(html);
 }
 
@@ -793,170 +566,106 @@ function renderSpotify(data){
    API CALLS
    ========================================================= */
 async function callTikTokApi(url){
-  const r = await fetch(`${TIKTOK_API_BASE}/api/download/tiktok`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ url })
-  });
-  if (!r.ok) throw new Error('TikTok API request failed');
-  const data = await r.json();
-  if (!data || data.success === false) throw new Error(data?.error || 'TikTok download failed');
-  return data;
+  const r=await fetch(`${TIKTOK_API_BASE}/api/download/tiktok`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});
+  if(!r.ok)throw new Error('TikTok API request failed');
+  const d=await r.json();
+  if(!d||d.success===false)throw new Error(d?.error||'TikTok download failed');
+  return d;
 }
-async function callKceySocial(type, url){
-  const endpoints = [`/api/${type}`, `https://api.kcey.online/api/${type}`];
-  for (const ep of endpoints) {
-    try {
-      const sep = ep.includes('?') ? '&' : '?';
-      const r = await fetch(`${ep}${sep}url=${encodeURIComponent(url)}${ep.startsWith('http') ? `&key=${API_KEY}` : ''}`);
-      if (r.ok) {
-        const data = await r.json();
-        if (data && data.status !== false) return data;
-      }
-    } catch(_) {}
+async function callKceySocial(type,url){
+  for(const ep of [`/api/${type}`,`https://api.kcey.online/api/${type}`]){
+    try{
+      const sep=ep.includes('?')?'&':'?';
+      const r=await fetch(`${ep}${sep}url=${encodeURIComponent(url)}${ep.startsWith('http')?`&key=${API_KEY}`:''}`);
+      if(r.ok){const d=await r.json();if(d&&d.status!==false)return d;}
+    }catch(_){}
   }
   throw new Error(`${type} API request failed`);
 }
 async function callYtmp3WithFallback(url){
-  const errors = [];
-  try {
-    let data = null;
-    try { const r = await fetch(`/api/ytmp3?url=${encodeURIComponent(url)}`); if (r.ok) data = await r.json(); } catch(_) {}
-    if (!data) { const r = await fetch(`https://api.kcey.online/api/ytmp3?url=${encodeURIComponent(url)}&key=${API_KEY}`); if (r.ok) data = await r.json(); }
-    if (data) {
-      const bk = data.raw?.BK9 || {};
-      if (data.ok !== false && data.status !== false && (data.download || bk.downloadUrl)) {
-        return { title: data.title || bk.title || 'YouTube Audio', thumbnail: data.thumbnail || bk.image || '', download: data.download || bk.downloadUrl || '', duration: bk.duration || 0, quality: bk.quality || 'M4A Audio', bitrate: bk.bitrate || 0 };
-      }
-      errors.push('KCeY: ' + (data.message || 'no data'));
-    } else errors.push('KCeY: no response');
-  } catch(e) { errors.push('KCeY: ' + e.message); }
-
-  try {
-    const r = await fetch(`${DARKSHAN_BASE}/download/ytmp3?url=${encodeURIComponent(url)}&api_key=${DARKSHAN_KEY}`);
-    if (r.ok) {
-      const data = await r.json();
-      const d = data?.data || data?.result || data;
-      if (data && data.status !== false && d && (d.download || d.downloadUrl || d.url)) {
-        return { title: d.title || 'YouTube Audio', thumbnail: d.thumbnail || d.image || '', download: d.download || d.downloadUrl || d.url, duration: d.duration || 0, quality: d.quality || 'M4A Audio', bitrate: d.bitrate || 0 };
-      }
-      errors.push('Darkshan: ' + (data?.message || 'no data'));
-    } else errors.push('Darkshan: HTTP ' + r.status);
-  } catch(e) { errors.push('Darkshan: ' + e.message); }
-
-  try {
-    const r = await fetch(`${ZANTA_BASE}/api/ytmp3?apiKey=${ZANTA_KEY}&url=${encodeURIComponent(url)}`);
-    if (r.ok) {
-      const data = await r.json();
-      const d = data?.result || data?.data;
-      if (data && data.success !== false && d && (d.downloadUrl || d.download || d.url)) {
-        return { title: d.title || 'YouTube Audio', thumbnail: d.thumbnail || d.image || '', download: d.downloadUrl || d.download || d.url, duration: d.duration || 0, quality: d.quality || 'M4A Audio', bitrate: d.bitrate || 0 };
-      }
-      errors.push('Zanta: ' + (data?.message || 'no data'));
-    } else errors.push('Zanta: HTTP ' + r.status);
-  } catch(e) { errors.push('Zanta: ' + e.message); }
-
-  try {
-    const r = await fetch(`${SASA_BASE}/api/yt/mp3-dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}`);
-    if (r.ok) {
-      const data = await r.json();
-      const d = data?.result || data?.data;
-      if (data && data.status !== false && d && (d.download || d.url || d.downloadUrl)) {
-        return { title: d.title || 'YouTube Audio', thumbnail: d.thumbnail || d.image || '', download: d.download || d.url || d.downloadUrl, duration: d.duration || 0, quality: d.quality || 'M4A Audio', bitrate: d.bitrate || 0 };
-      }
-      errors.push('Sasa: ' + (data?.message || 'no data'));
-    } else errors.push('Sasa: HTTP ' + r.status);
-  } catch(e) { errors.push('Sasa: ' + e.message); }
-
+  const errors=[];
+  try{let d=null;try{const r=await fetch(`/api/ytmp3?url=${encodeURIComponent(url)}`);if(r.ok)d=await r.json();}catch(_){}
+    if(!d){const r=await fetch(`https://api.kcey.online/api/ytmp3?url=${encodeURIComponent(url)}&key=${API_KEY}`);if(r.ok)d=await r.json();}
+    if(d){const bk=d.raw?.BK9||{};if(d.ok!==false&&d.status!==false&&(d.download||bk.downloadUrl))return{title:d.title||bk.title||'YouTube Audio',thumbnail:d.thumbnail||bk.image||'',download:d.download||bk.downloadUrl||'',duration:bk.duration||0,quality:bk.quality||'M4A Audio',bitrate:bk.bitrate||0};errors.push('KCeY');}else errors.push('KCeY');
+  }catch(e){errors.push('KCeY:'+e.message);}
+  try{const r=await fetch(`${DARKSHAN_BASE}/download/ytmp3?url=${encodeURIComponent(url)}&api_key=${DARKSHAN_KEY}`);
+    if(r.ok){const d=await r.json();const dd=d?.data||d?.result||d;
+      if(d&&d.status!==false&&dd&&(dd.download||dd.downloadUrl||dd.url))return{title:dd.title||'YouTube Audio',thumbnail:dd.thumbnail||dd.image||'',download:dd.download||dd.downloadUrl||dd.url,duration:dd.duration||0,quality:dd.quality||'M4A Audio',bitrate:dd.bitrate||0};
+    }errors.push('Darkshan');
+  }catch(e){errors.push('Darkshan:'+e.message);}
+  try{const r=await fetch(`${ZANTA_BASE}/api/ytmp3?apiKey=${ZANTA_KEY}&url=${encodeURIComponent(url)}`);
+    if(r.ok){const d=await r.json();const dd=d?.result||d?.data;
+      if(d&&d.success!==false&&dd&&(dd.downloadUrl||dd.download||dd.url))return{title:dd.title||'YouTube Audio',thumbnail:dd.thumbnail||dd.image||'',download:dd.downloadUrl||dd.download||dd.url,duration:dd.duration||0,quality:dd.quality||'M4A Audio',bitrate:dd.bitrate||0};
+    }errors.push('Zanta');
+  }catch(e){errors.push('Zanta:'+e.message);}
+  try{const r=await fetch(`${SASA_BASE}/api/yt/mp3-dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}`);
+    if(r.ok){const d=await r.json();const dd=d?.result||d?.data;
+      if(d&&d.status!==false&&dd&&(dd.download||dd.url||dd.downloadUrl))return{title:dd.title||'YouTube Audio',thumbnail:dd.thumbnail||dd.image||'',download:dd.download||dd.url||dd.downloadUrl,duration:dd.duration||0,quality:dd.quality||'M4A Audio',bitrate:dd.bitrate||0};
+    }errors.push('Sasa');
+  }catch(e){errors.push('Sasa:'+e.message);}
   throw new Error('All YT MP3 APIs failed');
 }
 async function callYtmp4New(url){
-  let info = null;
-  try {
-    const r = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`);
-    if (r.ok) info = await r.json();
-  } catch(_) {}
-  const r = await fetch(`${YTMP4_BASE}?url=${encodeURIComponent(url)}&apikey=${YTMP4_KEY}`);
-  if (!r.ok) throw new Error('YT MP4 API request failed');
-  const data = await r.json();
-  if (!data.success || !Array.isArray(data.result) || !data.result.length) {
-    throw new Error(data.message || 'No download links found');
-  }
-  data._info = info;
-  return data;
+  let info=null;
+  try{const r=await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`);if(r.ok)info=await r.json();}catch(_){}
+  const r=await fetch(`${YTMP4_BASE}?url=${encodeURIComponent(url)}&apikey=${YTMP4_KEY}`);
+  if(!r.ok)throw new Error('YT MP4 API request failed');
+  const d=await r.json();
+  if(!d.success||!Array.isArray(d.result)||!d.result.length)throw new Error(d.message||'No download links found');
+  d._info=info;
+  return d;
 }
 async function callPinterestApi(url){
-  const r = await fetch(`${PINTEREST_BASE}?url=${encodeURIComponent(url)}&apikey=${PINTEREST_KEY}`);
-  if (!r.ok) throw new Error('Pinterest API request failed');
-  const data = await r.json();
-  if (!data || data.success === false) throw new Error(data?.message || 'Pinterest download failed');
-  return data;
+  const r=await fetch(`${PINTEREST_BASE}?url=${encodeURIComponent(url)}&apikey=${PINTEREST_KEY}`);
+  if(!r.ok)throw new Error('Pinterest API request failed');
+  const d=await r.json();
+  if(!d||d.success===false)throw new Error(d?.message||'Pinterest download failed');
+  return d;
 }
 async function callSpotifyApi(url){
-  let data = null;
-  try { const r = await fetch(`/api/spotify?url=${encodeURIComponent(url)}`); if (r.ok) data = await r.json(); } catch(_) {}
-  if (!data || data.status === false) {
-    const r = await fetch(`${DARKSHAN_BASE}/download/spotify?url=${encodeURIComponent(url)}&api_key=${DARKSHAN_KEY}`);
-    if (!r.ok) throw new Error('Spotify API request failed');
-    data = await r.json();
-  }
-  return data;
+  let d=null;
+  try{const r=await fetch(`/api/spotify?url=${encodeURIComponent(url)}`);if(r.ok)d=await r.json();}catch(_){}
+  if(!d||d.status===false){const r=await fetch(`${DARKSHAN_BASE}/download/spotify?url=${encodeURIComponent(url)}&api_key=${DARKSHAN_KEY}`);if(!r.ok)throw new Error('Spotify API request failed');d=await r.json();}
+  return d;
 }
 
-/* =========================================================
-   MAIN DISPATCHER
-   ========================================================= */
-async function callApi(platformKey, url){
-  const p = PLATFORMS[platformKey];
-  if (!p) throw new Error('Unsupported platform');
-  if (p.method === 'CUSTOM_TIKTOK')   return await callTikTokApi(url);
-  if (p.method === 'KCEY_SOCIAL')     return await callKceySocial(p.type, url);
-  if (p.method === 'YTMP3_FALLBACK')  return await callYtmp3WithFallback(url);
-  if (p.method === 'YTMP4_NEW')       return await callYtmp4New(url);
-  if (p.method === 'PINTEREST_NEW')   return await callPinterestApi(url);
-  if (p.method === 'DARKSHAN')        return await callSpotifyApi(url);
-  throw new Error('Unknown method: ' + p.method);
+async function callApi(key,url){
+  const p=PLATFORMS[key];
+  if(!p)throw new Error('Unsupported platform');
+  if(p.method==='CUSTOM_TIKTOK')return callTikTokApi(url);
+  if(p.method==='KCEY_SOCIAL')return callKceySocial(p.type,url);
+  if(p.method==='YTMP3_FALLBACK')return callYtmp3WithFallback(url);
+  if(p.method==='YTMP4_NEW')return callYtmp4New(url);
+  if(p.method==='PINTEREST_NEW')return callPinterestApi(url);
+  if(p.method==='DARKSHAN')return callSpotifyApi(url);
+  throw new Error('Unknown method');
 }
 
-/* =========================================================
-   MAIN HANDLER
-   ========================================================= */
 async function handleDownload(){
-  const url = input.value.trim();
-  if (!url) { showStatus('error', 'Please paste a link first'); input.focus(); return; }
-  if (!/^https?:\/\//i.test(url)) { showStatus('error', 'Link must start with http:// or https://'); return; }
-  resultEl.className = '';
-  resultEl.innerHTML = '';
-  showStatus('loading', `Fetching ${PLATFORMS[currentPlatform].label} details...`);
+  const url=input.value.trim();
+  if(!url){showStatus('error','Please paste a link first');input.focus();return;}
+  if(!/^https?:\/\//i.test(url)){showStatus('error','Link must start with http:// or https://');return;}
+  resultEl.className='';resultEl.innerHTML='';
+  showStatus('loading',`Fetching ${PLATFORMS[currentPlatform].label} details...`);
   setLoading(true);
-  try {
-    const data = await callApi(currentPlatform, url);
+  try{
+    const data=await callApi(currentPlatform,url);
     showStatus('none');
     PLATFORMS[currentPlatform].render(data);
-  } catch (err) {
-    showStatus('error', err.message || 'Something went wrong. Please try again.');
-  } finally {
-    setLoading(false);
-  }
+  }catch(err){
+    showStatus('error',err.message||'Something went wrong. Please try again.');
+  }finally{setLoading(false);}
 }
 
-/* =========================================================
-   EVENTS
-   ========================================================= */
-downloadBtn.addEventListener('click', handleDownload);
-input.addEventListener('keydown', e => { if (e.key === 'Enter') handleDownload(); });
-pasteBtn.addEventListener('click', async () => {
-  try {
-    const text = await navigator.clipboard.readText();
-    if (text) { input.value = text.trim(); platformUrls[currentPlatform] = input.value; input.focus(); }
-  } catch { input.focus(); showStatus('error', 'Cannot access clipboard — paste manually'); }
+downloadBtn.addEventListener('click',handleDownload);
+input.addEventListener('keydown',e=>{if(e.key==='Enter')handleDownload();});
+pasteBtn.addEventListener('click',async()=>{
+  try{const t=await navigator.clipboard.readText();if(t){input.value=t.trim();platformUrls[currentPlatform]=input.value;input.focus();}}
+  catch{input.focus();showStatus('error','Cannot access clipboard — paste manually');}
 });
 
-/* =========================================================
-   INIT
-   ========================================================= */
 initTheme();
-setPlatform('facebook', true);
+setPlatform('facebook',true);
 input.focus();
 </script>
 </body>
