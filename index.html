@@ -3,131 +3,767 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<meta name="theme-color" content="#070a12">
-<title>Media Downloader</title>
+<meta name="theme-color" content="#05060b">
+<title>DG SAVER — Premium Media Downloader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+Sinhala:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  :root{--bg:#070a12;--card:rgba(20,26,42,.72);--line:rgba(255,255,255,.09);--txt:#e8ecf5;--mut:#8b95ad;--p1:#6d5efc;--p2:#00d4ff;--ok:#22c55e;--err:#ef4444;}
-  html,body{height:100%}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans Sinhala',sans-serif;background:var(--bg);color:var(--txt);min-height:100dvh;display:flex;flex-direction:column;padding:18px 16px 32px;position:relative;overflow-x:hidden;}
-  body::before,body::after{content:'';position:fixed;border-radius:50%;filter:blur(90px);opacity:.35;pointer-events:none;z-index:0;}
-  body::before{width:320px;height:320px;background:#5b3df5;top:-120px;left:-100px}
-  body::after{width:300px;height:300px;background:#00b4ff;bottom:-140px;right:-110px;opacity:.22}
-  .wrap{position:relative;z-index:1;width:100%;max-width:640px;margin:0 auto;flex:1;display:flex;flex-direction:column}
-  header{text-align:center;margin:14px 0 22px}
-  .logo{display:inline-flex;align-items:center;gap:9px;font-size:21px;font-weight:800;letter-spacing:-.4px;}
-  .logo .dot{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--p1),var(--p2));display:grid;place-items:center;font-size:17px;box-shadow:0 6px 20px rgba(109,94,252,.45);}
-  .logo span.grad{background:linear-gradient(135deg,#a99bff,#5fe1ff);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  header p{color:var(--mut);font-size:13px;margin-top:8px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 16px 44px rgba(0,0,0,.5);}
-  .platform-grid{display:grid;grid-template-columns:repeat(4, 1fr);gap:7px;margin-bottom:14px;}
-  .pbtn{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:10px 3px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font-family:inherit;color:var(--mut);transition:all .18s;position:relative;overflow:hidden;}
-  .pbtn .picon{font-size:18px;line-height:1}
-  .pbtn .plabel{font-size:9.5px;font-weight:700;letter-spacing:.1px;text-align:center;line-height:1.15}
-  .pbtn:active{transform:scale(.96)}
-  .pbtn.active{color:#fff;border-color:rgba(109,94,252,.6);background:linear-gradient(135deg,rgba(109,94,252,.25),rgba(0,212,255,.15));box-shadow:0 4px 16px rgba(109,94,252,.28);}
-  .pbtn.active::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--p1),var(--p2));}
-  .field{position:relative;display:flex;align-items:center;gap:8px}
-  .field input{flex:1;min-width:0;background:rgba(8,12,22,.85);border:1px solid var(--line);border-radius:14px;padding:15px 74px 15px 44px;color:var(--txt);font-size:15px;outline:none;transition:border-color .2s, box-shadow .2s;font-family:inherit;}
-  .field input::placeholder{color:#5c6580}
-  .field input:focus{border-color:rgba(109,94,252,.7);box-shadow:0 0 0 3px rgba(109,94,252,.16);}
-  .field .ico{position:absolute;left:15px;font-size:16px;opacity:.55;pointer-events:none;}
-  .field .tools{position:absolute;right:8px;display:flex;gap:4px;}
-  .mini{background:rgba(255,255,255,.07);border:none;color:var(--mut);font-size:11px;font-weight:700;padding:7px 10px;border-radius:9px;cursor:pointer;letter-spacing:.3px;font-family:inherit;transition:background .15s,color .15s;}
-  .mini:active{background:rgba(255,255,255,.16);color:#fff}
-  .quality-row{display:none;margin-top:12px;padding:10px 12px;background:rgba(109,94,252,.08);border:1px solid rgba(109,94,252,.22);border-radius:12px;}
-  .quality-row.show{display:block;animation:up .25s ease}
-  .quality-row .qlabel{font-size:10.5px;font-weight:800;color:#a99bff;letter-spacing:1.1px;text-transform:uppercase;margin-bottom:8px;}
-  .quality-chips{display:flex;gap:6px;flex-wrap:wrap}
-  .qchip{background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--mut);font-size:11.5px;font-weight:700;padding:7px 13px;border-radius:9px;cursor:pointer;font-family:inherit;transition:all .15s;}
-  .qchip:active{transform:scale(.95)}
-  .qchip.active{color:#fff;border-color:rgba(109,94,252,.6);background:linear-gradient(135deg,var(--p1),#4d8dff);box-shadow:0 4px 12px rgba(109,94,252,.35);}
-  .btn{width:100%;margin-top:12px;padding:16px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--p1),#4d8dff 55%,var(--p2));color:#fff;font-size:16px;font-weight:800;letter-spacing:.2px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 10px 26px rgba(91,61,245,.4);transition:transform .12s, opacity .2s;}
-  .btn:active{transform:scale(.975)}
-  .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
-  #status{margin-top:16px;display:none}
-  #status.show{display:block}
-  .box{border-radius:14px;padding:13px 15px;font-size:13.5px;display:flex;align-items:center;gap:10px;line-height:1.45;}
-  .box.load{background:rgba(109,94,252,.12);border:1px solid rgba(109,94,252,.3);color:#c3bcff}
-  .box.err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);color:#ffb3b3}
-  .spinner{width:16px;height:16px;flex:none;border-radius:50%;border:2px solid rgba(255,255,255,.2);border-top-color:#a99bff;animation:spin .7s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  #result{margin-top:18px;display:none}
-  #result.show{display:block;animation:up .35s ease}
-  @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  .thumb{position:relative;width:100%;border-radius:16px;overflow:hidden;background:#0d1220;aspect-ratio:16/9;border:1px solid var(--line);}
-  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-  .thumb .dur{position:absolute;bottom:9px;right:9px;background:rgba(0,0,0,.78);padding:4px 9px;border-radius:7px;font-size:11.5px;font-weight:700;backdrop-filter:blur(6px);}
-  .meta{margin-top:14px}
-  .meta h2{font-size:15px;font-weight:700;line-height:1.45;margin-bottom:6px}
-  .meta .author{font-size:13px;color:var(--mut);display:flex;align-items:center;gap:6px}
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;}
-  .stat{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center;}
-  .stat b{display:block;font-size:15px;font-weight:800}
-  .stat small{font-size:10.5px;color:var(--mut);letter-spacing:.3px}
-  .sec-title{font-size:11.5px;font-weight:800;color:var(--mut);letter-spacing:1.2px;text-transform:uppercase;margin:20px 0 10px;}
-  .dl{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:9px;text-decoration:none;color:var(--txt);transition:background .15s,border-color .15s,transform .12s;}
-  .dl:active{transform:scale(.985);background:rgba(109,94,252,.13);border-color:rgba(109,94,252,.4)}
-  .dl .badge{width:40px;height:40px;flex:none;border-radius:11px;display:grid;place-items:center;font-size:17px;background:linear-gradient(135deg,rgba(109,94,252,.28),rgba(0,212,255,.2));border:1px solid rgba(255,255,255,.08);}
-  .dl .txt{flex:1;min-width:0}
-  .dl .txt b{display:block;font-size:14px;font-weight:700}
-  .dl .txt small{font-size:11.5px;color:var(--mut)}
-  .dl .go{font-size:11px;font-weight:800;color:#a99bff;padding:6px 10px;border-radius:8px;background:rgba(109,94,252,.15);flex:none;}
-  footer{text-align:center;font-size:11.5px;color:#4d566e;margin-top:28px;line-height:1.7;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#05060b;
+  --bg-2:#0a0d17;
+  --card:rgba(14,18,32,.7);
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.12);
+  --txt:#eef2fb;
+  --mut:#8a94ad;
+  --txt-dim:#5a637c;
+  --p1:#7c5cff;
+  --p2:#00d9ff;
+  --p3:#ff4d8d;
+  --ok:#22c55e;
+  --err:#ff4d6a;
+  --brand:#7c5cff;
+}
+html,body{height:100%}
+body{
+  font-family:'Inter','Noto Sans Sinhala',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  padding:20px 16px 36px;
+  position:relative;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ============ AURORA BG ============ */
+.aurora{
+  position:fixed;
+  border-radius:50%;
+  filter:blur(110px);
+  pointer-events:none;
+  z-index:0;
+  will-change:transform;
+}
+.aurora-1{width:400px;height:400px;background:radial-gradient(circle,#7c5cff 0%,transparent 70%);top:-140px;left:-120px;opacity:.55;animation:float1 16s ease-in-out infinite}
+.aurora-2{width:380px;height:380px;background:radial-gradient(circle,#00d9ff 0%,transparent 70%);bottom:-160px;right:-130px;opacity:.42;animation:float2 18s ease-in-out infinite}
+.aurora-3{width:300px;height:300px;background:radial-gradient(circle,#ff4d8d 0%,transparent 70%);top:45%;left:50%;opacity:.14;transform:translate(-50%,-50%);animation:pulse 12s ease-in-out infinite}
+@keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(70px,60px)}}
+@keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-60px,-50px)}}
+@keyframes pulse{0%,100%{opacity:.1;transform:translate(-50%,-50%) scale(1)}50%{opacity:.22;transform:translate(-50%,-50%) scale(1.15)}}
+
+.wrap{
+  position:relative;
+  z-index:1;
+  width:100%;
+  max-width:640px;
+  margin:0 auto;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ============ HEADER ============ */
+header{text-align:center;margin:14px 0 26px}
+.logo{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  font-size:26px;
+  font-weight:900;
+  letter-spacing:-.6px;
+}
+.logo-icon{
+  width:44px;height:44px;
+  border-radius:13px;
+  background:linear-gradient(135deg,#7c5cff 0%,#4d8dff 50%,#00d9ff 100%);
+  display:grid;place-items:center;
+  color:#fff;
+  box-shadow:0 10px 30px rgba(124,92,255,.55),0 0 0 1px rgba(255,255,255,.1) inset,0 1px 0 rgba(255,255,255,.25) inset;
+  position:relative;
+  overflow:hidden;
+}
+.logo-icon svg{width:22px;height:22px;position:relative;z-index:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.logo-icon::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.35) 0%,transparent 45%);
+  pointer-events:none;
+}
+.logo-text{display:inline-flex;align-items:baseline;gap:1px}
+.logo-text span{
+  background:linear-gradient(90deg,#ff0055,#ffcc00,#00ff88,#00aaff,#aa00ff,#ff0055);
+  background-size:300% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  animation:rgbFlow 6s linear infinite;
+}
+@keyframes rgbFlow{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+.tagline{color:var(--mut);font-size:13px;margin-top:10px;font-weight:500;letter-spacing:.1px}
+
+/* ============ CARD ============ */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:18px;
+  backdrop-filter:blur(24px) saturate(180%);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.55),
+    0 0 0 1px rgba(255,255,255,.03) inset,
+    0 1px 0 rgba(255,255,255,.07) inset;
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(124,92,255,.6),rgba(0,217,255,.6),transparent);
+  pointer-events:none;
+}
+
+/* ============ PLATFORM GRID ============ */
+.platform-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-bottom:16px;
+}
+.pbtn{
+  --brand:#7c5cff;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px 4px 10px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  cursor:pointer;
+  font-family:inherit;
+  color:var(--mut);
+  transition:all .22s cubic-bezier(.4,0,.2,1);
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+.pbtn .picon{
+  position:relative;
+  width:24px;height:24px;
+  display:grid;place-items:center;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  color:var(--brand);
+}
+.pbtn .picon svg{width:100%;height:100%;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
+.pbtn .picon .badge-note,
+.pbtn .picon .badge-hd{
+  position:absolute;
+  bottom:-3px;right:-6px;
+  font-style:normal;
+  font-size:8px;
+  font-weight:900;
+  background:#ff0033;
+  color:#fff;
+  padding:1px 4px;
+  border-radius:4px;
+  line-height:1;
+  letter-spacing:.3px;
+  box-shadow:0 2px 6px rgba(255,0,51,.5);
+  border:1px solid rgba(255,255,255,.25);
+}
+.pbtn .plabel{
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.2px;
+  text-align:center;
+  line-height:1.15;
+  transition:color .2s;
+}
+.pbtn:hover{
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  transform:translateY(-2px);
+  border-color:var(--line-2);
+}
+.pbtn:hover .picon{transform:scale(1.15) rotate(-4deg)}
+.pbtn:active{transform:translateY(0) scale(.97)}
+.pbtn.active{
+  color:#fff;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 22%,transparent),color-mix(in srgb,var(--brand) 8%,transparent));
+  border-color:color-mix(in srgb,var(--brand) 55%,transparent);
+  box-shadow:
+    0 6px 22px color-mix(in srgb,var(--brand) 35%,transparent),
+    0 0 0 1px color-mix(in srgb,var(--brand) 20%,transparent) inset;
+}
+.pbtn.active::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,#ff0055,#ffcc00,#00ff88,#00aaff,#aa00ff,#ff0055);
+  background-size:300% 100%;
+  animation:rgbFlow 3s linear infinite;
+  z-index:2;
+}
+.pbtn.active .picon{color:var(--brand)}
+
+/* ============ FIELD ============ */
+.field{position:relative;display:flex;align-items:center}
+.field input{
+  width:100%;
+  background:rgba(6,9,18,.9);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:17px 96px 17px 46px;
+  color:var(--txt);
+  font-size:14.5px;
+  outline:none;
+  font-family:inherit;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+  letter-spacing:.1px;
+}
+.field input::placeholder{color:#545c74}
+.field input:focus{
+  border-color:rgba(124,92,255,.65);
+  box-shadow:
+    0 0 0 4px rgba(124,92,255,.14),
+    0 0 32px rgba(124,92,255,.22);
+  background:rgba(6,9,18,1);
+}
+.field .ico{
+  position:absolute;
+  left:15px;
+  width:18px;height:18px;
+  color:#a99bff;
+  opacity:.75;
+  pointer-events:none;
+  transition:opacity .25s;
+}
+.field input:focus ~ .ico{opacity:1}
+.field .tools{
+  position:absolute;
+  right:8px;
+  display:flex;
+  gap:4px;
+}
+.mini{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  color:var(--mut);
+  font-size:10px;
+  font-weight:800;
+  padding:8px 10px;
+  border-radius:10px;
+  cursor:pointer;
+  letter-spacing:.6px;
+  font-family:inherit;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  transition:all .18s;
+  height:30px;
+}
+.mini svg{width:11px;height:11px}
+.mini:hover{background:rgba(255,255,255,.13);color:#fff;transform:translateY(-1px)}
+.mini:active{transform:scale(.95)}
+.mini-x{padding:8px 9px}
+.mini-x:hover{background:rgba(255,77,106,.2);color:#ff8fa3;border-color:rgba(255,77,106,.4)}
+
+/* ============ QUALITY ============ */
+.quality-row{
+  display:none;
+  margin-top:12px;
+  padding:12px 14px;
+  background:linear-gradient(135deg,rgba(124,92,255,.1),rgba(0,217,255,.05));
+  border:1px solid rgba(124,92,255,.22);
+  border-radius:14px;
+}
+.quality-row.show{display:block;animation:up .3s ease}
+.qlabel{
+  font-size:10.5px;
+  font-weight:800;
+  color:#b8adff;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.quality-chips{display:flex;gap:6px;flex-wrap:wrap}
+.qchip{
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--line);
+  color:var(--mut);
+  font-size:11.5px;
+  font-weight:700;
+  padding:8px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  font-family:inherit;
+  transition:all .18s cubic-bezier(.4,0,.2,1);
+  position:relative;
+}
+.qchip:hover{color:#fff;background:rgba(255,255,255,.1);border-color:var(--line-2)}
+.qchip:active{transform:scale(.95)}
+.qchip.active{
+  color:#fff;
+  border-color:rgba(124,92,255,.65);
+  background:linear-gradient(135deg,var(--p1),#4d8dff);
+  box-shadow:0 4px 14px rgba(124,92,255,.45);
+}
+
+/* ============ MAIN BUTTON ============ */
+.btn-wrap{
+  position:relative;
+  margin-top:14px;
+  border-radius:18px;
+  isolation:isolate;
+}
+.btn-wrap::before{
+  content:'';
+  position:absolute;
+  inset:-2px;
+  border-radius:20px;
+  background:conic-gradient(from 0deg,#ff0055,#ffcc00,#00ff88,#00aaff,#aa00ff,#ff0055);
+  animation:hueSpin 5s linear infinite;
+  z-index:0;
+  opacity:.55;
+  filter:blur(10px);
+  transition:opacity .3s;
+}
+.btn-wrap:hover::before{opacity:.9}
+@keyframes hueSpin{
+  from{filter:blur(10px) hue-rotate(0deg)}
+  to{filter:blur(10px) hue-rotate(360deg)}
+}
+.btn{
+  position:relative;
+  z-index:1;
+  width:100%;
+  padding:18px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(135deg,#7c5cff 0%,#4d8dff 50%,#00d9ff 100%);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:.3px;
+  cursor:pointer;
+  font-family:inherit;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  overflow:hidden;
+  box-shadow:
+    0 12px 32px rgba(91,61,245,.5),
+    0 1px 0 rgba(255,255,255,.35) inset,
+    0 -6px 20px rgba(0,0,0,.25) inset;
+  transition:transform .15s cubic-bezier(.4,0,.2,1), box-shadow .25s;
+}
+.btn::after{
+  content:'';
+  position:absolute;
+  top:0;left:-120%;
+  width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+  transform:skewX(-25deg);
+  transition:left .7s cubic-bezier(.4,0,.2,1);
+}
+.btn:hover::after{left:130%}
+.btn:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(91,61,245,.65),0 1px 0 rgba(255,255,255,.4) inset}
+.btn:active{transform:translateY(0) scale(.985)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-icon{display:inline-flex;width:20px;height:20px;transition:transform .3s}
+.btn-icon svg{width:100%;height:100%}
+.btn:hover .btn-icon{transform:translateY(2px)}
+.btn.loading .btn-icon{animation:bounceY .9s ease-in-out infinite}
+@keyframes bounceY{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+/* ============ STATUS ============ */
+#status{margin-top:16px;display:none}
+#status.show{display:block;animation:up .3s ease}
+.box{
+  border-radius:14px;
+  padding:14px 16px;
+  font-size:13.5px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  line-height:1.5;
+  font-weight:500;
+}
+.box.load{
+  background:linear-gradient(135deg,rgba(124,92,255,.15),rgba(0,217,255,.08));
+  border:1px solid rgba(124,92,255,.35);
+  color:#d2cbff;
+}
+.box.err{
+  background:linear-gradient(135deg,rgba(255,77,106,.15),rgba(255,77,106,.05));
+  border:1px solid rgba(255,77,106,.4);
+  color:#ffb8c4;
+}
+.spinner{
+  width:16px;height:16px;flex:none;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,.18);
+  border-top-color:#b8adff;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============ RESULT ============ */
+#result{margin-top:20px;display:none}
+#result.show{display:block;animation:up .4s ease}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+.thumb{
+  position:relative;
+  width:100%;
+  border-radius:18px;
+  overflow:hidden;
+  background:#0d1220;
+  aspect-ratio:16/9;
+  border:1px solid var(--line);
+  box-shadow:0 16px 40px rgba(0,0,0,.5);
+}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.thumb:hover img{transform:scale(1.04)}
+.thumb .dur{
+  position:absolute;bottom:10px;right:10px;
+  background:rgba(0,0,0,.78);
+  padding:5px 10px;
+  border-radius:8px;
+  font-size:11.5px;
+  font-weight:800;
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.15);
+  letter-spacing:.3px;
+}
+.meta{margin-top:16px}
+.meta h2{font-size:15.5px;font-weight:700;line-height:1.45;margin-bottom:7px;letter-spacing:-.1px}
+.meta .author{font-size:12.5px;color:var(--mut);display:flex;align-items:center;gap:6px;font-weight:500}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:16px;
+}
+.stat{
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.02));
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:12px 6px;
+  text-align:center;
+  transition:all .2s;
+}
+.stat:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.stat b{display:block;font-size:15px;font-weight:800;letter-spacing:-.2px}
+.stat small{
+  font-size:9.5px;
+  color:var(--mut);
+  letter-spacing:1px;
+  font-weight:800;
+  text-transform:uppercase;
+  margin-top:3px;
+  display:block;
+}
+
+.sec-title{
+  font-size:11px;
+  font-weight:800;
+  color:var(--mut);
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  margin:22px 0 12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.sec-title::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,var(--line),transparent);
+}
+
+/* ============ DOWNLOAD ROW ============ */
+.dl{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.015));
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:13px 15px;
+  margin-bottom:9px;
+  text-decoration:none;
+  color:var(--txt);
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+  isolation:isolate;
+}
+.dl::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:linear-gradient(180deg,#7c5cff,#00d9ff);
+  opacity:0;
+  transition:opacity .25s;
+  z-index:1;
+}
+.dl::after{
+  content:'';
+  position:absolute;
+  top:0;left:-120%;
+  width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+  transition:left .6s;
+  pointer-events:none;
+}
+.dl:hover{
+  background:linear-gradient(135deg,rgba(124,92,255,.18),rgba(0,217,255,.08));
+  border-color:rgba(124,92,255,.45);
+  transform:translateX(4px);
+  box-shadow:0 10px 30px rgba(124,92,255,.22);
+}
+.dl:hover::before{opacity:1}
+.dl:hover::after{left:130%}
+.dl:active{transform:translateX(4px) scale(.985)}
+.dl .badge{
+  width:42px;height:42px;flex:none;
+  border-radius:12px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(124,92,255,.3),rgba(0,217,255,.18));
+  border:1px solid rgba(255,255,255,.1);
+  color:#fff;
+  transition:transform .3s;
+  position:relative;
+  z-index:1;
+}
+.dl .badge svg{width:20px;height:20px}
+.dl:hover .badge{transform:scale(1.08) rotate(-3deg)}
+.dl .txt{flex:1;min-width:0;position:relative;z-index:1}
+.dl .txt b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.1px;margin-bottom:2px}
+.dl .txt small{font-size:11px;color:var(--mut);font-weight:500}
+.dl .go{
+  font-size:10.5px;
+  font-weight:900;
+  color:#fff;
+  padding:7px 12px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#7c5cff,#4d8dff);
+  flex:none;
+  letter-spacing:.8px;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  box-shadow:0 4px 14px rgba(124,92,255,.4);
+  transition:all .2s;
+  position:relative;
+  z-index:1;
+}
+.dl .go svg{width:11px;height:11px}
+.dl:hover .go{box-shadow:0 6px 20px rgba(124,92,255,.65);transform:translateY(-1px)}
+.dl.downloading{pointer-events:none;opacity:.7}
+.dl.downloading .go{background:linear-gradient(135deg,#22c55e,#16a34a)}
+
+/* ============ FOOTER ============ */
+footer{
+  text-align:center;
+  font-size:11px;
+  color:#4d566e;
+  margin-top:34px;
+  line-height:1.8;
+  font-weight:500;
+}
+.footer-logo{
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:2px;
+  margin-bottom:6px;
+  background:linear-gradient(90deg,#7c5cff,#00d9ff);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+/* ============ TOAST ============ */
+.toast{
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%) translateY(100px);
+  background:rgba(14,18,32,.95);
+  border:1px solid rgba(124,92,255,.4);
+  color:#fff;
+  padding:12px 20px;
+  border-radius:14px;
+  font-size:13px;
+  font-weight:600;
+  z-index:9999;
+  backdrop-filter:blur(20px);
+  box-shadow:0 16px 40px rgba(0,0,0,.6),0 0 24px rgba(124,92,255,.3);
+  opacity:0;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  display:flex;
+  align-items:center;
+  gap:9px;
+  max-width:calc(100vw - 32px);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast svg{width:16px;height:16px;color:#22c55e;flex:none}
 </style>
 </head>
 <body>
+
+<div class="aurora aurora-1"></div>
+<div class="aurora aurora-2"></div>
+<div class="aurora aurora-3"></div>
+
 <div class="wrap">
+
+  <!-- ============ HEADER ============ -->
   <header>
-    <div class="logo"><div class="dot">⬇</div><div>Media<span class="grad">Grab</span></div></div>
-    <p>හැම social media එකකින්ම videos download කරන්න</p>
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+      </div>
+      <div class="logo-text">DG<span>SAVER</span></div>
+    </div>
+    <p class="tagline">Premium downloads · හැම social media එකකින්ම</p>
   </header>
 
+  <!-- ============ MAIN CARD ============ -->
   <div class="card">
+
+    <!-- Platform Grid -->
     <div class="platform-grid" id="platformGrid">
-      <button class="pbtn" data-p="facebook" type="button"><span class="picon">📘</span><span class="plabel">Facebook</span></button>
-      <button class="pbtn" data-p="instagram" type="button"><span class="picon">📷</span><span class="plabel">Instagram</span></button>
-      <button class="pbtn" data-p="tiktok" type="button"><span class="picon">🎵</span><span class="plabel">TikTok</span></button>
-      <button class="pbtn" data-p="pinterest" type="button"><span class="picon">📌</span><span class="plabel">Pinterest</span></button>
-      <button class="pbtn" data-p="ytmp3" type="button"><span class="picon">🎧</span><span class="plabel">YT MP3</span></button>
-      <button class="pbtn" data-p="ytmp4" type="button"><span class="picon">🎬</span><span class="plabel">YT MP4</span></button>
-      <button class="pbtn" data-p="spotify" type="button"><span class="picon">🟢</span><span class="plabel">Spotify</span></button>
+
+      <button class="pbtn" data-p="facebook" type="button" style="--brand:#1877f2">
+        <span class="picon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </span>
+        <span class="plabel">Facebook</span>
+      </button>
+
+      <button class="pbtn" data-p="instagram" type="button" style="--brand:#e1306c">
+        <span class="picon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </span>
+        <span class="plabel">Instagram</span>
+      </button>
+
+      <button class="pbtn" data-p="tiktok" type="button" style="--brand:#ff0050">
+        <span class="picon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+        </span>
+        <span class="plabel">TikTok</span>
+      </button>
+
+      <button class="pbtn" data-p="pinterest" type="button" style="--brand:#e60023">
+        <span class="picon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>
+        </span>
+        <span class="plabel">Pinterest</span>
+      </button>
+
+      <button class="pbtn" data-p="ytmp3" type="button" style="--brand:#ff0033">
+        <span class="picon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          <em class="badge-note">♪</em>
+        </span>
+        <span class="plabel">YT MP3</span>
+      </button>
+
+      <button class="pbtn" data-p="ytmp4" type="button" style="--brand:#ff0033">
+        <span class="picon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          <em class="badge-hd">HD</em>
+        </span>
+        <span class="plabel">YT MP4</span>
+      </button>
+
+      <button class="pbtn" data-p="spotify" type="button" style="--brand:#1db954">
+        <span class="picon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.301.421-1.02.599-1.56.3z"/></svg>
+        </span>
+        <span class="plabel">Spotify</span>
+      </button>
+
     </div>
 
+    <!-- URL Input -->
     <div class="field">
-      <span class="ico">🔗</span>
+      <span class="ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+      </span>
       <input id="urlInput" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Link එක මෙතන paste කරන්න...">
       <div class="tools">
-        <button class="mini" id="pasteBtn" type="button">PASTE</button>
-        <button class="mini" id="clearBtn" type="button">✕</button>
+        <button class="mini" id="pasteBtn" type="button" title="Paste">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+          PASTE
+        </button>
+        <button class="mini mini-x" id="clearBtn" type="button" title="Clear">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
     </div>
 
+    <!-- Quality (YT MP4) -->
     <div class="quality-row" id="qualityRow">
-      <div class="qlabel">🎬 Video Quality</div>
+      <div class="qlabel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:-2px;margin-right:5px"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4V8z"/></svg>
+        Video Quality
+      </div>
       <div class="quality-chips" id="qualityChips">
         <button class="qchip" data-q="360" type="button">360p</button>
         <button class="qchip" data-q="480" type="button">480p</button>
         <button class="qchip active" data-q="720" type="button">720p HD</button>
-        <button class="qchip" data-q="1080" type="button">1080p Full HD</button>
+        <button class="qchip" data-q="1080" type="button">1080p FHD</button>
       </div>
     </div>
 
-    <button class="btn" id="fetchBtn" type="button">
-      <span id="btnIcon">⬇</span><span id="btnText">Download කරන්න</span>
-    </button>
+    <!-- Main Download Button -->
+    <div class="btn-wrap">
+      <button class="btn" id="fetchBtn" type="button">
+        <span class="btn-icon" id="btnIcon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </span>
+        <span id="btnText">Download කරන්න</span>
+      </button>
+    </div>
   </div>
 
+  <!-- Status -->
   <div id="status"></div>
+
+  <!-- Result -->
   <div id="result"></div>
 
-  <footer>MediaGrab · Personal use සඳහා පමණි<br>සියලුම හිමිකම් අදාළ මුල් අයිතිකරුවන් සතුය</footer>
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">DG SAVER</div>
+    <div>Personal use සඳහා පමණි · සියලුම හිමිකම් අදාළ මුල් අයිතිකරුවන් සතුය</div>
+  </footer>
 </div>
 
 <script>
 /* =========================================================
-   CONFIG
+   DG SAVER — Premium Media Downloader
    ========================================================= */
+
+/* ============ CONFIG ============ */
 const API_KEY = 'kcey_3aac11b6ed5c49a5b3b0a2a2922a38de4014';
 const TIKTOK_API_BASE = 'https://dg-tiktok-audio-download-api.vercel.app';
 const DARKSHAN_BASE   = 'https://api-dark-shan-yt.koyeb.app';
@@ -138,18 +774,16 @@ const ZANTA_BASE      = 'https://api.zanta-mini.store';
 const ZANTA_KEY       = 'zanta_JatdaWBTIbi4uSdilQ1q6gE3';
 
 const PLATFORMS = {
-  facebook:  { label:'Facebook',  icon:'📘', method:'KCEY_SOCIAL', type:'facebook',  pattern:/(facebook\.com|fb\.watch|fb\.me|m\.facebook\.com)/i, placeholder:'Facebook video link එක paste කරන්න',  render:renderFacebook },
-  instagram: { label:'Instagram', icon:'📷', method:'KCEY_SOCIAL', type:'instagram', pattern:/(instagram\.com|instagr\.am)/i, placeholder:'Instagram reel/post link එක paste කරන්න', render:renderInstagram },
-  tiktok:    { label:'TikTok',    icon:'🎵', method:'CUSTOM_TIKTOK', pattern:/(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)/i, placeholder:'TikTok link එක paste කරන්න', render:renderTikTok },
-  pinterest: { label:'Pinterest', icon:'📌', method:'SASA', type:'pinterest', pattern:/(pinterest\.com|pin\.it)/i, placeholder:'Pinterest link එක paste කරන්න', render:renderSasaPinterest },
-  ytmp3:     { label:'YouTube MP3', icon:'🎧', method:'YTMP3_FALLBACK', pattern:/(youtube\.com|youtu\.be)/i, placeholder:'YouTube link එක paste කරන්න', render:renderYtmp3 },
-  ytmp4:     { label:'YouTube MP4', icon:'🎬', method:'SASA_FALLBACK_YTMP4', type:'ytmp4', pattern:/(youtube\.com|youtu\.be)/i, placeholder:'YouTube link එක paste කරන්න', render:renderSasaYtmp4, showQuality:true },
-  spotify:   { label:'Spotify',   icon:'🟢', method:'DARKSHAN', type:'spotify', pattern:/(spotify\.com|spoti\.fi)/i, placeholder:'Spotify track link එක paste කරන්න', render:renderSpotify }
+  facebook:  { label:'Facebook',  method:'KCEY_SOCIAL', type:'facebook',  pattern:/(facebook\.com|fb\.watch|fb\.me|m\.facebook\.com)/i, placeholder:'Facebook video link එක paste කරන්න',  render:renderFacebook },
+  instagram: { label:'Instagram', method:'KCEY_SOCIAL', type:'instagram', pattern:/(instagram\.com|instagr\.am)/i, placeholder:'Instagram reel/post link එක paste කරන්න', render:renderInstagram },
+  tiktok:    { label:'TikTok',    method:'CUSTOM_TIKTOK', pattern:/(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)/i, placeholder:'TikTok link එක paste කරන්න', render:renderTikTok },
+  pinterest: { label:'Pinterest', method:'SASA', type:'pinterest', pattern:/(pinterest\.com|pin\.it)/i, placeholder:'Pinterest link එක paste කරන්න', render:renderSasaPinterest },
+  ytmp3:     { label:'YouTube MP3', method:'YTMP3_FALLBACK', pattern:/(youtube\.com|youtu\.be)/i, placeholder:'YouTube link එක paste කරන්න', render:renderYtmp3 },
+  ytmp4:     { label:'YouTube MP4', method:'SASA_FALLBACK_YTMP4', type:'ytmp4', pattern:/(youtube\.com|youtu\.be)/i, placeholder:'YouTube link එක paste කරන්න', render:renderSasaYtmp4, showQuality:true },
+  spotify:   { label:'Spotify',   method:'DARKSHAN', type:'spotify', pattern:/(spotify\.com|spoti\.fi)/i, placeholder:'Spotify track link එක paste කරන්න', render:renderSpotify }
 };
 
-/* =========================================================
-   ELEMENTS
-   ========================================================= */
+/* ============ ELEMENTS ============ */
 const input        = document.getElementById('urlInput');
 const fetchBtn     = document.getElementById('fetchBtn');
 const pasteBtn     = document.getElementById('pasteBtn');
@@ -165,9 +799,18 @@ const qualityChips = document.getElementById('qualityChips');
 let currentPlatform = 'facebook';
 let currentQuality  = '720';
 
-/* =========================================================
-   PLATFORM SELECTOR
-   ========================================================= */
+/* ============ ICONS ============ */
+const SVG_DL    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+const SVG_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>';
+const SVG_HD    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M10 12h4M8 9v6M16 9v6"/></svg>';
+const SVG_SD    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>';
+const SVG_AUDIO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
+const SVG_VIDEO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4V8z"/></svg>';
+const SVG_IMAGE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+const SVG_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+const SVG_SPOTIFY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02z"/></svg>';
+
+/* ============ PLATFORM SELECTOR ============ */
 function setPlatform(name){
   if (!PLATFORMS[name]) return;
   currentPlatform = name;
@@ -190,9 +833,7 @@ qualityChips.addEventListener('click', e => {
   qualityChips.querySelectorAll('.qchip').forEach(c => c.classList.toggle('active', c.dataset.q === currentQuality));
 });
 
-/* =========================================================
-   HELPERS
-   ========================================================= */
+/* ============ HELPERS ============ */
 function showStatus(type, msg){
   if (!type || type === 'none') { statusEl.className = ''; statusEl.innerHTML = ''; return; }
   statusEl.className = 'show';
@@ -201,7 +842,8 @@ function showStatus(type, msg){
 }
 function setLoading(on){
   fetchBtn.disabled = on;
-  btnIcon.textContent = on ? '⏳' : '⬇';
+  fetchBtn.classList.toggle('loading', on);
+  btnIcon.innerHTML = SVG_DL;
   btnText.textContent = on ? 'සොයමින්...' : 'Download කරන්න';
 }
 function fmtNum(n){
@@ -224,12 +866,12 @@ function esc(str){
 function qualityLabel(link){
   const q = String(link.quality || '').toLowerCase();
   const t = String(link.type || '').toLowerCase();
-  if (q.includes('audio') || t.includes('audio')) return { icon:'🎵', title:'Audio Only', sub:'ශබ්දය පමණයි · M4A' };
-  if (q === '360' || q.includes('360')) return { icon:'📱', title:'360p Video', sub:'Data අඩුවෙන් · MP4' };
-  if (q === '720' || q.includes('720')) return { icon:'🎬', title:'720p HD', sub:'MP4 Video' };
-  if (q === '1080' || q.includes('1080')) return { icon:'💎', title:'1080p Full HD', sub:'MP4 Video' };
-  if (!q || q === 'video' || q === 'hd' || q.includes('hd')) return { icon:'⚡', title:'HD Video', sub:'Watermark රහිත · MP4' };
-  return { icon:'🎞️', title:`Video ${esc(link.quality)}`, sub:'MP4 Video' };
+  if (q.includes('audio') || t.includes('audio')) return { icon:SVG_AUDIO, title:'Audio Only', sub:'ශබ්දය පමණයි · M4A' };
+  if (q === '360' || q.includes('360')) return { icon:SVG_SD, title:'360p Video', sub:'Data අඩුවෙන් · MP4' };
+  if (q === '720' || q.includes('720')) return { icon:SVG_HD, title:'720p HD', sub:'MP4 Video' };
+  if (q === '1080' || q.includes('1080')) return { icon:SVG_HD, title:'1080p Full HD', sub:'MP4 Video' };
+  if (!q || q === 'video' || q === 'hd' || q.includes('hd')) return { icon:SVG_VIDEO, title:'HD Video', sub:'Watermark රහිත · MP4' };
+  return { icon:SVG_VIDEO, title:`Video ${esc(link.quality)}`, sub:'MP4 Video' };
 }
 function thumbBlock(url, duration){
   if (!url) return '';
@@ -240,8 +882,9 @@ function statBlock(list){
   if (!items.length) return '';
   return `<div class="stats">` + items.map(s => `<div class="stat"><b>${s.n}</b><small>${s.l}</small></div>`).join('') + `</div>`;
 }
-function dlRow(href, icon, title, sub, cta){
-  return `<a class="dl" href="${esc(href)}" target="_blank" rel="noopener noreferrer"><div class="badge">${icon}</div><div class="txt"><b>${title}</b><small>${sub}</small></div><div class="go">${cta || 'GET'}</div></a>`;
+function dlRow(href, iconSvg, title, sub, cta){
+  const safeHref = esc(href);
+  return `<a class="dl" href="${safeHref}" data-direct-dl="1" rel="noopener"><div class="badge">${iconSvg}</div><div class="txt"><b>${title}</b><small>${sub}</small></div><div class="go">${SVG_ARROW}<span>${cta || 'GET'}</span></div></a>`;
 }
 function showResult(html){
   resultEl.innerHTML = html;
@@ -249,9 +892,88 @@ function showResult(html){
   resultEl.scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
-/* =========================================================
-   RENDER: FACEBOOK
-   ========================================================= */
+/* ============ TOAST ============ */
+function toast(msg, ok){
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = (ok ? SVG_CHECK : '⚠️') + `<span>${esc(msg)}</span>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 320);
+  }, 2600);
+}
+
+/* ============ DIRECT DOWNLOAD ============ */
+function guessFilename(url, fallback){
+  try {
+    const u = new URL(url);
+    const last = u.pathname.split('/').filter(Boolean).pop() || '';
+    if (last && /\.(mp4|mp3|m4a|webm|jpg|jpeg|png|gif|webp)$/i.test(last)) return decodeURIComponent(last);
+  } catch(_){}
+  return fallback || 'DG_SAVER_download';
+}
+async function directDownload(url, rowEl, fallbackName){
+  if (rowEl && rowEl.classList.contains('downloading')) return;
+  const filename = guessFilename(url, fallbackName);
+  if (rowEl) {
+    rowEl.classList.add('downloading');
+    const go = rowEl.querySelector('.go');
+    if (go) go.innerHTML = '<div class="spinner" style="width:11px;height:11px;border-width:2px"></div><span>WAIT</span>';
+  }
+
+  // Attempt 1: blob fetch (true direct download)
+  try {
+    const res = await fetch(url, { mode: 'cors', credentials: 'omit' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+    toast('Download ආරම්භ වුණා ✓', true);
+    if (rowEl) {
+      rowEl.classList.remove('downloading');
+      const go = rowEl.querySelector('.go');
+      if (go) go.innerHTML = SVG_ARROW + '<span>GET</span>';
+    }
+    return;
+  } catch(_) { /* fall through */ }
+
+  // Attempt 2: anchor click fallback
+  try {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.rel = 'noopener';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    toast('Download ආරම්භ වුණා ✓', true);
+  } catch(e) {
+    toast('Download fail — link එක copy කරගන්න', false);
+  } finally {
+    if (rowEl) {
+      rowEl.classList.remove('downloading');
+      const go = rowEl.querySelector('.go');
+      if (go) go.innerHTML = SVG_ARROW + '<span>GET</span>';
+    }
+  }
+}
+document.addEventListener('click', e => {
+  const link = e.target.closest('a[data-direct-dl]');
+  if (!link) return;
+  e.preventDefault();
+  directDownload(link.href, link, '');
+});
+
+/* ============ RENDER: FACEBOOK ============ */
 function renderFacebook(data){
   const md = data.metadata || {};
   const dl = data.downloads || {};
@@ -279,9 +1001,7 @@ function renderFacebook(data){
   showResult(html);
 }
 
-/* =========================================================
-   RENDER: INSTAGRAM
-   ========================================================= */
+/* ============ RENDER: INSTAGRAM ============ */
 function renderInstagram(data){
   const md = data.metadata || {};
   const dl = data.downloads || {};
@@ -293,16 +1013,14 @@ function renderInstagram(data){
   html += `<div class="meta"><h2>${caption ? esc(caption.substring(0, 140)) + (caption.length > 140 ? '...' : '') : 'Instagram Video'}</h2><div class="author">👤 @${esc(username)}</div></div>`;
   if (videoUrl) {
     html += `<div class="sec-title">Download Options</div>`;
-    html += dlRow(videoUrl, '⚡', 'HD Video', 'Watermark රහිත · MP4');
+    html += dlRow(videoUrl, SVG_HD, 'HD Video', 'Watermark රහිත · MP4');
   } else {
     html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link එකක් හමු නොවුණා</div></div>`;
   }
   showResult(html);
 }
 
-/* =========================================================
-   RENDER: TIKTOK
-   ========================================================= */
+/* ============ RENDER: TIKTOK ============ */
 function renderTikTok(data){
   if (!data || data.success === false) { showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.error || 'TikTok video එක ලබා ගැනීමට නොහැකි විය')}</div></div>`); return; }
   const d = data.data || {};
@@ -317,9 +1035,9 @@ function renderTikTok(data){
   const proxyVideo = (u) => `${TIKTOK_API_BASE}/api/proxy-download?url=${encodeURIComponent(u)}&type=video`;
   const proxyAudio = (u) => `${TIKTOK_API_BASE}/api/proxy-download?url=${encodeURIComponent(u)}&type=audio`;
   const rows = [];
-  if (videoHD) rows.push({ href: proxyVideo(videoHD), icon: '💎', title: 'HD Video', sub: 'High Quality · Watermark රහිත · MP4' });
-  if (videoSD && videoSD !== videoHD) rows.push({ href: proxyVideo(videoSD), icon: '📱', title: 'SD Video', sub: 'Data අඩුවෙන් · MP4' });
-  if (audioUrl) rows.push({ href: proxyAudio(audioUrl), icon: '🎵', title: 'Audio (MP3)', sub: 'ශබ්දය පමණයි · Fast Download' });
+  if (videoHD) rows.push({ href: proxyVideo(videoHD), icon: SVG_HD, title: 'HD Video', sub: 'High Quality · Watermark රහිත · MP4' });
+  if (videoSD && videoSD !== videoHD) rows.push({ href: proxyVideo(videoSD), icon: SVG_SD, title: 'SD Video', sub: 'Data අඩුවෙන් · MP4' });
+  if (audioUrl) rows.push({ href: proxyAudio(audioUrl), icon: SVG_AUDIO, title: 'Audio (MP3)', sub: 'ශබ්දය පමණයි · Fast Download' });
   if (rows.length) {
     html += `<div class="sec-title">Download Options</div>`;
     rows.forEach(r => { html += dlRow(r.href, r.icon, r.title, r.sub); });
@@ -329,19 +1047,22 @@ function renderTikTok(data){
   showResult(html);
 }
 
-/* =========================================================
-   RENDER: PINTEREST (SASA)
-   ========================================================= */
+/* ============ RENDER: PINTEREST (robust) ============ */
 function renderSasaPinterest(data){
-  if (!data || data.status === false || !data.result) {
+  const root = data?.result || data?.data || data;
+  if (!root) {
     showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || data?.error || 'Pinterest link එක ලබා ගැනීමට නොහැකි විය')}</div></div>`);
     return;
   }
-  const r = data.result || {};
-  const cover  = r.cover || '';
-  const title  = r.title || 'Pinterest Pin';
-  const author = r.author || 'Pinterest User';
-  const items  = Array.isArray(r.items) ? r.items : [];
+  const cover  = root.cover || root.thumbnail || root.image || '';
+  const title  = root.title || root.description || 'Pinterest Pin';
+  const author = root.author || root.username || 'Pinterest User';
+  const items  = Array.isArray(root.items) ? root.items
+               : Array.isArray(root.medias) ? root.medias
+               : Array.isArray(root.images) ? root.images
+               : Array.isArray(root.videos) ? root.videos
+               : [];
+
   let html = thumbBlock(cover, '');
   html += `<div class="meta"><h2>${esc(String(title).substring(0, 160))}</h2><div class="author">👤 @${esc(author)}</div></div>`;
 
@@ -349,26 +1070,33 @@ function renderSasaPinterest(data){
   const imageItems = [];
   items.forEach(item => {
     if (!item) return;
-    const url = item.url || item.download || item.direct || '';
-    if (item.type === 'video' || /\.mp4($|\?)/i.test(url) || /video/i.test(item.type)) videoItems.push(item);
-    else imageItems.push(item);
+    const url = item.url || item.download || item.direct || item.link || '';
+    const type = String(item.type || '').toLowerCase();
+    const isVideo = type === 'video' || type.includes('video') || /\.mp4(\?|$)/i.test(url);
+    if (isVideo) videoItems.push({ ...item, _url: url });
+    else imageItems.push({ ...item, _url: url });
   });
 
+  if (!items.length) {
+    const direct = root.video || root.videoUrl || root.download || root.downloadUrl || '';
+    if (direct) videoItems.push({ url: direct, quality: root.quality || 'HD' });
+  }
+
   if (videoItems.length) {
-    html += `<div class="sec-title">🎬 Video Download</div>`;
+    html += `<div class="sec-title">Video Download</div>`;
     videoItems.forEach(item => {
-      const href = item.download || item.direct || item.url || '';
+      const href = item.download || item.direct || item._url || item.url || '';
       if (!href) return;
-      html += dlRow(href, '💎', `${esc(item.quality || 'HD')} Video`, 'MP4 · Direct Download');
+      html += dlRow(href, SVG_VIDEO, `${esc(item.quality || 'HD')} Video`, 'MP4 · Direct Download');
     });
   }
   if (imageItems.length) {
-    html += `<div class="sec-title">🖼️ Image Download</div>`;
+    html += `<div class="sec-title">Image Download</div>`;
     imageItems.forEach(item => {
-      const href = item.download || item.direct || item.url || '';
+      const href = item.download || item.direct || item._url || item.url || '';
       if (!href) return;
       const ext = (item.ext || 'JPG').toUpperCase();
-      html += dlRow(href, '🖼️', `${esc(item.quality || 'Original')} Image`, `${ext} · Full Resolution`);
+      html += dlRow(href, SVG_IMAGE, `${esc(item.quality || 'Original')} Image`, `${ext} · Full Resolution`);
     });
   }
   if (!videoItems.length && !imageItems.length) {
@@ -377,12 +1105,8 @@ function renderSasaPinterest(data){
   showResult(html);
 }
 
-/* =========================================================
-   RENDER: YOUTUBE MP3 (Normalized format)
-   Renderer accepts multiple structures via normalizer
-   ========================================================= */
+/* ============ RENDER: YOUTUBE MP3 ============ */
 function renderYtmp3(data){
-  // Normalized path (from fallback chain)
   const title    = data.title || 'YouTube Audio';
   const thumb    = data.thumbnail || '';
   const audioUrl = data.download || '';
@@ -403,24 +1127,27 @@ function renderYtmp3(data){
     duration ? { n: fmtDur(duration), l:'DURATION' } : null
   ]);
   html += `<div class="sec-title">Download Options</div>`;
-  html += dlRow(audioUrl, '🎵', 'MP3 / M4A Audio', bitrate ? `ශබ්දය පමණයි · ${bitrate}` : 'ශබ්දය පමණයි');
+  html += dlRow(audioUrl, SVG_AUDIO, 'MP3 / M4A Audio', bitrate ? `ශබ්දය පමණයි · ${bitrate}` : 'ශබ්දය පමණයි');
   showResult(html);
 }
 
-/* =========================================================
-   RENDER: YOUTUBE MP4 (SASA + Fallback)
-   ========================================================= */
+/* ============ RENDER: YOUTUBE MP4 (robust) ============ */
 function renderSasaYtmp4(data){
-  const r = data.result || data.data || data;
-  const videoId = r.videoId || r.id || '';
-  const thumb   = r.thumbnail || (videoId ? `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` : '');
+  const r = data?.result || data?.data || data || {};
+  const videoId = r.videoId || r.id || r.video_id || '';
+  const thumb   = r.thumbnail || r.thumb || r.image || (videoId ? `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` : '');
   const title   = r.title || 'YouTube Video';
-  const author  = r.author || r.channel || 'YouTube';
-  const quality = r.quality || `${currentQuality}p`;
-  const videoUrl = r.download || r.downloadUrl || r.url || '';
+  const author  = r.author || r.channel || r.uploader || 'YouTube';
+  const quality = r.quality || r.resolution || r.label || `${currentQuality}p`;
+
+  let videoUrl = r.download || r.downloadUrl || r.download_url || r.url || r.link || r.video || '';
+  if (!videoUrl && r.medias && Array.isArray(r.medias)) {
+    const v = r.medias.find(m => /video/i.test(m.type || '') || /\.mp4/i.test(m.url || ''));
+    if (v) videoUrl = v.url || v.download;
+  }
 
   if (!videoUrl) {
-    showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || 'YouTube video එක ලබා ගැනීමට නොහැකි විය')}</div></div>`);
+    showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || r.message || 'YouTube video එක ලබා ගැනීමට නොහැකි විය')}</div></div>`);
     return;
   }
 
@@ -428,16 +1155,15 @@ function renderSasaYtmp4(data){
   html += `<div class="meta"><h2>${esc(String(title).substring(0, 160))}</h2><div class="author">👤 ${esc(author)}${data._source ? ` · ${esc(data._source)}` : ''}</div></div>`;
   html += statBlock([
     quality ? { n: esc(quality), l:'QUALITY' } : null,
-    r.format ? { n: esc(r.format).toUpperCase(), l:'FORMAT' } : null
+    (r.format || r.ext) ? { n: esc(String(r.format || r.ext).toUpperCase()), l:'FORMAT' } : null,
+    (r.duration || r.length) ? { n: fmtDur(r.duration || r.length), l:'DURATION' } : null
   ]);
   html += `<div class="sec-title">Download Options</div>`;
-  html += dlRow(videoUrl, '🎬', `${esc(quality)} Video`, 'MP4 · Fast Download');
+  html += dlRow(videoUrl, SVG_VIDEO, `${esc(quality)} Video`, 'MP4 · Direct Download');
   showResult(html);
 }
 
-/* =========================================================
-   RENDER: SPOTIFY
-   ========================================================= */
+/* ============ RENDER: SPOTIFY ============ */
 function renderSpotify(data){
   if (!data || data.status === false) { showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || data?.error || 'Spotify track එක ලබා ගැනීමට නොහැකි විය')}</div></div>`); return; }
   const d = data.data || data.result || data;
@@ -456,16 +1182,14 @@ function renderSpotify(data){
   ]);
   if (audioUrl) {
     html += `<div class="sec-title">Download Options</div>`;
-    html += dlRow(audioUrl, '🟢', 'Spotify Audio', 'MP3 · High Quality');
+    html += dlRow(audioUrl, SVG_SPOTIFY, 'Spotify Audio', 'MP3 · High Quality');
   } else {
     html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Audio link එකක් හමු නොවුණා</div></div>`;
   }
   showResult(html);
 }
 
-/* =========================================================
-   API: TikTok (Custom)
-   ========================================================= */
+/* ============ API: TikTok ============ */
 async function callTikTokApi(url){
   const r = await fetch(`${TIKTOK_API_BASE}/api/download/tiktok`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -475,9 +1199,7 @@ async function callTikTokApi(url){
   return await r.json();
 }
 
-/* =========================================================
-   API: KCeY Social (Facebook / Instagram)
-   ========================================================= */
+/* ============ API: KCeY Social ============ */
 async function callKceySocial(type, url){
   const endpoints = [
     `/api/${type}`,
@@ -496,14 +1218,10 @@ async function callKceySocial(type, url){
   throw new Error(`${type} API එකට සම්බන්ධ වෙන්න බැරි වුණා`);
 }
 
-/* =========================================================
-   API: YT MP3 — Multi-fallback
-   Try order: KCeY → Darkshan → Zanta → Sasa
-   ========================================================= */
+/* ============ API: YT MP3 fallback ============ */
 async function callYtmp3WithFallback(url){
   const errors = [];
 
-  // Try 1: KCeY (Vercel proxy first, then direct)
   try {
     let data = null;
     try {
@@ -517,7 +1235,6 @@ async function callYtmp3WithFallback(url){
     if (data) {
       const bk = data.raw?.BK9 || {};
       if (data.ok !== false && data.status !== false && (data.download || bk.downloadUrl)) {
-        // normalize
         return {
           title: data.title || bk.title || 'YouTube Audio',
           thumbnail: data.thumbnail || bk.image || '',
@@ -529,12 +1246,9 @@ async function callYtmp3WithFallback(url){
         };
       }
       errors.push('KCeY: ' + (data.message || 'no data'));
-    } else {
-      errors.push('KCeY: no response');
-    }
+    } else errors.push('KCeY: no response');
   } catch(e) { errors.push('KCeY: ' + e.message); }
 
-  // Try 2: Darkshan
   try {
     const r = await fetch(`${DARKSHAN_BASE}/download/ytmp3?url=${encodeURIComponent(url)}&api_key=${DARKSHAN_KEY}`);
     if (r.ok) {
@@ -555,7 +1269,6 @@ async function callYtmp3WithFallback(url){
     } else errors.push('Darkshan: HTTP ' + r.status);
   } catch(e) { errors.push('Darkshan: ' + e.message); }
 
-  // Try 3: Zanta
   try {
     const r = await fetch(`${ZANTA_BASE}/api/ytmp3?apiKey=${ZANTA_KEY}&url=${encodeURIComponent(url)}`);
     if (r.ok) {
@@ -576,7 +1289,6 @@ async function callYtmp3WithFallback(url){
     } else errors.push('Zanta: HTTP ' + r.status);
   } catch(e) { errors.push('Zanta: ' + e.message); }
 
-  // Try 4: Sasa
   try {
     const r = await fetch(`${SASA_BASE}/api/yt/mp3-dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}`);
     if (r.ok) {
@@ -600,11 +1312,8 @@ async function callYtmp3WithFallback(url){
   throw new Error('හැම YT MP3 API එකක්ම fail වුණා. (' + errors.join(' | ') + ')');
 }
 
-/* =========================================================
-   API: YT MP4 (SASA + Zanta fallback)
-   ========================================================= */
+/* ============ API: YT MP4 ============ */
 async function callSasaYtmp4Api(url, quality){
-  // Try 1: Sasa
   try {
     let data = null;
     try {
@@ -615,7 +1324,7 @@ async function callSasaYtmp4Api(url, quality){
       const r = await fetch(`${SASA_BASE}/api/yt/mp4-dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}&quality=${quality || '720'}`);
       if (r.ok) data = await r.json();
     }
-    if (data && data.status !== false && data.result?.download) {
+    if (data && data.status !== false && (data.result?.download || data.result?.downloadUrl || data.result?.url || data.download || data.url)) {
       data._source = 'Sasa';
       return data;
     }
@@ -624,7 +1333,6 @@ async function callSasaYtmp4Api(url, quality){
     }
   } catch(e) {}
 
-  // Try 2: Zanta
   const r = await fetch(`${ZANTA_BASE}/api/ytmp4-v2?apiKey=${ZANTA_KEY}&url=${encodeURIComponent(url)}&quality=${quality || '720'}`);
   if (!r.ok) throw new Error('YT MP4 API එකට සම්බන්ධ වෙන්න බැරි වුණා');
   const data = await r.json();
@@ -632,9 +1340,7 @@ async function callSasaYtmp4Api(url, quality){
   return data;
 }
 
-/* =========================================================
-   API: Pinterest (SASA)
-   ========================================================= */
+/* ============ API: Pinterest ============ */
 async function callSasaPinterestApi(url){
   let data = null;
   try {
@@ -649,9 +1355,7 @@ async function callSasaPinterestApi(url){
   return data;
 }
 
-/* =========================================================
-   API: Spotify (Darkshan)
-   ========================================================= */
+/* ============ API: Spotify ============ */
 async function callDarkshanSpotify(url){
   let data = null;
   try {
@@ -666,26 +1370,22 @@ async function callDarkshanSpotify(url){
   return data;
 }
 
-/* =========================================================
-   MAIN CALL
-   ========================================================= */
+/* ============ MAIN CALL ============ */
 async function callApi(platformKey, url){
   const p = PLATFORMS[platformKey];
   if (!p) throw new Error('මේ platform එක support කරන්නේ නෑ');
 
-  if (p.method === 'CUSTOM_TIKTOK')      return await callTikTokApi(url);
-  if (p.method === 'KCEY_SOCIAL')        return await callKceySocial(p.type, url);
-  if (p.method === 'YTMP3_FALLBACK')     return await callYtmp3WithFallback(url);
+  if (p.method === 'CUSTOM_TIKTOK')       return await callTikTokApi(url);
+  if (p.method === 'KCEY_SOCIAL')         return await callKceySocial(p.type, url);
+  if (p.method === 'YTMP3_FALLBACK')      return await callYtmp3WithFallback(url);
   if (p.method === 'SASA_FALLBACK_YTMP4') return await callSasaYtmp4Api(url, currentQuality);
-  if (p.method === 'SASA')               return await callSasaPinterestApi(url);
-  if (p.method === 'DARKSHAN')           return await callDarkshanSpotify(url);
+  if (p.method === 'SASA')                return await callSasaPinterestApi(url);
+  if (p.method === 'DARKSHAN')            return await callDarkshanSpotify(url);
 
   throw new Error('Unknown method: ' + p.method);
 }
 
-/* =========================================================
-   AUTO-DETECT
-   ========================================================= */
+/* ============ AUTO-DETECT ============ */
 function autoDetect(url){
   if (/(youtube\.com|youtu\.be)/i.test(url)) {
     if (currentPlatform !== 'ytmp3' && currentPlatform !== 'ytmp4') setPlatform('ytmp3');
@@ -701,9 +1401,7 @@ input.addEventListener('input', () => {
   if (url.length > 8) autoDetect(url);
 });
 
-/* =========================================================
-   MAIN
-   ========================================================= */
+/* ============ MAIN HANDLER ============ */
 async function handleFetch(){
   const url = input.value.trim();
   if (!url) { showStatus('error', 'කරුණාකර link එකක් ඇතුළත් කරන්න'); input.focus(); return; }
@@ -726,9 +1424,7 @@ async function handleFetch(){
   }
 }
 
-/* =========================================================
-   EVENTS
-   ========================================================= */
+/* ============ EVENTS ============ */
 fetchBtn.addEventListener('click', handleFetch);
 input.addEventListener('keydown', e => { if (e.key === 'Enter') handleFetch(); });
 pasteBtn.addEventListener('click', async () => {
@@ -738,12 +1434,12 @@ pasteBtn.addEventListener('click', async () => {
   } catch { input.focus(); showStatus('error', 'Clipboard කියවන්න බෑ — අතින් paste කරන්න'); }
 });
 clearBtn.addEventListener('click', () => {
-  input.value = ''; input.focus(); resultEl.className = ''; resultEl.innerHTML = ''; showStatus('none');
+  input.value = ''; input.focus();
+  resultEl.className = ''; resultEl.innerHTML = '';
+  showStatus('none');
 });
 
-/* =========================================================
-   INIT
-   ========================================================= */
+/* ============ INIT ============ */
 setPlatform('facebook');
 </script>
 </body>
