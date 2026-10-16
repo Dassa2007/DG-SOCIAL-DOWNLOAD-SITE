@@ -7,295 +7,96 @@
 <title>Media Downloader</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  :root{
-    --bg:#070a12;
-    --card:rgba(20,26,42,.72);
-    --line:rgba(255,255,255,.09);
-    --txt:#e8ecf5;
-    --mut:#8b95ad;
-    --p1:#6d5efc;
-    --p2:#00d4ff;
-    --ok:#22c55e;
-    --err:#ef4444;
-  }
+  :root{--bg:#070a12;--card:rgba(20,26,42,.72);--line:rgba(255,255,255,.09);--txt:#e8ecf5;--mut:#8b95ad;--p1:#6d5efc;--p2:#00d4ff;--ok:#22c55e;--err:#ef4444;}
   html,body{height:100%}
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans Sinhala',sans-serif;
-    background:var(--bg);color:var(--txt);
-    min-height:100dvh;display:flex;flex-direction:column;
-    padding:18px 16px 32px;position:relative;overflow-x:hidden;
-  }
-  body::before,body::after{
-    content:'';position:fixed;border-radius:50%;filter:blur(90px);opacity:.35;
-    pointer-events:none;z-index:0;
-  }
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans Sinhala',sans-serif;background:var(--bg);color:var(--txt);min-height:100dvh;display:flex;flex-direction:column;padding:18px 16px 32px;position:relative;overflow-x:hidden;}
+  body::before,body::after{content:'';position:fixed;border-radius:50%;filter:blur(90px);opacity:.35;pointer-events:none;z-index:0;}
   body::before{width:320px;height:320px;background:#5b3df5;top:-120px;left:-100px}
   body::after{width:300px;height:300px;background:#00b4ff;bottom:-140px;right:-110px;opacity:.22}
-
   .wrap{position:relative;z-index:1;width:100%;max-width:640px;margin:0 auto;flex:1;display:flex;flex-direction:column}
-
   header{text-align:center;margin:14px 0 22px}
-  .logo{
-    display:inline-flex;align-items:center;gap:9px;
-    font-size:21px;font-weight:800;letter-spacing:-.4px;
-  }
-  .logo .dot{
-    width:32px;height:32px;border-radius:10px;
-    background:linear-gradient(135deg,var(--p1),var(--p2));
-    display:grid;place-items:center;font-size:17px;
-    box-shadow:0 6px 20px rgba(109,94,252,.45);
-  }
-  .logo span.grad{
-    background:linear-gradient(135deg,#a99bff,#5fe1ff);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
+  .logo{display:inline-flex;align-items:center;gap:9px;font-size:21px;font-weight:800;letter-spacing:-.4px;}
+  .logo .dot{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--p1),var(--p2));display:grid;place-items:center;font-size:17px;box-shadow:0 6px 20px rgba(109,94,252,.45);}
+  .logo span.grad{background:linear-gradient(135deg,#a99bff,#5fe1ff);-webkit-background-clip:text;background-clip:text;color:transparent;}
   header p{color:var(--mut);font-size:13px;margin-top:8px}
-
-  .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:20px;
-    padding:16px;
-    backdrop-filter:blur(14px);
-    -webkit-backdrop-filter:blur(14px);
-    box-shadow:0 16px 44px rgba(0,0,0,.5);
-  }
-
-  .platform-grid{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    gap:7px;
-    margin-bottom:14px;
-  }
-  .pbtn{
-    background:rgba(255,255,255,.04);
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:10px 3px;
-    display:flex;flex-direction:column;align-items:center;gap:4px;
-    cursor:pointer;font-family:inherit;
-    color:var(--mut);
-    transition:all .18s;
-    position:relative;
-    overflow:hidden;
-  }
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 16px 44px rgba(0,0,0,.5);}
+  .platform-grid{display:grid;grid-template-columns:repeat(4, 1fr);gap:7px;margin-bottom:14px;}
+  .pbtn{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:10px 3px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font-family:inherit;color:var(--mut);transition:all .18s;position:relative;overflow:hidden;}
   .pbtn .picon{font-size:18px;line-height:1}
   .pbtn .plabel{font-size:9.5px;font-weight:700;letter-spacing:.1px;text-align:center;line-height:1.15}
   .pbtn:active{transform:scale(.96)}
-  .pbtn.active{
-    color:#fff;
-    border-color:rgba(109,94,252,.6);
-    background:linear-gradient(135deg,rgba(109,94,252,.25),rgba(0,212,255,.15));
-    box-shadow:0 4px 16px rgba(109,94,252,.28);
-  }
-  .pbtn.active::after{
-    content:'';position:absolute;top:0;left:0;right:0;height:2px;
-    background:linear-gradient(90deg,var(--p1),var(--p2));
-  }
-
+  .pbtn.active{color:#fff;border-color:rgba(109,94,252,.6);background:linear-gradient(135deg,rgba(109,94,252,.25),rgba(0,212,255,.15));box-shadow:0 4px 16px rgba(109,94,252,.28);}
+  .pbtn.active::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--p1),var(--p2));}
   .field{position:relative;display:flex;align-items:center;gap:8px}
-  .field input{
-    flex:1;min-width:0;
-    background:rgba(8,12,22,.85);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:15px 74px 15px 44px;
-    color:var(--txt);font-size:15px;outline:none;
-    transition:border-color .2s, box-shadow .2s;
-    font-family:inherit;
-  }
+  .field input{flex:1;min-width:0;background:rgba(8,12,22,.85);border:1px solid var(--line);border-radius:14px;padding:15px 74px 15px 44px;color:var(--txt);font-size:15px;outline:none;transition:border-color .2s, box-shadow .2s;font-family:inherit;}
   .field input::placeholder{color:#5c6580}
-  .field input:focus{
-    border-color:rgba(109,94,252,.7);
-    box-shadow:0 0 0 3px rgba(109,94,252,.16);
-  }
-  .field .ico{
-    position:absolute;left:15px;font-size:16px;opacity:.55;pointer-events:none;
-  }
-  .field .tools{
-    position:absolute;right:8px;display:flex;gap:4px;
-  }
-  .mini{
-    background:rgba(255,255,255,.07);border:none;color:var(--mut);
-    font-size:11px;font-weight:700;padding:7px 10px;border-radius:9px;
-    cursor:pointer;letter-spacing:.3px;font-family:inherit;
-    transition:background .15s,color .15s;
-  }
+  .field input:focus{border-color:rgba(109,94,252,.7);box-shadow:0 0 0 3px rgba(109,94,252,.16);}
+  .field .ico{position:absolute;left:15px;font-size:16px;opacity:.55;pointer-events:none;}
+  .field .tools{position:absolute;right:8px;display:flex;gap:4px;}
+  .mini{background:rgba(255,255,255,.07);border:none;color:var(--mut);font-size:11px;font-weight:700;padding:7px 10px;border-radius:9px;cursor:pointer;letter-spacing:.3px;font-family:inherit;transition:background .15s,color .15s;}
   .mini:active{background:rgba(255,255,255,.16);color:#fff}
-
-  .quality-row{
-    display:none;
-    margin-top:12px;
-    padding:10px 12px;
-    background:rgba(109,94,252,.08);
-    border:1px solid rgba(109,94,252,.22);
-    border-radius:12px;
-  }
+  .quality-row{display:none;margin-top:12px;padding:10px 12px;background:rgba(109,94,252,.08);border:1px solid rgba(109,94,252,.22);border-radius:12px;}
   .quality-row.show{display:block;animation:up .25s ease}
-  .quality-row .qlabel{
-    font-size:10.5px;font-weight:800;color:#a99bff;
-    letter-spacing:1.1px;text-transform:uppercase;margin-bottom:8px;
-  }
+  .quality-row .qlabel{font-size:10.5px;font-weight:800;color:#a99bff;letter-spacing:1.1px;text-transform:uppercase;margin-bottom:8px;}
   .quality-chips{display:flex;gap:6px;flex-wrap:wrap}
-  .qchip{
-    background:rgba(255,255,255,.05);
-    border:1px solid var(--line);
-    color:var(--mut);
-    font-size:11.5px;font-weight:700;
-    padding:7px 13px;border-radius:9px;
-    cursor:pointer;font-family:inherit;
-    transition:all .15s;
-  }
+  .qchip{background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--mut);font-size:11.5px;font-weight:700;padding:7px 13px;border-radius:9px;cursor:pointer;font-family:inherit;transition:all .15s;}
   .qchip:active{transform:scale(.95)}
-  .qchip.active{
-    color:#fff;
-    border-color:rgba(109,94,252,.6);
-    background:linear-gradient(135deg,var(--p1),#4d8dff);
-    box-shadow:0 4px 12px rgba(109,94,252,.35);
-  }
-
-  .btn{
-    width:100%;margin-top:12px;
-    padding:16px;border:none;border-radius:14px;
-    background:linear-gradient(135deg,var(--p1),#4d8dff 55%,var(--p2));
-    color:#fff;font-size:16px;font-weight:800;letter-spacing:.2px;
-    cursor:pointer;font-family:inherit;
-    display:flex;align-items:center;justify-content:center;gap:9px;
-    box-shadow:0 10px 26px rgba(91,61,245,.4);
-    transition:transform .12s, opacity .2s;
-  }
+  .qchip.active{color:#fff;border-color:rgba(109,94,252,.6);background:linear-gradient(135deg,var(--p1),#4d8dff);box-shadow:0 4px 12px rgba(109,94,252,.35);}
+  .btn{width:100%;margin-top:12px;padding:16px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--p1),#4d8dff 55%,var(--p2));color:#fff;font-size:16px;font-weight:800;letter-spacing:.2px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 10px 26px rgba(91,61,245,.4);transition:transform .12s, opacity .2s;}
   .btn:active{transform:scale(.975)}
   .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
-
   #status{margin-top:16px;display:none}
   #status.show{display:block}
-  .box{
-    border-radius:14px;padding:13px 15px;font-size:13.5px;
-    display:flex;align-items:center;gap:10px;line-height:1.45;
-  }
+  .box{border-radius:14px;padding:13px 15px;font-size:13.5px;display:flex;align-items:center;gap:10px;line-height:1.45;}
   .box.load{background:rgba(109,94,252,.12);border:1px solid rgba(109,94,252,.3);color:#c3bcff}
   .box.err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);color:#ffb3b3}
-  .spinner{
-    width:16px;height:16px;flex:none;border-radius:50%;
-    border:2px solid rgba(255,255,255,.2);border-top-color:#a99bff;
-    animation:spin .7s linear infinite;
-  }
+  .spinner{width:16px;height:16px;flex:none;border-radius:50%;border:2px solid rgba(255,255,255,.2);border-top-color:#a99bff;animation:spin .7s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg)}}
-
   #result{margin-top:18px;display:none}
   #result.show{display:block;animation:up .35s ease}
   @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-
-  .thumb{
-    position:relative;width:100%;border-radius:16px;overflow:hidden;
-    background:#0d1220;aspect-ratio:16/9;
-    border:1px solid var(--line);
-  }
+  .thumb{position:relative;width:100%;border-radius:16px;overflow:hidden;background:#0d1220;aspect-ratio:16/9;border:1px solid var(--line);}
   .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-  .thumb .dur{
-    position:absolute;bottom:9px;right:9px;
-    background:rgba(0,0,0,.78);padding:4px 9px;border-radius:7px;
-    font-size:11.5px;font-weight:700;backdrop-filter:blur(6px);
-  }
-
+  .thumb .dur{position:absolute;bottom:9px;right:9px;background:rgba(0,0,0,.78);padding:4px 9px;border-radius:7px;font-size:11.5px;font-weight:700;backdrop-filter:blur(6px);}
   .meta{margin-top:14px}
   .meta h2{font-size:15px;font-weight:700;line-height:1.45;margin-bottom:6px}
   .meta .author{font-size:13px;color:var(--mut);display:flex;align-items:center;gap:6px}
-
-  .stats{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;
-  }
-  .stat{
-    background:rgba(255,255,255,.04);border:1px solid var(--line);
-    border-radius:12px;padding:10px 6px;text-align:center;
-  }
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;}
+  .stat{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center;}
   .stat b{display:block;font-size:15px;font-weight:800}
   .stat small{font-size:10.5px;color:var(--mut);letter-spacing:.3px}
-
-  .sec-title{
-    font-size:11.5px;font-weight:800;color:var(--mut);
-    letter-spacing:1.2px;text-transform:uppercase;
-    margin:20px 0 10px;
-  }
-
-  .dl{
-    display:flex;align-items:center;gap:12px;
-    background:rgba(255,255,255,.04);
-    border:1px solid var(--line);
-    border-radius:14px;padding:13px 14px;margin-bottom:9px;
-    text-decoration:none;color:var(--txt);
-    transition:background .15s,border-color .15s,transform .12s;
-  }
+  .sec-title{font-size:11.5px;font-weight:800;color:var(--mut);letter-spacing:1.2px;text-transform:uppercase;margin:20px 0 10px;}
+  .dl{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:9px;text-decoration:none;color:var(--txt);transition:background .15s,border-color .15s,transform .12s;}
   .dl:active{transform:scale(.985);background:rgba(109,94,252,.13);border-color:rgba(109,94,252,.4)}
-  .dl .badge{
-    width:40px;height:40px;flex:none;border-radius:11px;
-    display:grid;place-items:center;font-size:17px;
-    background:linear-gradient(135deg,rgba(109,94,252,.28),rgba(0,212,255,.2));
-    border:1px solid rgba(255,255,255,.08);
-  }
+  .dl .badge{width:40px;height:40px;flex:none;border-radius:11px;display:grid;place-items:center;font-size:17px;background:linear-gradient(135deg,rgba(109,94,252,.28),rgba(0,212,255,.2));border:1px solid rgba(255,255,255,.08);}
   .dl .txt{flex:1;min-width:0}
   .dl .txt b{display:block;font-size:14px;font-weight:700}
   .dl .txt small{font-size:11.5px;color:var(--mut)}
-  .dl .go{
-    font-size:11px;font-weight:800;color:#a99bff;
-    padding:6px 10px;border-radius:8px;background:rgba(109,94,252,.15);
-    flex:none;
-  }
-
-  footer{
-    text-align:center;font-size:11.5px;color:#4d566e;
-    margin-top:28px;line-height:1.7;
-  }
+  .dl .go{font-size:11px;font-weight:800;color:#a99bff;padding:6px 10px;border-radius:8px;background:rgba(109,94,252,.15);flex:none;}
+  footer{text-align:center;font-size:11.5px;color:#4d566e;margin-top:28px;line-height:1.7;}
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <header>
-    <div class="logo">
-      <div class="dot">⬇</div>
-      <div>Media<span class="grad">Grab</span></div>
-    </div>
+    <div class="logo"><div class="dot">⬇</div><div>Media<span class="grad">Grab</span></div></div>
     <p>හැම social media එකකින්ම videos download කරන්න</p>
   </header>
 
   <div class="card">
-
     <div class="platform-grid" id="platformGrid">
-      <button class="pbtn" data-p="facebook" type="button">
-        <span class="picon">📘</span>
-        <span class="plabel">Facebook</span>
-      </button>
-      <button class="pbtn" data-p="instagram" type="button">
-        <span class="picon">📷</span>
-        <span class="plabel">Instagram</span>
-      </button>
-      <button class="pbtn" data-p="tiktok" type="button">
-        <span class="picon">🎵</span>
-        <span class="plabel">TikTok</span>
-      </button>
-      <button class="pbtn" data-p="pinterest" type="button">
-        <span class="picon">📌</span>
-        <span class="plabel">Pinterest</span>
-      </button>
-      <button class="pbtn" data-p="ytmp3" type="button">
-        <span class="picon">🎧</span>
-        <span class="plabel">YT MP3</span>
-      </button>
-      <button class="pbtn" data-p="ytmp4" type="button">
-        <span class="picon">🎬</span>
-        <span class="plabel">YT MP4</span>
-      </button>
-      <button class="pbtn" data-p="spotify" type="button">
-        <span class="picon">🟢</span>
-        <span class="plabel">Spotify</span>
-      </button>
+      <button class="pbtn" data-p="facebook" type="button"><span class="picon">📘</span><span class="plabel">Facebook</span></button>
+      <button class="pbtn" data-p="instagram" type="button"><span class="picon">📷</span><span class="plabel">Instagram</span></button>
+      <button class="pbtn" data-p="tiktok" type="button"><span class="picon">🎵</span><span class="plabel">TikTok</span></button>
+      <button class="pbtn" data-p="pinterest" type="button"><span class="picon">📌</span><span class="plabel">Pinterest</span></button>
+      <button class="pbtn" data-p="ytmp3" type="button"><span class="picon">🎧</span><span class="plabel">YT MP3</span></button>
+      <button class="pbtn" data-p="ytmp4" type="button"><span class="picon">🎬</span><span class="plabel">YT MP4</span></button>
+      <button class="pbtn" data-p="spotify" type="button"><span class="picon">🟢</span><span class="plabel">Spotify</span></button>
     </div>
 
     <div class="field">
       <span class="ico">🔗</span>
-      <input id="urlInput" type="url" inputmode="url" autocomplete="off"
-             spellcheck="false" placeholder="Link එක මෙතන paste කරන්න...">
+      <input id="urlInput" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Link එක මෙතන paste කරන්න...">
       <div class="tools">
         <button class="mini" id="pasteBtn" type="button">PASTE</button>
         <button class="mini" id="clearBtn" type="button">✕</button>
@@ -320,11 +121,7 @@
   <div id="status"></div>
   <div id="result"></div>
 
-  <footer>
-    MediaGrab · Personal use සඳහා පමණි<br>
-    සියලුම හිමිකම් අදාළ මුල් අයිතිකරුවන් සතුය
-  </footer>
-
+  <footer>MediaGrab · Personal use සඳහා පමණි<br>සියලුම හිමිකම් අදාළ මුල් අයිතිකරුවන් සතුය</footer>
 </div>
 
 <script>
@@ -341,54 +138,13 @@ const ZANTA_BASE      = 'https://api.zanta-mini.store';
 const ZANTA_KEY       = 'zanta_JatdaWBTIbi4uSdilQ1q6gE3';
 
 const PLATFORMS = {
-  facebook: {
-    label: 'Facebook', icon: '📘', method:'GET',
-    proxy: '/api/facebook', direct:'https://api.kcey.online/api/facebook',
-    pattern: /(facebook\.com|fb\.watch|fb\.me|m\.facebook\.com)/i,
-    placeholder: 'https://www.facebook.com/... හෝ fb.watch link එක paste කරන්න',
-    render: renderFacebook
-  },
-  instagram: {
-    label: 'Instagram', icon: '📷', method:'GET',
-    proxy: '/api/instagram', direct:'https://api.kcey.online/api/instagram',
-    pattern: /(instagram\.com|instagr\.am)/i,
-    placeholder: 'https://www.instagram.com/reel/... link එක paste කරන්න',
-    render: renderInstagram
-  },
-  tiktok: {
-    label: 'TikTok', icon: '🎵', method:'CUSTOM_TIKTOK',
-    pattern: /(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)/i,
-    placeholder: 'https://vt.tiktok.com/... link එක paste කරන්න',
-    render: renderTikTok
-  },
-  pinterest: {
-    label: 'Pinterest', icon: '📌', method:'SASA', type:'pinterest',
-    proxy: '/api/sasa-pinterest',
-    pattern: /(pinterest\.com|pin\.it)/i,
-    placeholder: 'https://pin.it/... හෝ pinterest link එක paste කරන්න',
-    render: renderSasaPinterest
-  },
-  ytmp3: {
-    label: 'YouTube MP3', icon: '🎧', method:'GET',
-    proxy: '/api/ytmp3', direct:'https://api.kcey.online/api/ytmp3',
-    pattern: /(youtube\.com|youtu\.be)/i,
-    placeholder: 'https://youtu.be/... හෝ youtube link එක paste කරන්න',
-    render: renderYtmp3
-  },
-  ytmp4: {
-    label: 'YouTube MP4', icon: '🎬', method:'SASA_FALLBACK_YTMP4', type:'ytmp4',
-    proxy: '/api/sasa-ytmp4',
-    pattern: /(youtube\.com|youtu\.be)/i,
-    placeholder: 'https://youtu.be/... හෝ youtube link එක paste කරන්න',
-    render: renderSasaYtmp4, showQuality: true
-  },
-  spotify: {
-    label: 'Spotify', icon: '🟢', method:'DARKSHAN', type:'spotify',
-    proxy: '/api/spotify',
-    pattern: /(spotify\.com|spoti\.fi)/i,
-    placeholder: 'https://open.spotify.com/... track link එක paste කරන්න',
-    render: renderSpotify
-  }
+  facebook:  { label:'Facebook',  icon:'📘', method:'KCEY_SOCIAL', type:'facebook',  pattern:/(facebook\.com|fb\.watch|fb\.me|m\.facebook\.com)/i, placeholder:'Facebook video link එක paste කරන්න',  render:renderFacebook },
+  instagram: { label:'Instagram', icon:'📷', method:'KCEY_SOCIAL', type:'instagram', pattern:/(instagram\.com|instagr\.am)/i, placeholder:'Instagram reel/post link එක paste කරන්න', render:renderInstagram },
+  tiktok:    { label:'TikTok',    icon:'🎵', method:'CUSTOM_TIKTOK', pattern:/(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)/i, placeholder:'TikTok link එක paste කරන්න', render:renderTikTok },
+  pinterest: { label:'Pinterest', icon:'📌', method:'SASA', type:'pinterest', pattern:/(pinterest\.com|pin\.it)/i, placeholder:'Pinterest link එක paste කරන්න', render:renderSasaPinterest },
+  ytmp3:     { label:'YouTube MP3', icon:'🎧', method:'YTMP3_FALLBACK', pattern:/(youtube\.com|youtu\.be)/i, placeholder:'YouTube link එක paste කරන්න', render:renderYtmp3 },
+  ytmp4:     { label:'YouTube MP4', icon:'🎬', method:'SASA_FALLBACK_YTMP4', type:'ytmp4', pattern:/(youtube\.com|youtu\.be)/i, placeholder:'YouTube link එක paste කරන්න', render:renderSasaYtmp4, showQuality:true },
+  spotify:   { label:'Spotify',   icon:'🟢', method:'DARKSHAN', type:'spotify', pattern:/(spotify\.com|spoti\.fi)/i, placeholder:'Spotify track link එක paste කරන්න', render:renderSpotify }
 };
 
 /* =========================================================
@@ -415,13 +171,10 @@ let currentQuality  = '720';
 function setPlatform(name){
   if (!PLATFORMS[name]) return;
   currentPlatform = name;
-  grid.querySelectorAll('.pbtn').forEach(b => {
-    b.classList.toggle('active', b.dataset.p === name);
-  });
+  grid.querySelectorAll('.pbtn').forEach(b => b.classList.toggle('active', b.dataset.p === name));
   input.placeholder = PLATFORMS[name].placeholder || 'Link එක මෙතන paste කරන්න...';
   qualityRow.classList.toggle('show', !!PLATFORMS[name].showQuality);
 }
-
 grid.addEventListener('click', e => {
   const btn = e.target.closest('.pbtn');
   if (!btn) return;
@@ -430,39 +183,27 @@ grid.addEventListener('click', e => {
   resultEl.innerHTML = '';
   showStatus('none');
 });
-
 qualityChips.addEventListener('click', e => {
   const btn = e.target.closest('.qchip');
   if (!btn) return;
   currentQuality = btn.dataset.q;
-  qualityChips.querySelectorAll('.qchip').forEach(c => {
-    c.classList.toggle('active', c.dataset.q === currentQuality);
-  });
+  qualityChips.querySelectorAll('.qchip').forEach(c => c.classList.toggle('active', c.dataset.q === currentQuality));
 });
 
 /* =========================================================
    HELPERS
    ========================================================= */
 function showStatus(type, msg){
-  if (!type || type === 'none') {
-    statusEl.className = '';
-    statusEl.innerHTML = '';
-    return;
-  }
+  if (!type || type === 'none') { statusEl.className = ''; statusEl.innerHTML = ''; return; }
   statusEl.className = 'show';
-  if (type === 'loading') {
-    statusEl.innerHTML = `<div class="box load"><div class="spinner"></div><div>${msg}</div></div>`;
-  } else if (type === 'error') {
-    statusEl.innerHTML = `<div class="box err"><div>⚠️</div><div>${msg}</div></div>`;
-  }
+  if (type === 'loading') statusEl.innerHTML = `<div class="box load"><div class="spinner"></div><div>${msg}</div></div>`;
+  else if (type === 'error') statusEl.innerHTML = `<div class="box err"><div>⚠️</div><div>${msg}</div></div>`;
 }
-
 function setLoading(on){
   fetchBtn.disabled = on;
   btnIcon.textContent = on ? '⏳' : '⬇';
   btnText.textContent = on ? 'සොයමින්...' : 'Download කරන්න';
 }
-
 function fmtNum(n){
   n = Number(n) || 0;
   if (n >= 1e9) return (n / 1e9).toFixed(1).replace('.0','') + 'B';
@@ -470,7 +211,6 @@ function fmtNum(n){
   if (n >= 1e3) return (n / 1e3).toFixed(1).replace('.0','') + 'K';
   return String(n);
 }
-
 function fmtDur(sec){
   sec = Number(sec) || 0;
   if (!sec) return '';
@@ -478,43 +218,31 @@ function fmtDur(sec){
   const s = Math.floor(sec % 60);
   return `${m}:${String(s).padStart(2,'0')}`;
 }
-
 function esc(str){
-  return String(str ?? '').replace(/[&<>"']/g, c => (
-    {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
-  ));
+  return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
-
+function qualityLabel(link){
+  const q = String(link.quality || '').toLowerCase();
+  const t = String(link.type || '').toLowerCase();
+  if (q.includes('audio') || t.includes('audio')) return { icon:'🎵', title:'Audio Only', sub:'ශබ්දය පමණයි · M4A' };
+  if (q === '360' || q.includes('360')) return { icon:'📱', title:'360p Video', sub:'Data අඩුවෙන් · MP4' };
+  if (q === '720' || q.includes('720')) return { icon:'🎬', title:'720p HD', sub:'MP4 Video' };
+  if (q === '1080' || q.includes('1080')) return { icon:'💎', title:'1080p Full HD', sub:'MP4 Video' };
+  if (!q || q === 'video' || q === 'hd' || q.includes('hd')) return { icon:'⚡', title:'HD Video', sub:'Watermark රහිත · MP4' };
+  return { icon:'🎞️', title:`Video ${esc(link.quality)}`, sub:'MP4 Video' };
+}
 function thumbBlock(url, duration){
   if (!url) return '';
-  return `
-    <div class="thumb">
-      <img src="${esc(url)}" alt="thumbnail" referrerpolicy="no-referrer"
-           onerror="this.parentElement.style.display='none'">
-      ${duration ? `<div class="dur">${esc(duration)}</div>` : ''}
-    </div>`;
+  return `<div class="thumb"><img src="${esc(url)}" alt="thumbnail" referrerpolicy="no-referrer" onerror="this.parentElement.style.display='none'">${duration ? `<div class="dur">${esc(duration)}</div>` : ''}</div>`;
 }
-
 function statBlock(list){
   const items = list.filter(Boolean).slice(0, 3);
   if (!items.length) return '';
-  return `<div class="stats">` + items.map(s =>
-    `<div class="stat"><b>${s.n}</b><small>${s.l}</small></div>`
-  ).join('') + `</div>`;
+  return `<div class="stats">` + items.map(s => `<div class="stat"><b>${s.n}</b><small>${s.l}</small></div>`).join('') + `</div>`;
 }
-
 function dlRow(href, icon, title, sub, cta){
-  return `
-    <a class="dl" href="${esc(href)}" target="_blank" rel="noopener noreferrer">
-      <div class="badge">${icon}</div>
-      <div class="txt">
-        <b>${title}</b>
-        <small>${sub}</small>
-      </div>
-      <div class="go">${cta || 'GET'}</div>
-    </a>`;
+  return `<a class="dl" href="${esc(href)}" target="_blank" rel="noopener noreferrer"><div class="badge">${icon}</div><div class="txt"><b>${title}</b><small>${sub}</small></div><div class="go">${cta || 'GET'}</div></a>`;
 }
-
 function showResult(html){
   resultEl.innerHTML = html;
   resultEl.className = 'show';
@@ -530,20 +258,14 @@ function renderFacebook(data){
   const links = Array.isArray(dl.links) ? dl.links : [];
   const thumb = dl.thumbnail || '';
   const title = md.title || 'Facebook Video';
-
   let html = thumbBlock(thumb, md.duration);
-  html += `<div class="meta">
-    <h2>${esc(title)}</h2>
-    <div class="author">👤 ${esc(md.author || 'Unknown')}</div>
-  </div>`;
-
+  html += `<div class="meta"><h2>${esc(title)}</h2><div class="author">👤 ${esc(md.author || 'Unknown')}</div></div>`;
   html += statBlock([
-    md.view_count    ? { n: fmtNum(md.view_count),    l:'VIEWS' }    : null,
-    md.like_count    ? { n: fmtNum(md.like_count),    l:'LIKES' }    : null,
+    md.view_count ? { n: fmtNum(md.view_count), l:'VIEWS' } : null,
+    md.like_count ? { n: fmtNum(md.like_count), l:'LIKES' } : null,
     md.comment_count ? { n: fmtNum(md.comment_count), l:'COMMENTS' } : null,
-    md.resolution    ? { n: esc(md.resolution),       l:'RESOLUTION'} : null
+    md.resolution ? { n: esc(md.resolution), l:'RESOLUTION' } : null
   ]);
-
   if (links.length) {
     html += `<div class="sec-title">Download Options</div>`;
     links.forEach(link => {
@@ -567,13 +289,8 @@ function renderInstagram(data){
   const videoUrl = dl.video || dl.videoUrl || (dl.links && dl.links[0]?.url) || '';
   const username = md.username || md.author || 'Instagram User';
   const caption  = md.caption || md.title || '';
-
   let html = thumbBlock(thumb, md.duration);
-  html += `<div class="meta">
-    <h2>${caption ? esc(caption.substring(0, 140)) + (caption.length > 140 ? '...' : '') : 'Instagram Video'}</h2>
-    <div class="author">👤 @${esc(username)}</div>
-  </div>`;
-
+  html += `<div class="meta"><h2>${caption ? esc(caption.substring(0, 140)) + (caption.length > 140 ? '...' : '') : 'Instagram Video'}</h2><div class="author">👤 @${esc(username)}</div></div>`;
   if (videoUrl) {
     html += `<div class="sec-title">Download Options</div>`;
     html += dlRow(videoUrl, '⚡', 'HD Video', 'Watermark රහිත · MP4');
@@ -587,10 +304,7 @@ function renderInstagram(data){
    RENDER: TIKTOK
    ========================================================= */
 function renderTikTok(data){
-  if (!data || data.success === false) {
-    showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.error || 'TikTok video එක ලබා ගැනීමට නොහැකි විය')}</div></div>`);
-    return;
-  }
+  if (!data || data.success === false) { showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.error || 'TikTok video එක ලබා ගැනීමට නොහැකි විය')}</div></div>`); return; }
   const d = data.data || {};
   const thumb     = d.cover || d.thumbnail || '';
   const title     = d.title || d.description || 'TikTok Video';
@@ -598,21 +312,14 @@ function renderTikTok(data){
   const videoSD   = d.videoNormal || d.videoSD || d.videoSd || d.video || '';
   const audioUrl  = d.audioUrl || d.audio || d.mp3 || '';
   const author    = d.author || d.username || d.nickname || '';
-
   let html = thumbBlock(thumb, '');
-  html += `<div class="meta">
-    <h2>${esc(String(title).substring(0, 160))}</h2>
-    ${author ? `<div class="author">👤 @${esc(author)}</div>` : '<div class="author">🎵 TikTok</div>'}
-  </div>`;
-
+  html += `<div class="meta"><h2>${esc(String(title).substring(0, 160))}</h2>${author ? `<div class="author">👤 @${esc(author)}</div>` : '<div class="author">🎵 TikTok</div>'}</div>`;
   const proxyVideo = (u) => `${TIKTOK_API_BASE}/api/proxy-download?url=${encodeURIComponent(u)}&type=video`;
   const proxyAudio = (u) => `${TIKTOK_API_BASE}/api/proxy-download?url=${encodeURIComponent(u)}&type=audio`;
   const rows = [];
-
   if (videoHD) rows.push({ href: proxyVideo(videoHD), icon: '💎', title: 'HD Video', sub: 'High Quality · Watermark රහිත · MP4' });
   if (videoSD && videoSD !== videoHD) rows.push({ href: proxyVideo(videoSD), icon: '📱', title: 'SD Video', sub: 'Data අඩුවෙන් · MP4' });
   if (audioUrl) rows.push({ href: proxyAudio(audioUrl), icon: '🎵', title: 'Audio (MP3)', sub: 'ශබ්දය පමණයි · Fast Download' });
-
   if (rows.length) {
     html += `<div class="sec-title">Download Options</div>`;
     rows.forEach(r => { html += dlRow(r.href, r.icon, r.title, r.sub); });
@@ -623,46 +330,30 @@ function renderTikTok(data){
 }
 
 /* =========================================================
-   RENDER: PINTEREST (SASA - Video & Image Alagakara)
+   RENDER: PINTEREST (SASA)
    ========================================================= */
 function renderSasaPinterest(data){
   if (!data || data.status === false || !data.result) {
     showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || data?.error || 'Pinterest link එක ලබා ගැනීමට නොහැකි විය')}</div></div>`);
     return;
   }
-
   const r = data.result || {};
   const cover  = r.cover || '';
   const title  = r.title || 'Pinterest Pin';
   const author = r.author || 'Pinterest User';
   const items  = Array.isArray(r.items) ? r.items : [];
-
   let html = thumbBlock(cover, '');
-  html += `<div class="meta">
-    <h2>${esc(String(title).substring(0, 160))}</h2>
-    <div class="author">👤 @${esc(author)}</div>
-  </div>`;
+  html += `<div class="meta"><h2>${esc(String(title).substring(0, 160))}</h2><div class="author">👤 @${esc(author)}</div></div>`;
 
-  // වීඩියෝ සහ ඉමේජ් වෙන් කරන්න
   const videoItems = [];
   const imageItems = [];
-
   items.forEach(item => {
     if (!item) return;
     const url = item.url || item.download || item.direct || '';
-    const isVideo = item.type === 'video' || /\.mp4($|\?)/i.test(url) || /video/i.test(item.type);
-    const isImage = item.type === 'image' || /\.(jpg|jpeg|png|webp)($|\?)/i.test(url) || /image/i.test(item.type);
-
-    if (isVideo) videoItems.push(item);
-    else if (isImage) imageItems.push(item);
-    else {
-      // type එක පැහැදිලි නැත්නම් URL එකෙන් හොයන්න
-      if (/\.mp4/i.test(url)) videoItems.push(item);
-      else imageItems.push(item);
-    }
+    if (item.type === 'video' || /\.mp4($|\?)/i.test(url) || /video/i.test(item.type)) videoItems.push(item);
+    else imageItems.push(item);
   });
 
-  // 1. VIDEO එක මුලින්ම පෙන්නන්න
   if (videoItems.length) {
     html += `<div class="sec-title">🎬 Video Download</div>`;
     videoItems.forEach(item => {
@@ -671,8 +362,6 @@ function renderSasaPinterest(data){
       html += dlRow(href, '💎', `${esc(item.quality || 'HD')} Video`, 'MP4 · Direct Download');
     });
   }
-
-  // 2. IMAGE පෙන්නන්න
   if (imageItems.length) {
     html += `<div class="sec-title">🖼️ Image Download</div>`;
     imageItems.forEach(item => {
@@ -682,84 +371,67 @@ function renderSasaPinterest(data){
       html += dlRow(href, '🖼️', `${esc(item.quality || 'Original')} Image`, `${ext} · Full Resolution`);
     });
   }
-
-  // 3. මොකුත් නැත්නම්
   if (!videoItems.length && !imageItems.length) {
     html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link කිසිවක් හමු නොවුණා</div></div>`;
   }
-
   showResult(html);
 }
 
 /* =========================================================
-   RENDER: YOUTUBE MP3
+   RENDER: YOUTUBE MP3 (Normalized format)
+   Renderer accepts multiple structures via normalizer
    ========================================================= */
 function renderYtmp3(data){
-  if (!data || data.ok === false || (!data.download && !data.raw)) {
+  // Normalized path (from fallback chain)
+  const title    = data.title || 'YouTube Audio';
+  const thumb    = data.thumbnail || '';
+  const audioUrl = data.download || '';
+  const duration = data.duration || 0;
+  const quality  = data.quality || 'M4A Audio';
+  const bitrate  = data.bitrate ? (data.bitrate > 1000 ? Math.round(data.bitrate / 1000) + ' kbps' : data.bitrate + ' kbps') : '';
+
+  if (!audioUrl) {
     showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || 'මේ video එකට MP3 හමු නොවුණා')}</div></div>`);
     return;
   }
-  const bk = data.raw?.BK9 || {};
-  const thumb = data.thumbnail || bk.image || '';
-  const title = data.title || bk.title || 'YouTube Audio';
-  const audioUrl = data.download || bk.downloadUrl || '';
-  const duration = bk.duration || 0;
-  const quality  = bk.quality || 'M4A Audio';
-  const bitrate  = bk.bitrate ? Math.round(bk.bitrate / 1000) + ' kbps' : '';
 
   let html = thumbBlock(thumb, fmtDur(duration));
-  html += `<div class="meta">
-    <h2>${esc(title)}</h2>
-    <div class="author">🎧 YouTube Audio</div>
-  </div>`;
+  html += `<div class="meta"><h2>${esc(title)}</h2><div class="author">🎧 YouTube Audio${data._source ? ` · ${esc(data._source)}` : ''}</div></div>`;
   html += statBlock([
-    quality  ? { n: esc(quality),     l:'FORMAT' }   : null,
-    bitrate  ? { n: esc(bitrate),     l:'BITRATE' }  : null,
+    quality  ? { n: esc(quality), l:'FORMAT' } : null,
+    bitrate  ? { n: esc(bitrate), l:'BITRATE' } : null,
     duration ? { n: fmtDur(duration), l:'DURATION' } : null
   ]);
-  if (audioUrl) {
-    html += `<div class="sec-title">Download Options</div>`;
-    html += dlRow(audioUrl, '🎵', 'MP3 / M4A Audio', bitrate ? `ශබ්දය පමණයි · ${bitrate}` : 'ශබ්දය පමණයි');
-  } else {
-    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Audio link එකක් හමු නොවුණා</div></div>`;
-  }
+  html += `<div class="sec-title">Download Options</div>`;
+  html += dlRow(audioUrl, '🎵', 'MP3 / M4A Audio', bitrate ? `ශබ්දය පමණයි · ${bitrate}` : 'ශබ්දය පමණයි');
   showResult(html);
 }
 
 /* =========================================================
-   RENDER: YOUTUBE MP4 (Sasa Dev API)
+   RENDER: YOUTUBE MP4 (SASA + Fallback)
    ========================================================= */
 function renderSasaYtmp4(data){
-  if (!data || data.status === false || !data.result) {
-    showResult(`<div class="box err">
-      <div>⚠️</div>
-      <div>${esc(data?.message || data?.error || 'YouTube video එක ලබා ගැනීමට නොහැකි විය')}</div>
-    </div>`);
+  const r = data.result || data.data || data;
+  const videoId = r.videoId || r.id || '';
+  const thumb   = r.thumbnail || (videoId ? `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` : '');
+  const title   = r.title || 'YouTube Video';
+  const author  = r.author || r.channel || 'YouTube';
+  const quality = r.quality || `${currentQuality}p`;
+  const videoUrl = r.download || r.downloadUrl || r.url || '';
+
+  if (!videoUrl) {
+    showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || 'YouTube video එක ලබා ගැනීමට නොහැකි විය')}</div></div>`);
     return;
   }
-  const r = data.result || {};
-  const videoId = r.videoId || '';
-  const thumb = videoId ? `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` : '';
-  const title = r.title || 'YouTube Video';
-  const author = r.author || 'YouTube';
-  const quality = r.quality || `${currentQuality}p`;
-  const videoUrl = r.download || '';
 
   let html = thumbBlock(thumb, '');
-  html += `<div class="meta">
-    <h2>${esc(String(title).substring(0, 160))}</h2>
-    <div class="author">👤 ${esc(author)}</div>
-  </div>`;
+  html += `<div class="meta"><h2>${esc(String(title).substring(0, 160))}</h2><div class="author">👤 ${esc(author)}${data._source ? ` · ${esc(data._source)}` : ''}</div></div>`;
   html += statBlock([
     quality ? { n: esc(quality), l:'QUALITY' } : null,
     r.format ? { n: esc(r.format).toUpperCase(), l:'FORMAT' } : null
   ]);
-  if (videoUrl) {
-    html += `<div class="sec-title">Download Options</div>`;
-    html += dlRow(videoUrl, '🎬', `${esc(quality)} Video`, 'MP4 · Fast Download');
-  } else {
-    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link එකක් හමු නොවුණා</div></div>`;
-  }
+  html += `<div class="sec-title">Download Options</div>`;
+  html += dlRow(videoUrl, '🎬', `${esc(quality)} Video`, 'MP4 · Fast Download');
   showResult(html);
 }
 
@@ -767,10 +439,7 @@ function renderSasaYtmp4(data){
    RENDER: SPOTIFY
    ========================================================= */
 function renderSpotify(data){
-  if (!data || data.status === false) {
-    showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || data?.error || 'Spotify track එක ලබා ගැනීමට නොහැකි විය')}</div></div>`);
-    return;
-  }
+  if (!data || data.status === false) { showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || data?.error || 'Spotify track එක ලබා ගැනීමට නොහැකි විය')}</div></div>`); return; }
   const d = data.data || data.result || data;
   const thumb    = d.thumbnail || d.image || d.cover || d.album_art || '';
   const title    = d.title || d.name || d.track || 'Spotify Track';
@@ -778,16 +447,12 @@ function renderSpotify(data){
   const album    = d.album || '';
   const duration = d.duration || (d.duration_ms ? Math.round(d.duration_ms / 1000) : 0);
   const audioUrl = d.download || d.downloadUrl || d.url || d.audio || d.mp3 || d.link || '';
-
   let html = thumbBlock(thumb, fmtDur(duration));
-  html += `<div class="meta">
-    <h2>${esc(String(title).substring(0, 160))}</h2>
-    <div class="author">🎤 ${esc(artist)}${album ? ` · ${esc(album)}` : ''}</div>
-  </div>`;
+  html += `<div class="meta"><h2>${esc(String(title).substring(0, 160))}</h2><div class="author">🎤 ${esc(artist)}${album ? ` · ${esc(album)}` : ''}</div></div>`;
   html += statBlock([
-    d.quality ? { n: esc(d.quality),   l:'FORMAT' }   : null,
+    d.quality ? { n: esc(d.quality), l:'FORMAT' } : null,
     duration  ? { n: fmtDur(duration), l:'DURATION' } : null,
-    d.bitrate ? { n: esc(d.bitrate),   l:'BITRATE' }  : null
+    d.bitrate ? { n: esc(d.bitrate), l:'BITRATE' } : null
   ]);
   if (audioUrl) {
     html += `<div class="sec-title">Download Options</div>`;
@@ -799,7 +464,7 @@ function renderSpotify(data){
 }
 
 /* =========================================================
-   API CALLS
+   API: TikTok (Custom)
    ========================================================= */
 async function callTikTokApi(url){
   const r = await fetch(`${TIKTOK_API_BASE}/api/download/tiktok`, {
@@ -810,81 +475,216 @@ async function callTikTokApi(url){
   return await r.json();
 }
 
-async function callDarkshanApi(type, url, quality){
-  try {
-    let purl = `/api/${type}?url=${encodeURIComponent(url)}`;
-    if (type === 'ytmp4' && quality) purl += `&quality=${quality}`;
-    const r = await fetch(purl);
-    if (r.ok) { const data = await r.json(); if (data && typeof data === 'object') return data; }
-  } catch (_) {}
-  let direct = `${DARKSHAN_BASE}/download/${type}?url=${encodeURIComponent(url)}&api_key=${DARKSHAN_KEY}`;
-  if (type === 'ytmp4' && quality) direct += `&quality=${quality}`;
-  const r2 = await fetch(direct);
-  if (!r2.ok) throw new Error('API එකට සම්බන්ධ වෙන්න බැරි වුණා');
-  return await r2.json();
-}
-
-async function callZantaApi(type, url, quality){
-  try {
-    const purl = `/api/${type === 'ytmp4-v2' ? 'ytmp4' : type}?url=${encodeURIComponent(url)}${quality ? `&quality=${quality}` : ''}`;
-    const r = await fetch(purl);
-    if (r.ok) { const data = await r.json(); if (data && typeof data === 'object') return data; }
-  } catch (_) {}
-  const direct = `${ZANTA_BASE}/api/${type}?apiKey=${ZANTA_KEY}&url=${encodeURIComponent(url)}${quality ? `&quality=${quality}` : ''}`;
-  const r2 = await fetch(direct);
-  if (!r2.ok) throw new Error('API එකට සම්බන්ධ වෙන්න බැරි වුණා');
-  return await r2.json();
-}
-
-async function callSasaApi(type, url, quality){
-  try {
-    let purl = type === 'ytmp4' ? `/api/sasa-ytmp4?url=${encodeURIComponent(url)}&quality=${quality || '720'}` : `/api/sasa-pinterest?url=${encodeURIComponent(url)}`;
-    const r = await fetch(purl);
-    if (r.ok) { const data = await r.json(); if (data && typeof data === 'object') return data; }
-  } catch (_) {}
-
-  if (type === 'ytmp4') {
-    const direct = `${SASA_BASE}/api/yt/mp4-dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}&quality=${quality || '720'}`;
-    const r2 = await fetch(direct);
-    if (!r2.ok) throw new Error('Sasa API එකට සම්බන්ධ වෙන්න බැරි වුණා');
-    const data = await r2.json();
-    // Sasa API එකේ Rate Limit එකක් ආවොත් Zanta API එකට fallback වෙන්න
-    if (data && data.status === false && /rate limit/i.test(data.message || '')) {
-      console.warn('Sasa rate limited. Falling back to Zanta...');
-      return await callZantaApi('ytmp4-v2', url, quality);
-    }
-    return data;
-  } else if (type === 'pinterest') {
-    const direct = `${SASA_BASE}/api/pinterest/dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}`;
-    const r2 = await fetch(direct);
-    if (!r2.ok) throw new Error('API එකට සම්බන්ධ වෙන්න බැරි වුණා');
-    return await r2.json();
+/* =========================================================
+   API: KCeY Social (Facebook / Instagram)
+   ========================================================= */
+async function callKceySocial(type, url){
+  const endpoints = [
+    `/api/${type}`,
+    `https://api.kcey.online/api/${type}`
+  ];
+  for (const ep of endpoints) {
+    try {
+      const sep = ep.includes('?') ? '&' : '?';
+      const r = await fetch(`${ep}${sep}url=${encodeURIComponent(url)}${ep.startsWith('http') ? `&key=${API_KEY}` : ''}`);
+      if (r.ok) {
+        const data = await r.json();
+        if (data && data.status !== false) return data;
+      }
+    } catch(_) {}
   }
-  throw new Error('මේ type එක support කරන්නේ නෑ');
+  throw new Error(`${type} API එකට සම්බන්ධ වෙන්න බැරි වුණා`);
 }
 
+/* =========================================================
+   API: YT MP3 — Multi-fallback
+   Try order: KCeY → Darkshan → Zanta → Sasa
+   ========================================================= */
+async function callYtmp3WithFallback(url){
+  const errors = [];
+
+  // Try 1: KCeY (Vercel proxy first, then direct)
+  try {
+    let data = null;
+    try {
+      const r = await fetch(`/api/ytmp3?url=${encodeURIComponent(url)}`);
+      if (r.ok) data = await r.json();
+    } catch(_) {}
+    if (!data) {
+      const r = await fetch(`https://api.kcey.online/api/ytmp3?url=${encodeURIComponent(url)}&key=${API_KEY}`);
+      if (r.ok) data = await r.json();
+    }
+    if (data) {
+      const bk = data.raw?.BK9 || {};
+      if (data.ok !== false && data.status !== false && (data.download || bk.downloadUrl)) {
+        // normalize
+        return {
+          title: data.title || bk.title || 'YouTube Audio',
+          thumbnail: data.thumbnail || bk.image || '',
+          download: data.download || bk.downloadUrl || '',
+          duration: bk.duration || 0,
+          quality: bk.quality || 'M4A Audio',
+          bitrate: bk.bitrate || 0,
+          _source: 'KCeY'
+        };
+      }
+      errors.push('KCeY: ' + (data.message || 'no data'));
+    } else {
+      errors.push('KCeY: no response');
+    }
+  } catch(e) { errors.push('KCeY: ' + e.message); }
+
+  // Try 2: Darkshan
+  try {
+    const r = await fetch(`${DARKSHAN_BASE}/download/ytmp3?url=${encodeURIComponent(url)}&api_key=${DARKSHAN_KEY}`);
+    if (r.ok) {
+      const data = await r.json();
+      const d = data?.data || data?.result || data;
+      if (data && data.status !== false && d && (d.download || d.downloadUrl || d.url)) {
+        return {
+          title: d.title || 'YouTube Audio',
+          thumbnail: d.thumbnail || d.image || '',
+          download: d.download || d.downloadUrl || d.url,
+          duration: d.duration || 0,
+          quality: d.quality || 'M4A Audio',
+          bitrate: d.bitrate || 0,
+          _source: 'Darkshan'
+        };
+      }
+      errors.push('Darkshan: ' + (data?.message || 'no data'));
+    } else errors.push('Darkshan: HTTP ' + r.status);
+  } catch(e) { errors.push('Darkshan: ' + e.message); }
+
+  // Try 3: Zanta
+  try {
+    const r = await fetch(`${ZANTA_BASE}/api/ytmp3?apiKey=${ZANTA_KEY}&url=${encodeURIComponent(url)}`);
+    if (r.ok) {
+      const data = await r.json();
+      const d = data?.result || data?.data;
+      if (data && data.success !== false && d && (d.downloadUrl || d.download || d.url)) {
+        return {
+          title: d.title || 'YouTube Audio',
+          thumbnail: d.thumbnail || d.image || '',
+          download: d.downloadUrl || d.download || d.url,
+          duration: d.duration || 0,
+          quality: d.quality || 'M4A Audio',
+          bitrate: d.bitrate || 0,
+          _source: 'Zanta'
+        };
+      }
+      errors.push('Zanta: ' + (data?.message || 'no data'));
+    } else errors.push('Zanta: HTTP ' + r.status);
+  } catch(e) { errors.push('Zanta: ' + e.message); }
+
+  // Try 4: Sasa
+  try {
+    const r = await fetch(`${SASA_BASE}/api/yt/mp3-dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}`);
+    if (r.ok) {
+      const data = await r.json();
+      const d = data?.result || data?.data;
+      if (data && data.status !== false && d && (d.download || d.url || d.downloadUrl)) {
+        return {
+          title: d.title || 'YouTube Audio',
+          thumbnail: d.thumbnail || d.image || '',
+          download: d.download || d.url || d.downloadUrl,
+          duration: d.duration || 0,
+          quality: d.quality || 'M4A Audio',
+          bitrate: d.bitrate || 0,
+          _source: 'Sasa'
+        };
+      }
+      errors.push('Sasa: ' + (data?.message || 'no data'));
+    } else errors.push('Sasa: HTTP ' + r.status);
+  } catch(e) { errors.push('Sasa: ' + e.message); }
+
+  throw new Error('හැම YT MP3 API එකක්ම fail වුණා. (' + errors.join(' | ') + ')');
+}
+
+/* =========================================================
+   API: YT MP4 (SASA + Zanta fallback)
+   ========================================================= */
+async function callSasaYtmp4Api(url, quality){
+  // Try 1: Sasa
+  try {
+    let data = null;
+    try {
+      const r = await fetch(`/api/sasa-ytmp4?url=${encodeURIComponent(url)}&quality=${quality || '720'}`);
+      if (r.ok) data = await r.json();
+    } catch(_) {}
+    if (!data) {
+      const r = await fetch(`${SASA_BASE}/api/yt/mp4-dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}&quality=${quality || '720'}`);
+      if (r.ok) data = await r.json();
+    }
+    if (data && data.status !== false && data.result?.download) {
+      data._source = 'Sasa';
+      return data;
+    }
+    if (data && /rate limit/i.test(data.message || '')) {
+      console.warn('Sasa rate limited, falling to Zanta...');
+    }
+  } catch(e) {}
+
+  // Try 2: Zanta
+  const r = await fetch(`${ZANTA_BASE}/api/ytmp4-v2?apiKey=${ZANTA_KEY}&url=${encodeURIComponent(url)}&quality=${quality || '720'}`);
+  if (!r.ok) throw new Error('YT MP4 API එකට සම්බන්ධ වෙන්න බැරි වුණා');
+  const data = await r.json();
+  data._source = 'Zanta';
+  return data;
+}
+
+/* =========================================================
+   API: Pinterest (SASA)
+   ========================================================= */
+async function callSasaPinterestApi(url){
+  let data = null;
+  try {
+    const r = await fetch(`/api/sasa-pinterest?url=${encodeURIComponent(url)}`);
+    if (r.ok) data = await r.json();
+  } catch(_) {}
+  if (!data || data.status === false) {
+    const r = await fetch(`${SASA_BASE}/api/pinterest/dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}`);
+    if (!r.ok) throw new Error('Pinterest API එකට සම්බන්ධ වෙන්න බැරි වුණා');
+    data = await r.json();
+  }
+  return data;
+}
+
+/* =========================================================
+   API: Spotify (Darkshan)
+   ========================================================= */
+async function callDarkshanSpotify(url){
+  let data = null;
+  try {
+    const r = await fetch(`/api/spotify?url=${encodeURIComponent(url)}`);
+    if (r.ok) data = await r.json();
+  } catch(_) {}
+  if (!data || data.status === false) {
+    const r = await fetch(`${DARKSHAN_BASE}/download/spotify?url=${encodeURIComponent(url)}&api_key=${DARKSHAN_KEY}`);
+    if (!r.ok) throw new Error('Spotify API එකට සම්බන්ධ වෙන්න බැරි වුණා');
+    data = await r.json();
+  }
+  return data;
+}
+
+/* =========================================================
+   MAIN CALL
+   ========================================================= */
 async function callApi(platformKey, url){
   const p = PLATFORMS[platformKey];
   if (!p) throw new Error('මේ platform එක support කරන්නේ නෑ');
 
-  if (p.method === 'CUSTOM_TIKTOK') return await callTikTokApi(url);
-  if (p.method === 'DARKSHAN') return await callDarkshanApi(p.type, url, currentQuality);
-  if (p.method === 'SASA' || p.method === 'SASA_FALLBACK_YTMP4') return await callSasaApi(p.type, url, currentQuality);
+  if (p.method === 'CUSTOM_TIKTOK')      return await callTikTokApi(url);
+  if (p.method === 'KCEY_SOCIAL')        return await callKceySocial(p.type, url);
+  if (p.method === 'YTMP3_FALLBACK')     return await callYtmp3WithFallback(url);
+  if (p.method === 'SASA_FALLBACK_YTMP4') return await callSasaYtmp4Api(url, currentQuality);
+  if (p.method === 'SASA')               return await callSasaPinterestApi(url);
+  if (p.method === 'DARKSHAN')           return await callDarkshanSpotify(url);
 
-  if (p.proxy) {
-    try {
-      const r = await fetch(`${p.proxy}?url=${encodeURIComponent(url)}`);
-      if (r.ok) { const data = await r.json(); if (data && typeof data === 'object') return data; }
-    } catch (_) {}
-  }
-  const direct = `${p.direct}?url=${encodeURIComponent(url)}&key=${API_KEY}`;
-  const r2 = await fetch(direct);
-  if (!r2.ok) throw new Error('API එකට සම්බන්ධ වෙන්න බැරි වුණා');
-  return await r2.json();
+  throw new Error('Unknown method: ' + p.method);
 }
 
 /* =========================================================
-   AUTO-DETECT ON INPUT
+   AUTO-DETECT
    ========================================================= */
 function autoDetect(url){
   if (/(youtube\.com|youtu\.be)/i.test(url)) {
@@ -896,7 +696,6 @@ function autoDetect(url){
     if (p.pattern.test(url)) { setPlatform(key); return; }
   }
 }
-
 input.addEventListener('input', () => {
   const url = input.value.trim();
   if (url.length > 8) autoDetect(url);
@@ -918,17 +717,6 @@ async function handleFetch(){
 
   try {
     const data = await callApi(currentPlatform, url);
-    let isSuccess = true;
-    if (currentPlatform === 'tiktok') {
-      if (!data || data.success === false) isSuccess = false;
-    } else if (['SASA', 'SASA_FALLBACK_YTMP4', 'DARKSHAN'].includes(PLATFORMS[currentPlatform].method)) {
-      if (!data || data.status === false) isSuccess = false;
-    } else {
-      if (!data || data.status === false) isSuccess = false;
-    }
-
-    if (!isSuccess) throw new Error(data?.message || data?.error || 'Video එක හමු නොවුණා');
-
     showStatus('none');
     PLATFORMS[currentPlatform].render(data);
   } catch (err) {
@@ -943,14 +731,12 @@ async function handleFetch(){
    ========================================================= */
 fetchBtn.addEventListener('click', handleFetch);
 input.addEventListener('keydown', e => { if (e.key === 'Enter') handleFetch(); });
-
 pasteBtn.addEventListener('click', async () => {
   try {
     const text = await navigator.clipboard.readText();
     if (text) { input.value = text.trim(); autoDetect(input.value); input.focus(); }
   } catch { input.focus(); showStatus('error', 'Clipboard කියවන්න බෑ — අතින් paste කරන්න'); }
 });
-
 clearBtn.addEventListener('click', () => {
   input.value = ''; input.focus(); resultEl.className = ''; resultEl.innerHTML = ''; showStatus('none');
 });
