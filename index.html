@@ -1,46 +1,91 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<meta name="theme-color" content="#05060b">
-<title>DG SAVER — Premium Media Downloader</title>
+<meta name="theme-color" content="#07080f">
+<title>DG SAVER — All Social Media Downloader For Free</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+Sinhala:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
+/* =========================================================
+   RESET & THEME VARIABLES
+   ========================================================= */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{
-  --bg:#05060b;
-  --bg-2:#0a0d17;
-  --card:rgba(14,18,32,.7);
-  --line:rgba(255,255,255,.08);
-  --line-2:rgba(255,255,255,.12);
-  --txt:#eef2fb;
-  --mut:#8a94ad;
-  --txt-dim:#5a637c;
+
+:root, [data-theme="dark"]{
+  --bg:#07080f;
+  --bg-2:#0d0f1a;
+  --bg-3:#131726;
+  --card:rgba(18,22,36,.75);
+  --card-solid:#12162a;
+  --line:rgba(255,255,255,.07);
+  --line-2:rgba(255,255,255,.14);
+  --txt:#f0f3fb;
+  --txt-2:#c2cbe0;
+  --mut:#7c87a1;
+  --txt-dim:#535d75;
   --p1:#7c5cff;
   --p2:#00d9ff;
   --p3:#ff4d8d;
   --ok:#22c55e;
   --err:#ff4d6a;
-  --brand:#7c5cff;
+  --shadow:0 24px 60px rgba(0,0,0,.55);
+  --shadow-soft:0 8px 24px rgba(0,0,0,.35);
+  --nav-bg:rgba(9,11,20,.75);
+  --input-bg:rgba(6,9,18,.85);
+  --chip-bg:rgba(255,255,255,.04);
+  --chip-bg-2:rgba(255,255,255,.08);
+  --icon-bg:#141a2b;
+  --aurora-op:.55;
 }
+
+[data-theme="light"]{
+  --bg:#f5f6fb;
+  --bg-2:#ffffff;
+  --bg-3:#f0f2f9;
+  --card:rgba(255,255,255,.88);
+  --card-solid:#ffffff;
+  --line:rgba(15,23,42,.08);
+  --line-2:rgba(15,23,42,.16);
+  --txt:#0a0f1e;
+  --txt-2:#334155;
+  --mut:#64748b;
+  --txt-dim:#94a3b8;
+  --p1:#6d5efc;
+  --p2:#0099cc;
+  --p3:#e11d63;
+  --ok:#16a34a;
+  --err:#e11d48;
+  --shadow:0 24px 60px rgba(15,23,42,.1);
+  --shadow-soft:0 8px 24px rgba(15,23,42,.06);
+  --nav-bg:rgba(255,255,255,.78);
+  --input-bg:#ffffff;
+  --chip-bg:rgba(15,23,42,.04);
+  --chip-bg-2:rgba(15,23,42,.08);
+  --icon-bg:#f0f2f9;
+  --aurora-op:.35;
+}
+
+html{scroll-behavior:smooth}
 html,body{height:100%}
 body{
-  font-family:'Inter','Noto Sans Sinhala',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   background:var(--bg);
   color:var(--txt);
   min-height:100dvh;
-  display:flex;
-  flex-direction:column;
-  padding:20px 16px 36px;
   position:relative;
   overflow-x:hidden;
+  padding-top:64px;
+  transition:background .4s ease,color .4s ease;
   -webkit-font-smoothing:antialiased;
+  letter-spacing:-.01em;
 }
 
-/* ============ AURORA BG ============ */
+/* =========================================================
+   AURORA BACKGROUND
+   ========================================================= */
 .aurora{
   position:fixed;
   border-radius:50%;
@@ -48,303 +93,300 @@ body{
   pointer-events:none;
   z-index:0;
   will-change:transform;
+  opacity:var(--aurora-op);
+  transition:opacity .4s;
 }
-.aurora-1{width:400px;height:400px;background:radial-gradient(circle,#7c5cff 0%,transparent 70%);top:-140px;left:-120px;opacity:.55;animation:float1 16s ease-in-out infinite}
-.aurora-2{width:380px;height:380px;background:radial-gradient(circle,#00d9ff 0%,transparent 70%);bottom:-160px;right:-130px;opacity:.42;animation:float2 18s ease-in-out infinite}
-.aurora-3{width:300px;height:300px;background:radial-gradient(circle,#ff4d8d 0%,transparent 70%);top:45%;left:50%;opacity:.14;transform:translate(-50%,-50%);animation:pulse 12s ease-in-out infinite}
+.aurora-1{width:420px;height:420px;background:radial-gradient(circle,#7c5cff 0%,transparent 70%);top:-160px;left:-140px;animation:float1 16s ease-in-out infinite}
+.aurora-2{width:400px;height:400px;background:radial-gradient(circle,#00d9ff 0%,transparent 70%);bottom:-180px;right:-140px;animation:float2 18s ease-in-out infinite}
 @keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(70px,60px)}}
 @keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-60px,-50px)}}
-@keyframes pulse{0%,100%{opacity:.1;transform:translate(-50%,-50%) scale(1)}50%{opacity:.22;transform:translate(-50%,-50%) scale(1.15)}}
 
-.wrap{
-  position:relative;
-  z-index:1;
-  width:100%;
-  max-width:640px;
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+.navbar{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:100;
+  background:var(--nav-bg);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border-bottom:1px solid var(--line);
+  transition:background .4s ease,border-color .4s ease;
+}
+.nav-inner{
+  max-width:680px;
   margin:0 auto;
-  flex:1;
+  padding:11px 20px;
   display:flex;
-  flex-direction:column;
-}
-
-/* ============ HEADER ============ */
-header{text-align:center;margin:14px 0 26px}
-.logo{
-  display:inline-flex;
+  justify-content:space-between;
   align-items:center;
-  gap:12px;
-  font-size:26px;
-  font-weight:900;
-  letter-spacing:-.6px;
+  height:64px;
+  box-sizing:border-box;
 }
-.logo-icon{
-  width:44px;height:44px;
-  border-radius:13px;
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-family:'Sora',sans-serif;
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:.3px;
+  color:var(--txt);
+}
+.brand-icon{
+  width:32px;height:32px;
+  border-radius:9px;
   background:linear-gradient(135deg,#7c5cff 0%,#4d8dff 50%,#00d9ff 100%);
   display:grid;place-items:center;
   color:#fff;
-  box-shadow:0 10px 30px rgba(124,92,255,.55),0 0 0 1px rgba(255,255,255,.1) inset,0 1px 0 rgba(255,255,255,.25) inset;
-  position:relative;
-  overflow:hidden;
+  box-shadow:0 6px 18px rgba(124,92,255,.45);
 }
-.logo-icon svg{width:22px;height:22px;position:relative;z-index:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
-.logo-icon::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.35) 0%,transparent 45%);
-  pointer-events:none;
-}
-.logo-text{display:inline-flex;align-items:baseline;gap:1px}
-.logo-text span{
-  background:linear-gradient(90deg,#ff0055,#ffcc00,#00ff88,#00aaff,#aa00ff,#ff0055);
-  background-size:300% 100%;
+.brand-icon svg{width:16px;height:16px}
+.brand-name span{
+  background:linear-gradient(90deg,#7c5cff,#4d8dff,#00d9ff);
+  background-size:200% 100%;
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
-  animation:rgbFlow 6s linear infinite;
+  animation:gradFlow 5s linear infinite;
 }
-@keyframes rgbFlow{0%{background-position:0% 50%}100%{background-position:300% 50%}}
-.tagline{color:var(--mut);font-size:13px;margin-top:10px;font-weight:500;letter-spacing:.1px}
+@keyframes gradFlow{0%{background-position:0% 50%}100%{background-position:200% 50%}}
 
-/* ============ CARD ============ */
-.card{
-  background:var(--card);
+.theme-btn{
+  width:38px;height:38px;
+  border-radius:11px;
+  background:var(--chip-bg);
   border:1px solid var(--line);
-  border-radius:24px;
-  padding:18px;
-  backdrop-filter:blur(24px) saturate(180%);
-  -webkit-backdrop-filter:blur(24px) saturate(180%);
-  box-shadow:
-    0 24px 60px rgba(0,0,0,.55),
-    0 0 0 1px rgba(255,255,255,.03) inset,
-    0 1px 0 rgba(255,255,255,.07) inset;
-  position:relative;
-  overflow:hidden;
-}
-.card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(124,92,255,.6),rgba(0,217,255,.6),transparent);
-  pointer-events:none;
-}
-
-/* ============ PLATFORM GRID ============ */
-.platform-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-  margin-bottom:16px;
-}
-.pbtn{
-  --brand:#7c5cff;
-  background:rgba(255,255,255,.03);
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:12px 4px 10px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:6px;
-  cursor:pointer;
-  font-family:inherit;
-  color:var(--mut);
-  transition:all .22s cubic-bezier(.4,0,.2,1);
-  position:relative;
-  overflow:hidden;
-  isolation:isolate;
-}
-.pbtn .picon{
-  position:relative;
-  width:24px;height:24px;
   display:grid;place-items:center;
-  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
-  color:var(--brand);
-}
-.pbtn .picon svg{width:100%;height:100%;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
-.pbtn .picon .badge-note,
-.pbtn .picon .badge-hd{
-  position:absolute;
-  bottom:-3px;right:-6px;
-  font-style:normal;
-  font-size:8px;
-  font-weight:900;
-  background:#ff0033;
-  color:#fff;
-  padding:1px 4px;
-  border-radius:4px;
-  line-height:1;
-  letter-spacing:.3px;
-  box-shadow:0 2px 6px rgba(255,0,51,.5);
-  border:1px solid rgba(255,255,255,.25);
-}
-.pbtn .plabel{
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.2px;
-  text-align:center;
-  line-height:1.15;
-  transition:color .2s;
-}
-.pbtn:hover{
-  background:rgba(255,255,255,.06);
-  color:#fff;
-  transform:translateY(-2px);
-  border-color:var(--line-2);
-}
-.pbtn:hover .picon{transform:scale(1.15) rotate(-4deg)}
-.pbtn:active{transform:translateY(0) scale(.97)}
-.pbtn.active{
-  color:#fff;
-  background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 22%,transparent),color-mix(in srgb,var(--brand) 8%,transparent));
-  border-color:color-mix(in srgb,var(--brand) 55%,transparent);
-  box-shadow:
-    0 6px 22px color-mix(in srgb,var(--brand) 35%,transparent),
-    0 0 0 1px color-mix(in srgb,var(--brand) 20%,transparent) inset;
-}
-.pbtn.active::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,#ff0055,#ffcc00,#00ff88,#00aaff,#aa00ff,#ff0055);
-  background-size:300% 100%;
-  animation:rgbFlow 3s linear infinite;
-  z-index:2;
-}
-.pbtn.active .picon{color:var(--brand)}
-
-/* ============ FIELD ============ */
-.field{position:relative;display:flex;align-items:center}
-.field input{
-  width:100%;
-  background:rgba(6,9,18,.9);
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:17px 96px 17px 46px;
+  cursor:pointer;
   color:var(--txt);
-  font-size:14.5px;
-  outline:none;
-  font-family:inherit;
   transition:all .25s cubic-bezier(.4,0,.2,1);
-  letter-spacing:.1px;
 }
-.field input::placeholder{color:#545c74}
-.field input:focus{
-  border-color:rgba(124,92,255,.65);
-  box-shadow:
-    0 0 0 4px rgba(124,92,255,.14),
-    0 0 32px rgba(124,92,255,.22);
-  background:rgba(6,9,18,1);
-}
-.field .ico{
-  position:absolute;
-  left:15px;
-  width:18px;height:18px;
-  color:#a99bff;
-  opacity:.75;
-  pointer-events:none;
-  transition:opacity .25s;
-}
-.field input:focus ~ .ico{opacity:1}
-.field .tools{
-  position:absolute;
-  right:8px;
-  display:flex;
-  gap:4px;
-}
-.mini{
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.08);
-  color:var(--mut);
-  font-size:10px;
-  font-weight:800;
-  padding:8px 10px;
-  border-radius:10px;
-  cursor:pointer;
-  letter-spacing:.6px;
-  font-family:inherit;
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  transition:all .18s;
-  height:30px;
-}
-.mini svg{width:11px;height:11px}
-.mini:hover{background:rgba(255,255,255,.13);color:#fff;transform:translateY(-1px)}
-.mini:active{transform:scale(.95)}
-.mini-x{padding:8px 9px}
-.mini-x:hover{background:rgba(255,77,106,.2);color:#ff8fa3;border-color:rgba(255,77,106,.4)}
+.theme-btn:hover{background:var(--chip-bg-2);border-color:var(--line-2);transform:rotate(20deg)}
+.theme-btn:active{transform:scale(.92) rotate(20deg)}
+.theme-btn svg{width:17px;height:17px;transition:opacity .25s}
+.theme-btn .icon-sun{display:block}
+.theme-btn .icon-moon{display:none}
+[data-theme="light"] .theme-btn .icon-sun{display:none}
+[data-theme="light"] .theme-btn .icon-moon{display:block}
 
-/* ============ QUALITY ============ */
-.quality-row{
-  display:none;
-  margin-top:12px;
-  padding:12px 14px;
-  background:linear-gradient(135deg,rgba(124,92,255,.1),rgba(0,217,255,.05));
-  border:1px solid rgba(124,92,255,.22);
-  border-radius:14px;
-}
-.quality-row.show{display:block;animation:up .3s ease}
-.qlabel{
-  font-size:10.5px;
-  font-weight:800;
-  color:#b8adff;
-  letter-spacing:1.2px;
-  text-transform:uppercase;
-  margin-bottom:10px;
-}
-.quality-chips{display:flex;gap:6px;flex-wrap:wrap}
-.qchip{
-  background:rgba(255,255,255,.05);
-  border:1px solid var(--line);
-  color:var(--mut);
-  font-size:11.5px;
-  font-weight:700;
-  padding:8px 14px;
-  border-radius:10px;
-  cursor:pointer;
-  font-family:inherit;
-  transition:all .18s cubic-bezier(.4,0,.2,1);
-  position:relative;
-}
-.qchip:hover{color:#fff;background:rgba(255,255,255,.1);border-color:var(--line-2)}
-.qchip:active{transform:scale(.95)}
-.qchip.active{
-  color:#fff;
-  border-color:rgba(124,92,255,.65);
-  background:linear-gradient(135deg,var(--p1),#4d8dff);
-  box-shadow:0 4px 14px rgba(124,92,255,.45);
-}
-
-/* ============ MAIN BUTTON ============ */
-.btn-wrap{
-  position:relative;
-  margin-top:14px;
-  border-radius:18px;
-  isolation:isolate;
-}
-.btn-wrap::before{
-  content:'';
-  position:absolute;
-  inset:-2px;
-  border-radius:20px;
-  background:conic-gradient(from 0deg,#ff0055,#ffcc00,#00ff88,#00aaff,#aa00ff,#ff0055);
-  animation:hueSpin 5s linear infinite;
-  z-index:0;
-  opacity:.55;
-  filter:blur(10px);
-  transition:opacity .3s;
-}
-.btn-wrap:hover::before{opacity:.9}
-@keyframes hueSpin{
-  from{filter:blur(10px) hue-rotate(0deg)}
-  to{filter:blur(10px) hue-rotate(360deg)}
-}
-.btn{
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+.container{
   position:relative;
   z-index:1;
   width:100%;
-  padding:18px;
+  max-width:680px;
+  margin:0 auto;
+  padding:0 20px 60px;
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero{
+  text-align:center;
+  padding:34px 0 30px;
+}
+.hero h1{
+  font-family:'Sora',sans-serif;
+  font-size:clamp(24px,5.2vw,34px);
+  font-weight:800;
+  line-height:1.2;
+  letter-spacing:-.9px;
+  color:var(--txt);
+  margin-bottom:12px;
+}
+.hero h1 .grad{
+  background:linear-gradient(90deg,#7c5cff,#4d8dff,#00d9ff);
+  background-size:200% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  animation:gradFlow 5s linear infinite;
+}
+.hero .subtitle{
+  color:var(--mut);
+  font-size:14px;
+  line-height:1.6;
+  max-width:440px;
+  margin:0 auto;
+  font-weight:500;
+}
+
+/* =========================================================
+   CARD
+   ========================================================= */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:20px;
+  backdrop-filter:blur(24px) saturate(180%);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);
+  box-shadow:var(--shadow);
+  transition:background .4s ease,border-color .4s ease,box-shadow .4s ease;
+  position:relative;
+}
+.card::before{
+  content:'';
+  position:absolute;
+  top:0;left:20px;right:20px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(124,92,255,.5),rgba(0,217,255,.5),transparent);
+  pointer-events:none;
+}
+
+/* =========================================================
+   INPUT FIELD
+   ========================================================= */
+.input-field{
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+.input-field input{
+  width:100%;
+  background:var(--input-bg);
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:16px 90px 16px 46px;
+  color:var(--txt);
+  font-size:14.5px;
+  font-weight:500;
+  outline:none;
+  font-family:inherit;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+  letter-spacing:-.01em;
+}
+.input-field input::placeholder{color:var(--txt-dim);font-weight:400}
+.input-field input:focus{
+  border-color:rgba(124,92,255,.65);
+  box-shadow:0 0 0 4px rgba(124,92,255,.13);
+}
+.input-field .input-icon{
+  position:absolute;
+  left:16px;
+  width:17px;height:17px;
+  color:var(--p1);
+  opacity:.85;
+  pointer-events:none;
+}
+.input-field .input-icon svg{width:100%;height:100%}
+.paste-btn{
+  position:absolute;
+  right:8px;
+  background:linear-gradient(135deg,rgba(124,92,255,.15),rgba(0,217,255,.1));
+  border:1px solid rgba(124,92,255,.3);
+  color:var(--txt);
+  font-size:11px;
+  font-weight:700;
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-family:inherit;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  letter-spacing:.5px;
+  transition:all .2s;
+  height:34px;
+}
+.paste-btn svg{width:12px;height:12px}
+.paste-btn:hover{background:linear-gradient(135deg,rgba(124,92,255,.28),rgba(0,217,255,.18));transform:translateY(-1px)}
+.paste-btn:active{transform:scale(.95)}
+
+/* =========================================================
+   PLATFORMS
+   ========================================================= */
+.platforms-label{
+  font-size:11px;
+  font-weight:700;
+  color:var(--txt-dim);
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  margin:22px 0 14px;
+}
+.platforms{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:10px;
+  margin-bottom:18px;
+}
+@media(max-width:520px){
+  .platforms{grid-template-columns:repeat(4,1fr);gap:8px}
+}
+.platform-btn{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  background:transparent;
   border:none;
-  border-radius:16px;
+  cursor:pointer;
+  padding:0;
+  font-family:inherit;
+  transition:transform .2s;
+}
+.platform-btn:active{transform:scale(.94)}
+.platform-icon{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:var(--icon-bg);
+  border:1px solid var(--line);
+  color:var(--mut);
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+  position:relative;
+  overflow:hidden;
+}
+@media(max-width:520px){
+  .platform-icon{width:100%;aspect-ratio:1;height:auto;max-width:60px}
+}
+.platform-icon svg{
+  width:22px;height:22px;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+  z-index:1;
+}
+.platform-name{
+  font-size:10px;
+  font-weight:700;
+  color:var(--mut);
+  letter-spacing:.2px;
+  transition:color .25s;
+  white-space:nowrap;
+}
+.platform-btn:hover .platform-icon{
+  border-color:var(--line-2);
+  transform:translateY(-2px);
+}
+.platform-btn:hover .platform-icon svg{transform:scale(1.12)}
+.platform-btn:hover .platform-name{color:var(--txt-2)}
+
+.platform-btn.active .platform-icon{
+  background:linear-gradient(135deg,var(--p1),var(--p2));
+  color:#fff;
+  border-color:transparent;
+  box-shadow:0 8px 24px rgba(124,92,255,.45),0 0 0 4px rgba(124,92,255,.12);
+}
+.platform-btn.active .platform-name{color:var(--txt);font-weight:800}
+
+/* =========================================================
+   DOWNLOAD BUTTON
+   ========================================================= */
+.download-btn{
+  width:100%;
+  padding:17px;
+  border:none;
+  border-radius:15px;
   background:linear-gradient(135deg,#7c5cff 0%,#4d8dff 50%,#00d9ff 100%);
   color:#fff;
-  font-size:16px;
+  font-size:15.5px;
   font-weight:800;
   letter-spacing:.3px;
   cursor:pointer;
@@ -353,36 +395,36 @@ header{text-align:center;margin:14px 0 26px}
   align-items:center;
   justify-content:center;
   gap:10px;
+  position:relative;
   overflow:hidden;
-  box-shadow:
-    0 12px 32px rgba(91,61,245,.5),
-    0 1px 0 rgba(255,255,255,.35) inset,
-    0 -6px 20px rgba(0,0,0,.25) inset;
+  box-shadow:0 12px 32px rgba(91,61,245,.45),0 1px 0 rgba(255,255,255,.35) inset;
   transition:transform .15s cubic-bezier(.4,0,.2,1), box-shadow .25s;
+  margin-top:4px;
 }
-.btn::after{
+.download-btn::after{
   content:'';
   position:absolute;
   top:0;left:-120%;
   width:100%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
   transform:skewX(-25deg);
   transition:left .7s cubic-bezier(.4,0,.2,1);
 }
-.btn:hover::after{left:130%}
-.btn:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(91,61,245,.65),0 1px 0 rgba(255,255,255,.4) inset}
-.btn:active{transform:translateY(0) scale(.985)}
-.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
-.btn-icon{display:inline-flex;width:20px;height:20px;transition:transform .3s}
-.btn-icon svg{width:100%;height:100%}
-.btn:hover .btn-icon{transform:translateY(2px)}
-.btn.loading .btn-icon{animation:bounceY .9s ease-in-out infinite}
+.download-btn:hover::after{left:130%}
+.download-btn:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(91,61,245,.6)}
+.download-btn:active{transform:translateY(0) scale(.985)}
+.download-btn:disabled{opacity:.65;cursor:not-allowed;transform:none}
+.download-btn svg{width:18px;height:18px}
+.download-btn.loading svg{animation:bounceY .9s ease-in-out infinite}
 @keyframes bounceY{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
 
-/* ============ STATUS ============ */
+/* =========================================================
+   STATUS
+   ========================================================= */
 #status{margin-top:16px;display:none}
-#status.show{display:block;animation:up .3s ease}
-.box{
+#status.show{display:block;animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.status-box{
   border-radius:14px;
   padding:14px 16px;
   font-size:13.5px;
@@ -392,41 +434,42 @@ header{text-align:center;margin:14px 0 26px}
   line-height:1.5;
   font-weight:500;
 }
-.box.load{
-  background:linear-gradient(135deg,rgba(124,92,255,.15),rgba(0,217,255,.08));
-  border:1px solid rgba(124,92,255,.35);
-  color:#d2cbff;
+.status-box.load{
+  background:linear-gradient(135deg,rgba(124,92,255,.13),rgba(0,217,255,.06));
+  border:1px solid rgba(124,92,255,.3);
+  color:#c9beff;
 }
-.box.err{
-  background:linear-gradient(135deg,rgba(255,77,106,.15),rgba(255,77,106,.05));
-  border:1px solid rgba(255,77,106,.4);
-  color:#ffb8c4;
+.status-box.err{
+  background:linear-gradient(135deg,rgba(255,77,106,.13),rgba(255,77,106,.05));
+  border:1px solid rgba(255,77,106,.35);
+  color:#ffb3c4;
 }
 .spinner{
   width:16px;height:16px;flex:none;
   border-radius:50%;
-  border:2px solid rgba(255,255,255,.18);
+  border:2px solid rgba(255,255,255,.15);
   border-top-color:#b8adff;
   animation:spin .7s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ============ RESULT ============ */
-#result{margin-top:20px;display:none}
-#result.show{display:block;animation:up .4s ease}
-@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+/* =========================================================
+   RESULT
+   ========================================================= */
+#result{margin-top:22px;display:none}
+#result.show{display:block;animation:slideUp .4s ease}
 
 .thumb{
   position:relative;
   width:100%;
   border-radius:18px;
   overflow:hidden;
-  background:#0d1220;
+  background:var(--bg-3);
   aspect-ratio:16/9;
   border:1px solid var(--line);
-  box-shadow:0 16px 40px rgba(0,0,0,.5);
+  box-shadow:var(--shadow-soft);
 }
-.thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
 .thumb:hover img{transform:scale(1.04)}
 .thumb .dur{
   position:absolute;bottom:10px;right:10px;
@@ -434,14 +477,30 @@ header{text-align:center;margin:14px 0 26px}
   padding:5px 10px;
   border-radius:8px;
   font-size:11.5px;
-  font-weight:800;
+  font-weight:700;
+  color:#fff;
   backdrop-filter:blur(8px);
   border:1px solid rgba(255,255,255,.15);
   letter-spacing:.3px;
 }
 .meta{margin-top:16px}
-.meta h2{font-size:15.5px;font-weight:700;line-height:1.45;margin-bottom:7px;letter-spacing:-.1px}
-.meta .author{font-size:12.5px;color:var(--mut);display:flex;align-items:center;gap:6px;font-weight:500}
+.meta h2{
+  font-family:'Sora',sans-serif;
+  font-size:16px;
+  font-weight:700;
+  line-height:1.4;
+  margin-bottom:7px;
+  letter-spacing:-.3px;
+  color:var(--txt);
+}
+.meta .author{
+  font-size:12.5px;
+  color:var(--mut);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-weight:500;
+}
 
 .stats{
   display:grid;
@@ -450,7 +509,7 @@ header{text-align:center;margin:14px 0 26px}
   margin-top:16px;
 }
 .stat{
-  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.02));
+  background:var(--chip-bg);
   border:1px solid var(--line);
   border-radius:13px;
   padding:12px 6px;
@@ -458,12 +517,12 @@ header{text-align:center;margin:14px 0 26px}
   transition:all .2s;
 }
 .stat:hover{border-color:var(--line-2);transform:translateY(-2px)}
-.stat b{display:block;font-size:15px;font-weight:800;letter-spacing:-.2px}
+.stat b{display:block;font-size:15px;font-weight:800;letter-spacing:-.2px;color:var(--txt)}
 .stat small{
   font-size:9.5px;
   color:var(--mut);
   letter-spacing:1px;
-  font-weight:800;
+  font-weight:700;
   text-transform:uppercase;
   margin-top:3px;
   display:block;
@@ -478,21 +537,21 @@ header{text-align:center;margin:14px 0 26px}
   margin:22px 0 12px;
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
 }
 .sec-title::after{
-  content:'';
-  flex:1;
-  height:1px;
+  content:'';flex:1;height:1px;
   background:linear-gradient(90deg,var(--line),transparent);
 }
 
-/* ============ DOWNLOAD ROW ============ */
+/* =========================================================
+   DOWNLOAD ROW
+   ========================================================= */
 .dl{
   display:flex;
   align-items:center;
   gap:13px;
-  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.015));
+  background:var(--chip-bg);
   border:1px solid var(--line);
   border-radius:15px;
   padding:13px 15px;
@@ -503,7 +562,6 @@ header{text-align:center;margin:14px 0 26px}
   position:relative;
   overflow:hidden;
   cursor:pointer;
-  isolation:isolate;
 }
 .dl::before{
   content:'';
@@ -513,22 +571,21 @@ header{text-align:center;margin:14px 0 26px}
   background:linear-gradient(180deg,#7c5cff,#00d9ff);
   opacity:0;
   transition:opacity .25s;
-  z-index:1;
 }
 .dl::after{
   content:'';
   position:absolute;
   top:0;left:-120%;
   width:100%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+  background:linear-gradient(90deg,transparent,rgba(124,92,255,.08),transparent);
   transition:left .6s;
   pointer-events:none;
 }
 .dl:hover{
-  background:linear-gradient(135deg,rgba(124,92,255,.18),rgba(0,217,255,.08));
-  border-color:rgba(124,92,255,.45);
+  background:var(--chip-bg-2);
+  border-color:rgba(124,92,255,.4);
   transform:translateX(4px);
-  box-shadow:0 10px 30px rgba(124,92,255,.22);
+  box-shadow:0 10px 30px rgba(124,92,255,.18);
 }
 .dl:hover::before{opacity:1}
 .dl:hover::after{left:130%}
@@ -537,76 +594,159 @@ header{text-align:center;margin:14px 0 26px}
   width:42px;height:42px;flex:none;
   border-radius:12px;
   display:grid;place-items:center;
-  background:linear-gradient(135deg,rgba(124,92,255,.3),rgba(0,217,255,.18));
-  border:1px solid rgba(255,255,255,.1);
-  color:#fff;
+  background:linear-gradient(135deg,rgba(124,92,255,.22),rgba(0,217,255,.14));
+  border:1px solid rgba(124,92,255,.2);
+  color:var(--p1);
   transition:transform .3s;
-  position:relative;
-  z-index:1;
 }
-.dl .badge svg{width:20px;height:20px}
+[data-theme="light"] .dl .badge{color:#6d5efc}
+.dl .badge svg{width:19px;height:19px}
 .dl:hover .badge{transform:scale(1.08) rotate(-3deg)}
-.dl .txt{flex:1;min-width:0;position:relative;z-index:1}
-.dl .txt b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.1px;margin-bottom:2px}
+.dl .txt{flex:1;min-width:0}
+.dl .txt b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.1px;margin-bottom:2px;color:var(--txt)}
 .dl .txt small{font-size:11px;color:var(--mut);font-weight:500}
 .dl .go{
   font-size:10.5px;
-  font-weight:900;
+  font-weight:800;
   color:#fff;
   padding:7px 12px;
   border-radius:9px;
   background:linear-gradient(135deg,#7c5cff,#4d8dff);
   flex:none;
-  letter-spacing:.8px;
+  letter-spacing:.6px;
   display:inline-flex;
   align-items:center;
   gap:5px;
   box-shadow:0 4px 14px rgba(124,92,255,.4);
   transition:all .2s;
-  position:relative;
-  z-index:1;
 }
 .dl .go svg{width:11px;height:11px}
-.dl:hover .go{box-shadow:0 6px 20px rgba(124,92,255,.65);transform:translateY(-1px)}
-.dl.downloading{pointer-events:none;opacity:.7}
+.dl:hover .go{box-shadow:0 6px 20px rgba(124,92,255,.6);transform:translateY(-1px)}
+.dl.downloading{pointer-events:none;opacity:.75}
 .dl.downloading .go{background:linear-gradient(135deg,#22c55e,#16a34a)}
 
-/* ============ FOOTER ============ */
-footer{
+/* =========================================================
+   HOW IT WORKS
+   ========================================================= */
+.howto{margin-top:60px}
+.howto h2{
+  font-family:'Sora',sans-serif;
+  font-size:clamp(20px,4.5vw,26px);
+  font-weight:800;
+  letter-spacing:-.6px;
   text-align:center;
-  font-size:11px;
-  color:#4d566e;
-  margin-top:34px;
-  line-height:1.8;
-  font-weight:500;
+  margin-bottom:8px;
+  color:var(--txt);
 }
-.footer-logo{
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:2px;
-  margin-bottom:6px;
+.howto h2 .grad{
   background:linear-gradient(90deg,#7c5cff,#00d9ff);
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
 }
+.howto .lead{
+  text-align:center;
+  color:var(--mut);
+  font-size:13.5px;
+  margin-bottom:28px;
+  font-weight:500;
+  line-height:1.6;
+}
+.steps{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+@media(max-width:520px){
+  .steps{grid-template-columns:1fr;gap:10px}
+}
+.step{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  position:relative;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+.step:hover{
+  border-color:rgba(124,92,255,.4);
+  transform:translateY(-3px);
+  box-shadow:0 12px 32px rgba(124,92,255,.15);
+}
+.step-num{
+  font-family:'Sora',sans-serif;
+  font-size:22px;
+  font-weight:800;
+  background:linear-gradient(135deg,#7c5cff,#00d9ff);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  line-height:1;
+  margin-bottom:12px;
+  letter-spacing:-1px;
+}
+.step h3{
+  font-family:'Sora',sans-serif;
+  font-size:14.5px;
+  font-weight:700;
+  letter-spacing:-.2px;
+  margin-bottom:6px;
+  color:var(--txt);
+}
+.step p{
+  font-size:12.5px;
+  color:var(--mut);
+  line-height:1.6;
+  font-weight:500;
+}
 
-/* ============ TOAST ============ */
+/* =========================================================
+   FOOTER
+   ========================================================= */
+footer{
+  text-align:center;
+  padding:30px 20px 20px;
+  border-top:1px solid var(--line);
+  margin-top:60px;
+}
+.footer-brand{
+  font-family:'Sora',sans-serif;
+  font-size:14px;
+  font-weight:800;
+  letter-spacing:2px;
+  background:linear-gradient(90deg,#7c5cff,#00d9ff);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  margin-bottom:8px;
+}
+footer p{
+  font-size:11.5px;
+  color:var(--txt-dim);
+  line-height:1.7;
+  font-weight:500;
+}
+
+/* =========================================================
+   TOAST
+   ========================================================= */
 .toast{
   position:fixed;
   bottom:24px;
   left:50%;
   transform:translateX(-50%) translateY(100px);
-  background:rgba(14,18,32,.95);
+  background:var(--card-solid);
   border:1px solid rgba(124,92,255,.4);
-  color:#fff;
+  color:var(--txt);
   padding:12px 20px;
   border-radius:14px;
   font-size:13px;
   font-weight:600;
   z-index:9999;
   backdrop-filter:blur(20px);
-  box-shadow:0 16px 40px rgba(0,0,0,.6),0 0 24px rgba(124,92,255,.3);
+  box-shadow:0 16px 40px rgba(0,0,0,.35),0 0 24px rgba(124,92,255,.22);
   opacity:0;
   transition:all .3s cubic-bezier(.34,1.56,.64,1);
   display:flex;
@@ -615,134 +755,129 @@ footer{
   max-width:calc(100vw - 32px);
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast svg{width:16px;height:16px;color:#22c55e;flex:none}
+.toast svg{width:16px;height:16px;color:var(--ok);flex:none}
 </style>
 </head>
 <body>
 
-<div class="aurora aurora-1"></div>
-<div class="aurora aurora-2"></div>
-<div class="aurora aurora-3"></div>
-
-<div class="wrap">
-
-  <!-- ============ HEADER ============ -->
-  <header>
-    <div class="logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+<!-- ============ NAVBAR ============ -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
           <polyline points="7 10 12 15 17 10"/>
           <line x1="12" y1="15" x2="12" y2="3"/>
         </svg>
       </div>
-      <div class="logo-text">DG<span>SAVER</span></div>
+      <div class="brand-name">DG<span>&nbsp;SAVER</span></div>
     </div>
-    <p class="tagline">Premium downloads · හැම social media එකකින්ම</p>
-  </header>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<div class="aurora aurora-1"></div>
+<div class="aurora aurora-2"></div>
+
+<main class="container">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <h1>All Social Media Downloader <span class="grad">For Free</span></h1>
+    <p class="subtitle">Download videos, reels, and audio from your favorite platforms. No sign-up, no ads, no limits.</p>
+  </section>
 
   <!-- ============ MAIN CARD ============ -->
   <div class="card">
 
-    <!-- Platform Grid -->
-    <div class="platform-grid" id="platformGrid">
-
-      <button class="pbtn" data-p="facebook" type="button" style="--brand:#1877f2">
-        <span class="picon">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-        </span>
-        <span class="plabel">Facebook</span>
-      </button>
-
-      <button class="pbtn" data-p="instagram" type="button" style="--brand:#e1306c">
-        <span class="picon">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-        </span>
-        <span class="plabel">Instagram</span>
-      </button>
-
-      <button class="pbtn" data-p="tiktok" type="button" style="--brand:#ff0050">
-        <span class="picon">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
-        </span>
-        <span class="plabel">TikTok</span>
-      </button>
-
-      <button class="pbtn" data-p="pinterest" type="button" style="--brand:#e60023">
-        <span class="picon">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>
-        </span>
-        <span class="plabel">Pinterest</span>
-      </button>
-
-      <button class="pbtn" data-p="ytmp3" type="button" style="--brand:#ff0033">
-        <span class="picon">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          <em class="badge-note">♪</em>
-        </span>
-        <span class="plabel">YT MP3</span>
-      </button>
-
-      <button class="pbtn" data-p="ytmp4" type="button" style="--brand:#ff0033">
-        <span class="picon">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          <em class="badge-hd">HD</em>
-        </span>
-        <span class="plabel">YT MP4</span>
-      </button>
-
-      <button class="pbtn" data-p="spotify" type="button" style="--brand:#1db954">
-        <span class="picon">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.301.421-1.02.599-1.56.3z"/></svg>
-        </span>
-        <span class="plabel">Spotify</span>
-      </button>
-
-    </div>
-
     <!-- URL Input -->
-    <div class="field">
-      <span class="ico">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <div class="input-field">
+      <span class="input-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
         </svg>
       </span>
-      <input id="urlInput" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Link එක මෙතන paste කරන්න...">
-      <div class="tools">
-        <button class="mini" id="pasteBtn" type="button" title="Paste">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
-          PASTE
-        </button>
-        <button class="mini mini-x" id="clearBtn" type="button" title="Clear">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Quality (YT MP4) -->
-    <div class="quality-row" id="qualityRow">
-      <div class="qlabel">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:-2px;margin-right:5px"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4V8z"/></svg>
-        Video Quality
-      </div>
-      <div class="quality-chips" id="qualityChips">
-        <button class="qchip" data-q="360" type="button">360p</button>
-        <button class="qchip" data-q="480" type="button">480p</button>
-        <button class="qchip active" data-q="720" type="button">720p HD</button>
-        <button class="qchip" data-q="1080" type="button">1080p FHD</button>
-      </div>
-    </div>
-
-    <!-- Main Download Button -->
-    <div class="btn-wrap">
-      <button class="btn" id="fetchBtn" type="button">
-        <span class="btn-icon" id="btnIcon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        </span>
-        <span id="btnText">Download කරන්න</span>
+      <input id="urlInput" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Paste your link here...">
+      <button class="paste-btn" id="pasteBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+        PASTE
       </button>
     </div>
+
+    <!-- Platforms -->
+    <div class="platforms-label">Choose Platform</div>
+    <div class="platforms" id="platforms">
+
+      <button class="platform-btn" data-p="facebook" type="button">
+        <div class="platform-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </div>
+        <span class="platform-name">Facebook</span>
+      </button>
+
+      <button class="platform-btn" data-p="instagram" type="button">
+        <div class="platform-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </div>
+        <span class="platform-name">Instagram</span>
+      </button>
+
+      <button class="platform-btn" data-p="tiktok" type="button">
+        <div class="platform-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+        </div>
+        <span class="platform-name">TikTok</span>
+      </button>
+
+      <button class="platform-btn" data-p="pinterest" type="button">
+        <div class="platform-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>
+        </div>
+        <span class="platform-name">Pinterest</span>
+      </button>
+
+      <button class="platform-btn" data-p="ytmp3" type="button">
+        <div class="platform-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </div>
+        <span class="platform-name">YT MP3</span>
+      </button>
+
+      <button class="platform-btn" data-p="ytmp4" type="button">
+        <div class="platform-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </div>
+        <span class="platform-name">YT MP4</span>
+      </button>
+
+      <button class="platform-btn" data-p="spotify" type="button">
+        <div class="platform-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.301.421-1.02.599-1.56.3z"/></svg>
+        </div>
+        <span class="platform-name">Spotify</span>
+      </button>
+
+    </div>
+
+    <!-- Download Button -->
+    <button class="download-btn" id="downloadBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      <span id="downloadBtnText">Download</span>
+    </button>
   </div>
 
   <!-- Status -->
@@ -751,16 +886,46 @@ footer{
   <!-- Result -->
   <div id="result"></div>
 
-  <!-- Footer -->
-  <footer>
-    <div class="footer-logo">DG SAVER</div>
-    <div>Personal use සඳහා පමණි · සියලුම හිමිකම් අදාළ මුල් අයිතිකරුවන් සතුය</div>
-  </footer>
-</div>
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="howto">
+    <h2>How <span class="grad">It Works</span></h2>
+    <p class="lead">Four simple steps to download any video from any platform</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Pick a Platform</h3>
+        <p>Choose the social media platform you want to download from using the icons above.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Paste Your Link</h3>
+        <p>Copy the video URL from the app or browser and paste it into the input field.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Tap Download</h3>
+        <p>Press the download button and wait a few seconds for the media details to load.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>Save Your File</h3>
+        <p>Select your preferred quality or format, and the file will download automatically.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="footer-brand">DG SAVER</div>
+  <p>© 2025 DG SAVER · All rights reserved<br>For personal use only. All trademarks belong to their respective owners.</p>
+</footer>
 
 <script>
 /* =========================================================
-   DG SAVER — Premium Media Downloader
+   DG SAVER — JavaScript
    ========================================================= */
 
 /* ============ CONFIG ============ */
@@ -773,33 +938,45 @@ const SASA_KEY        = 'Sasa_Dev_Api_7e9cf42bd33607b3503c016dd49720fec6d22b63';
 const ZANTA_BASE      = 'https://api.zanta-mini.store';
 const ZANTA_KEY       = 'zanta_JatdaWBTIbi4uSdilQ1q6gE3';
 
+/* NEW YT MP4 API */
+const YTMP4_BASE = 'https://supunofc.site/api/download/ytmp4-down';
+const YTMP4_KEY  = 'supun-6senhznz07sw1zzfkn8yf768';
+
+/* ============ PLATFORM CONFIG ============ */
 const PLATFORMS = {
-  facebook:  { label:'Facebook',  method:'KCEY_SOCIAL', type:'facebook',  pattern:/(facebook\.com|fb\.watch|fb\.me|m\.facebook\.com)/i, placeholder:'Facebook video link එක paste කරන්න',  render:renderFacebook },
-  instagram: { label:'Instagram', method:'KCEY_SOCIAL', type:'instagram', pattern:/(instagram\.com|instagr\.am)/i, placeholder:'Instagram reel/post link එක paste කරන්න', render:renderInstagram },
-  tiktok:    { label:'TikTok',    method:'CUSTOM_TIKTOK', pattern:/(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)/i, placeholder:'TikTok link එක paste කරන්න', render:renderTikTok },
-  pinterest: { label:'Pinterest', method:'SASA', type:'pinterest', pattern:/(pinterest\.com|pin\.it)/i, placeholder:'Pinterest link එක paste කරන්න', render:renderSasaPinterest },
-  ytmp3:     { label:'YouTube MP3', method:'YTMP3_FALLBACK', pattern:/(youtube\.com|youtu\.be)/i, placeholder:'YouTube link එක paste කරන්න', render:renderYtmp3 },
-  ytmp4:     { label:'YouTube MP4', method:'SASA_FALLBACK_YTMP4', type:'ytmp4', pattern:/(youtube\.com|youtu\.be)/i, placeholder:'YouTube link එක paste කරන්න', render:renderSasaYtmp4, showQuality:true },
-  spotify:   { label:'Spotify',   method:'DARKSHAN', type:'spotify', pattern:/(spotify\.com|spoti\.fi)/i, placeholder:'Spotify track link එක paste කරන්න', render:renderSpotify }
+  facebook:  { label:'Facebook',    method:'KCEY_SOCIAL', type:'facebook',  pattern:/(facebook\.com|fb\.watch|fb\.me|m\.facebook\.com)/i, render:renderFacebook },
+  instagram: { label:'Instagram',   method:'KCEY_SOCIAL', type:'instagram', pattern:/(instagram\.com|instagr\.am)/i, render:renderInstagram },
+  tiktok:    { label:'TikTok',      method:'CUSTOM_TIKTOK', pattern:/(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)/i, render:renderTikTok },
+  pinterest: { label:'Pinterest',   method:'SASA', type:'pinterest', pattern:/(pinterest\.com|pin\.it)/i, render:renderPinterest },
+  ytmp3:     { label:'YouTube MP3', method:'YTMP3_FALLBACK', pattern:/(youtube\.com|youtu\.be)/i, render:renderYtmp3 },
+  ytmp4:     { label:'YouTube MP4', method:'YTMP4_NEW', pattern:/(youtube\.com|youtu\.be)/i, render:renderYtmp4 },
+  spotify:   { label:'Spotify',     method:'DARKSHAN', type:'spotify', pattern:/(spotify\.com|spoti\.fi)/i, render:renderSpotify }
 };
 
 /* ============ ELEMENTS ============ */
+const htmlEl       = document.documentElement;
+const themeBtn     = document.getElementById('themeBtn');
 const input        = document.getElementById('urlInput');
-const fetchBtn     = document.getElementById('fetchBtn');
+const downloadBtn  = document.getElementById('downloadBtn');
+const downloadBtnText = document.getElementById('downloadBtnText');
 const pasteBtn     = document.getElementById('pasteBtn');
-const clearBtn     = document.getElementById('clearBtn');
-const btnIcon      = document.getElementById('btnIcon');
-const btnText      = document.getElementById('btnText');
 const statusEl     = document.getElementById('status');
 const resultEl     = document.getElementById('result');
-const grid         = document.getElementById('platformGrid');
-const qualityRow   = document.getElementById('qualityRow');
-const qualityChips = document.getElementById('qualityChips');
+const platformsEl  = document.getElementById('platforms');
 
+/* ============ STATE ============ */
 let currentPlatform = 'facebook';
-let currentQuality  = '720';
+const platformUrls = {
+  facebook: '',
+  instagram: '',
+  tiktok: '',
+  pinterest: '',
+  ytmp3: '',
+  ytmp4: '',
+  spotify: ''
+};
 
-/* ============ ICONS ============ */
+/* ============ SVG ICONS ============ */
 const SVG_DL    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
 const SVG_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>';
 const SVG_HD    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M10 12h4M8 9v6M16 9v6"/></svg>';
@@ -808,43 +985,83 @@ const SVG_AUDIO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 const SVG_VIDEO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4V8z"/></svg>';
 const SVG_IMAGE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
 const SVG_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
-const SVG_SPOTIFY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02z"/></svg>';
 
-/* ============ PLATFORM SELECTOR ============ */
-function setPlatform(name){
-  if (!PLATFORMS[name]) return;
-  currentPlatform = name;
-  grid.querySelectorAll('.pbtn').forEach(b => b.classList.toggle('active', b.dataset.p === name));
-  input.placeholder = PLATFORMS[name].placeholder || 'Link එක මෙතන paste කරන්න...';
-  qualityRow.classList.toggle('show', !!PLATFORMS[name].showQuality);
+/* =========================================================
+   THEME TOGGLE
+   ========================================================= */
+function setTheme(theme){
+  htmlEl.setAttribute('data-theme', theme);
+  localStorage.setItem('dgsaver-theme', theme);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', theme === 'light' ? '#f5f6fb' : '#07080f');
 }
-grid.addEventListener('click', e => {
-  const btn = e.target.closest('.pbtn');
-  if (!btn) return;
-  setPlatform(btn.dataset.p);
+function initTheme(){
+  const saved = localStorage.getItem('dgsaver-theme');
+  if (saved === 'light' || saved === 'dark') { setTheme(saved); return; }
+  const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+  setTheme(prefersLight ? 'light' : 'dark');
+}
+themeBtn.addEventListener('click', () => {
+  const curr = htmlEl.getAttribute('data-theme');
+  setTheme(curr === 'dark' ? 'light' : 'dark');
+});
+
+/* =========================================================
+   PLATFORM SWITCHING (with per-platform URL storage)
+   ========================================================= */
+function setPlatform(name, skipSave){
+  if (!PLATFORMS[name]) return;
+
+  // Save current URL to old platform
+  if (!skipSave && currentPlatform) {
+    platformUrls[currentPlatform] = input.value;
+  }
+
+  currentPlatform = name;
+
+  // Restore new platform's URL
+  input.value = platformUrls[name] || '';
+
+  // Update UI
+  platformsEl.querySelectorAll('.platform-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.p === name)
+  );
+
+  // Clear result/status when switching
   resultEl.className = '';
   resultEl.innerHTML = '';
   showStatus('none');
-});
-qualityChips.addEventListener('click', e => {
-  const btn = e.target.closest('.qchip');
+}
+
+platformsEl.addEventListener('click', e => {
+  const btn = e.target.closest('.platform-btn');
   if (!btn) return;
-  currentQuality = btn.dataset.q;
-  qualityChips.querySelectorAll('.qchip').forEach(c => c.classList.toggle('active', c.dataset.q === currentQuality));
+  if (btn.dataset.p === currentPlatform) return;
+  setPlatform(btn.dataset.p);
+  input.focus();
 });
 
-/* ============ HELPERS ============ */
+/* Save URL as user types */
+input.addEventListener('input', () => {
+  platformUrls[currentPlatform] = input.value;
+});
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
 function showStatus(type, msg){
   if (!type || type === 'none') { statusEl.className = ''; statusEl.innerHTML = ''; return; }
   statusEl.className = 'show';
-  if (type === 'loading') statusEl.innerHTML = `<div class="box load"><div class="spinner"></div><div>${msg}</div></div>`;
-  else if (type === 'error') statusEl.innerHTML = `<div class="box err"><div>⚠️</div><div>${msg}</div></div>`;
+  if (type === 'loading') statusEl.innerHTML = `<div class="status-box load"><div class="spinner"></div><div>${msg}</div></div>`;
+  else if (type === 'error') statusEl.innerHTML = `<div class="status-box err"><div>⚠️</div><div>${msg}</div></div>`;
 }
 function setLoading(on){
-  fetchBtn.disabled = on;
-  fetchBtn.classList.toggle('loading', on);
-  btnIcon.innerHTML = SVG_DL;
-  btnText.textContent = on ? 'සොයමින්...' : 'Download කරන්න';
+  downloadBtn.disabled = on;
+  downloadBtn.classList.toggle('loading', on);
+  downloadBtnText.textContent = on ? 'Loading...' : 'Download';
+  downloadBtn.querySelector('svg').outerHTML = on
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'
+    : SVG_DL;
 }
 function fmtNum(n){
   n = Number(n) || 0;
@@ -863,15 +1080,13 @@ function fmtDur(sec){
 function esc(str){
   return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
-function qualityLabel(link){
-  const q = String(link.quality || '').toLowerCase();
-  const t = String(link.type || '').toLowerCase();
-  if (q.includes('audio') || t.includes('audio')) return { icon:SVG_AUDIO, title:'Audio Only', sub:'ශබ්දය පමණයි · M4A' };
-  if (q === '360' || q.includes('360')) return { icon:SVG_SD, title:'360p Video', sub:'Data අඩුවෙන් · MP4' };
-  if (q === '720' || q.includes('720')) return { icon:SVG_HD, title:'720p HD', sub:'MP4 Video' };
-  if (q === '1080' || q.includes('1080')) return { icon:SVG_HD, title:'1080p Full HD', sub:'MP4 Video' };
-  if (!q || q === 'video' || q === 'hd' || q.includes('hd')) return { icon:SVG_VIDEO, title:'HD Video', sub:'Watermark රහිත · MP4' };
-  return { icon:SVG_VIDEO, title:`Video ${esc(link.quality)}`, sub:'MP4 Video' };
+function qualityIcon(quality){
+  const q = String(quality || '').toLowerCase();
+  if (q.includes('1080') || q.includes('4k') || q.includes('2k')) return SVG_HD;
+  if (q.includes('720')) return SVG_HD;
+  if (q.includes('480') || q.includes('360') || q.includes('240')) return SVG_SD;
+  if (q.includes('audio') || q.includes('mp3') || q.includes('m4a')) return SVG_AUDIO;
+  return SVG_VIDEO;
 }
 function thumbBlock(url, duration){
   if (!url) return '';
@@ -889,10 +1104,19 @@ function dlRow(href, iconSvg, title, sub, cta){
 function showResult(html){
   resultEl.innerHTML = html;
   resultEl.className = 'show';
-  resultEl.scrollIntoView({ behavior:'smooth', block:'start' });
+  setTimeout(() => {
+    resultEl.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 80);
+}
+function getYouTubeId(url){
+  if (!url) return null;
+  const m = String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/|live\/))([\w-]{11})/);
+  return m ? m[1] : null;
 }
 
-/* ============ TOAST ============ */
+/* =========================================================
+   TOAST
+   ========================================================= */
 function toast(msg, ok){
   const el = document.createElement('div');
   el.className = 'toast';
@@ -905,7 +1129,9 @@ function toast(msg, ok){
   }, 2600);
 }
 
-/* ============ DIRECT DOWNLOAD ============ */
+/* =========================================================
+   DIRECT DOWNLOAD
+   ========================================================= */
 function guessFilename(url, fallback){
   try {
     const u = new URL(url);
@@ -923,7 +1149,6 @@ async function directDownload(url, rowEl, fallbackName){
     if (go) go.innerHTML = '<div class="spinner" style="width:11px;height:11px;border-width:2px"></div><span>WAIT</span>';
   }
 
-  // Attempt 1: blob fetch (true direct download)
   try {
     const res = await fetch(url, { mode: 'cors', credentials: 'omit' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -936,28 +1161,28 @@ async function directDownload(url, rowEl, fallbackName){
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-    toast('Download ආරම්භ වුණා ✓', true);
+    toast('Download started ✓', true);
     if (rowEl) {
       rowEl.classList.remove('downloading');
       const go = rowEl.querySelector('.go');
       if (go) go.innerHTML = SVG_ARROW + '<span>GET</span>';
     }
     return;
-  } catch(_) { /* fall through */ }
+  } catch(_) {}
 
-  // Attempt 2: anchor click fallback
   try {
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
     a.rel = 'noopener';
+    a.target = '_blank';
     a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
     a.remove();
-    toast('Download ආරම්භ වුණා ✓', true);
+    toast('Download started ✓', true);
   } catch(e) {
-    toast('Download fail — link එක copy කරගන්න', false);
+    toast('Download failed — try copying the link', false);
   } finally {
     if (rowEl) {
       rowEl.classList.remove('downloading');
@@ -973,7 +1198,9 @@ document.addEventListener('click', e => {
   directDownload(link.href, link, '');
 });
 
-/* ============ RENDER: FACEBOOK ============ */
+/* =========================================================
+   RENDER: FACEBOOK
+   ========================================================= */
 function renderFacebook(data){
   const md = data.metadata || {};
   const dl = data.downloads || {};
@@ -983,46 +1210,50 @@ function renderFacebook(data){
   let html = thumbBlock(thumb, md.duration);
   html += `<div class="meta"><h2>${esc(title)}</h2><div class="author">👤 ${esc(md.author || 'Unknown')}</div></div>`;
   html += statBlock([
-    md.view_count ? { n: fmtNum(md.view_count), l:'VIEWS' } : null,
-    md.like_count ? { n: fmtNum(md.like_count), l:'LIKES' } : null,
-    md.comment_count ? { n: fmtNum(md.comment_count), l:'COMMENTS' } : null,
-    md.resolution ? { n: esc(md.resolution), l:'RESOLUTION' } : null
+    md.view_count ? { n: fmtNum(md.view_count), l:'Views' } : null,
+    md.like_count ? { n: fmtNum(md.like_count), l:'Likes' } : null,
+    md.comment_count ? { n: fmtNum(md.comment_count), l:'Comments' } : null,
+    md.resolution ? { n: esc(md.resolution), l:'Resolution' } : null
   ]);
   if (links.length) {
     html += `<div class="sec-title">Download Options</div>`;
     links.forEach(link => {
       if (!link || !link.url) return;
-      const q = qualityLabel(link);
-      html += dlRow(link.url, q.icon, q.title, q.sub);
+      const q = String(link.quality || 'HD');
+      html += dlRow(link.url, qualityIcon(q), `${esc(q)} Video`, 'MP4 · Watermark-free');
     });
   } else {
-    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link කිසිවක් හමු නොවුණා</div></div>`;
+    html += `<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No download links found</div></div>`;
   }
   showResult(html);
 }
 
-/* ============ RENDER: INSTAGRAM ============ */
+/* =========================================================
+   RENDER: INSTAGRAM
+   ========================================================= */
 function renderInstagram(data){
   const md = data.metadata || {};
   const dl = data.downloads || {};
   const thumb    = dl.thumbnail || md.thumbnail || '';
   const videoUrl = dl.video || dl.videoUrl || (dl.links && dl.links[0]?.url) || '';
-  const username = md.username || md.author || 'Instagram User';
+  const username = md.username || md.author || 'instagram';
   const caption  = md.caption || md.title || '';
   let html = thumbBlock(thumb, md.duration);
   html += `<div class="meta"><h2>${caption ? esc(caption.substring(0, 140)) + (caption.length > 140 ? '...' : '') : 'Instagram Video'}</h2><div class="author">👤 @${esc(username)}</div></div>`;
   if (videoUrl) {
     html += `<div class="sec-title">Download Options</div>`;
-    html += dlRow(videoUrl, SVG_HD, 'HD Video', 'Watermark රහිත · MP4');
+    html += dlRow(videoUrl, SVG_HD, 'HD Video', 'MP4 · Watermark-free');
   } else {
-    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link එකක් හමු නොවුණා</div></div>`;
+    html += `<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No download link found</div></div>`;
   }
   showResult(html);
 }
 
-/* ============ RENDER: TIKTOK ============ */
+/* =========================================================
+   RENDER: TIKTOK
+   ========================================================= */
 function renderTikTok(data){
-  if (!data || data.success === false) { showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.error || 'TikTok video එක ලබා ගැනීමට නොහැකි විය')}</div></div>`); return; }
+  if (!data || data.success === false) { showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.error || 'Could not fetch TikTok video')}</div></div>`); return; }
   const d = data.data || {};
   const thumb     = d.cover || d.thumbnail || '';
   const title     = d.title || d.description || 'TikTok Video';
@@ -1035,28 +1266,30 @@ function renderTikTok(data){
   const proxyVideo = (u) => `${TIKTOK_API_BASE}/api/proxy-download?url=${encodeURIComponent(u)}&type=video`;
   const proxyAudio = (u) => `${TIKTOK_API_BASE}/api/proxy-download?url=${encodeURIComponent(u)}&type=audio`;
   const rows = [];
-  if (videoHD) rows.push({ href: proxyVideo(videoHD), icon: SVG_HD, title: 'HD Video', sub: 'High Quality · Watermark රහිත · MP4' });
-  if (videoSD && videoSD !== videoHD) rows.push({ href: proxyVideo(videoSD), icon: SVG_SD, title: 'SD Video', sub: 'Data අඩුවෙන් · MP4' });
-  if (audioUrl) rows.push({ href: proxyAudio(audioUrl), icon: SVG_AUDIO, title: 'Audio (MP3)', sub: 'ශබ්දය පමණයි · Fast Download' });
+  if (videoHD) rows.push({ href: proxyVideo(videoHD), icon: SVG_HD, title: 'HD Video', sub: 'High quality · MP4' });
+  if (videoSD && videoSD !== videoHD) rows.push({ href: proxyVideo(videoSD), icon: SVG_SD, title: 'SD Video', sub: 'Lower data · MP4' });
+  if (audioUrl) rows.push({ href: proxyAudio(audioUrl), icon: SVG_AUDIO, title: 'Audio (MP3)', sub: 'Audio only · MP3' });
   if (rows.length) {
     html += `<div class="sec-title">Download Options</div>`;
     rows.forEach(r => { html += dlRow(r.href, r.icon, r.title, r.sub); });
   } else {
-    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link කිසිවක් හමු නොවුණා</div></div>`;
+    html += `<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No download links found</div></div>`;
   }
   showResult(html);
 }
 
-/* ============ RENDER: PINTEREST (robust) ============ */
-function renderSasaPinterest(data){
+/* =========================================================
+   RENDER: PINTEREST
+   ========================================================= */
+function renderPinterest(data){
   const root = data?.result || data?.data || data;
   if (!root) {
-    showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || data?.error || 'Pinterest link එක ලබා ගැනීමට නොහැකි විය')}</div></div>`);
+    showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.message || data?.error || 'Could not fetch Pinterest pin')}</div></div>`);
     return;
   }
   const cover  = root.cover || root.thumbnail || root.image || '';
   const title  = root.title || root.description || 'Pinterest Pin';
-  const author = root.author || root.username || 'Pinterest User';
+  const author = root.author || root.username || 'Pinterest';
   const items  = Array.isArray(root.items) ? root.items
                : Array.isArray(root.medias) ? root.medias
                : Array.isArray(root.images) ? root.images
@@ -1083,29 +1316,31 @@ function renderSasaPinterest(data){
   }
 
   if (videoItems.length) {
-    html += `<div class="sec-title">Video Download</div>`;
+    html += `<div class="sec-title">Video</div>`;
     videoItems.forEach(item => {
       const href = item.download || item.direct || item._url || item.url || '';
       if (!href) return;
-      html += dlRow(href, SVG_VIDEO, `${esc(item.quality || 'HD')} Video`, 'MP4 · Direct Download');
+      html += dlRow(href, SVG_VIDEO, `${esc(item.quality || 'HD')} Video`, 'MP4 · Direct download');
     });
   }
   if (imageItems.length) {
-    html += `<div class="sec-title">Image Download</div>`;
+    html += `<div class="sec-title">Image</div>`;
     imageItems.forEach(item => {
       const href = item.download || item.direct || item._url || item.url || '';
       if (!href) return;
       const ext = (item.ext || 'JPG').toUpperCase();
-      html += dlRow(href, SVG_IMAGE, `${esc(item.quality || 'Original')} Image`, `${ext} · Full Resolution`);
+      html += dlRow(href, SVG_IMAGE, `${esc(item.quality || 'Original')} Image`, `${ext} · Full resolution`);
     });
   }
   if (!videoItems.length && !imageItems.length) {
-    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Download link කිසිවක් හමු නොවුණා</div></div>`;
+    html += `<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No download links found</div></div>`;
   }
   showResult(html);
 }
 
-/* ============ RENDER: YOUTUBE MP3 ============ */
+/* =========================================================
+   RENDER: YOUTUBE MP3
+   ========================================================= */
 function renderYtmp3(data){
   const title    = data.title || 'YouTube Audio';
   const thumb    = data.thumbnail || '';
@@ -1115,57 +1350,69 @@ function renderYtmp3(data){
   const bitrate  = data.bitrate ? (data.bitrate > 1000 ? Math.round(data.bitrate / 1000) + ' kbps' : data.bitrate + ' kbps') : '';
 
   if (!audioUrl) {
-    showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || 'මේ video එකට MP3 හමු නොවුණා')}</div></div>`);
+    showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.message || 'Could not fetch audio')}</div></div>`);
     return;
   }
 
   let html = thumbBlock(thumb, fmtDur(duration));
-  html += `<div class="meta"><h2>${esc(title)}</h2><div class="author">🎧 YouTube Audio${data._source ? ` · ${esc(data._source)}` : ''}</div></div>`;
+  html += `<div class="meta"><h2>${esc(title)}</h2><div class="author">🎧 YouTube Audio</div></div>`;
   html += statBlock([
-    quality  ? { n: esc(quality), l:'FORMAT' } : null,
-    bitrate  ? { n: esc(bitrate), l:'BITRATE' } : null,
-    duration ? { n: fmtDur(duration), l:'DURATION' } : null
+    quality  ? { n: esc(quality), l:'Format' } : null,
+    bitrate  ? { n: esc(bitrate), l:'Bitrate' } : null,
+    duration ? { n: fmtDur(duration), l:'Duration' } : null
   ]);
   html += `<div class="sec-title">Download Options</div>`;
-  html += dlRow(audioUrl, SVG_AUDIO, 'MP3 / M4A Audio', bitrate ? `ශබ්දය පමණයි · ${bitrate}` : 'ශබ්දය පමණයි');
+  html += dlRow(audioUrl, SVG_AUDIO, 'MP3 / M4A Audio', bitrate ? `Audio only · ${bitrate}` : 'Audio only');
   showResult(html);
 }
 
-/* ============ RENDER: YOUTUBE MP4 (robust) ============ */
-function renderSasaYtmp4(data){
-  const r = data?.result || data?.data || data || {};
-  const videoId = r.videoId || r.id || r.video_id || '';
-  const thumb   = r.thumbnail || r.thumb || r.image || (videoId ? `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` : '');
-  const title   = r.title || 'YouTube Video';
-  const author  = r.author || r.channel || r.uploader || 'YouTube';
-  const quality = r.quality || r.resolution || r.label || `${currentQuality}p`;
+/* =========================================================
+   RENDER: YOUTUBE MP4 (NEW API — Supun OFC)
+   ========================================================= */
+function renderYtmp4(data){
+  const results = data.result || [];
+  const info    = data._info || {};
+  const query   = data.query || input.value;
 
-  let videoUrl = r.download || r.downloadUrl || r.download_url || r.url || r.link || r.video || '';
-  if (!videoUrl && r.medias && Array.isArray(r.medias)) {
-    const v = r.medias.find(m => /video/i.test(m.type || '') || /\.mp4/i.test(m.url || ''));
-    if (v) videoUrl = v.url || v.download;
-  }
-
-  if (!videoUrl) {
-    showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || r.message || 'YouTube video එක ලබා ගැනීමට නොහැකි විය')}</div></div>`);
+  if (!results.length) {
+    showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.message || 'No download links found')}</div></div>`);
     return;
   }
 
+  const videoId = getYouTubeId(query);
+  const thumb   = info.thumbnail_url || (videoId ? `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` : '');
+  const title   = info.title || 'YouTube Video';
+  const author  = info.author_name || 'YouTube';
+
   let html = thumbBlock(thumb, '');
-  html += `<div class="meta"><h2>${esc(String(title).substring(0, 160))}</h2><div class="author">👤 ${esc(author)}${data._source ? ` · ${esc(data._source)}` : ''}</div></div>`;
+  html += `<div class="meta"><h2>${esc(title)}</h2><div class="author">👤 ${esc(author)}</div></div>`;
+
+  // Stats
+  const topRes = results[0]?.resolution || '';
   html += statBlock([
-    quality ? { n: esc(quality), l:'QUALITY' } : null,
-    (r.format || r.ext) ? { n: esc(String(r.format || r.ext).toUpperCase()), l:'FORMAT' } : null,
-    (r.duration || r.length) ? { n: fmtDur(r.duration || r.length), l:'DURATION' } : null
+    { n: String(results.length), l:'Qualities' },
+    topRes ? { n: esc(topRes), l:'Max Quality' } : null,
+    { n: 'MP4', l:'Format' }
   ]);
+
   html += `<div class="sec-title">Download Options</div>`;
-  html += dlRow(videoUrl, SVG_VIDEO, `${esc(quality)} Video`, 'MP4 · Direct Download');
+  results.forEach(item => {
+    const res = item.resolution || 'Video';
+    const size = item.size || '';
+    const url = item.downloadUrl || '';
+    if (!url) return;
+    const icon = qualityIcon(res);
+    html += dlRow(url, icon, `${esc(res)} Video`, size && size !== 'N/A' ? `MP4 · ${esc(size)}` : 'MP4 · Video');
+  });
+
   showResult(html);
 }
 
-/* ============ RENDER: SPOTIFY ============ */
+/* =========================================================
+   RENDER: SPOTIFY
+   ========================================================= */
 function renderSpotify(data){
-  if (!data || data.status === false) { showResult(`<div class="box err"><div>⚠️</div><div>${esc(data?.message || data?.error || 'Spotify track එක ලබා ගැනීමට නොහැකි විය')}</div></div>`); return; }
+  if (!data || data.status === false) { showResult(`<div class="status-box err"><div>⚠️</div><div>${esc(data?.message || data?.error || 'Could not fetch Spotify track')}</div></div>`); return; }
   const d = data.data || data.result || data;
   const thumb    = d.thumbnail || d.image || d.cover || d.album_art || '';
   const title    = d.title || d.name || d.track || 'Spotify Track';
@@ -1173,33 +1420,38 @@ function renderSpotify(data){
   const album    = d.album || '';
   const duration = d.duration || (d.duration_ms ? Math.round(d.duration_ms / 1000) : 0);
   const audioUrl = d.download || d.downloadUrl || d.url || d.audio || d.mp3 || d.link || '';
+
   let html = thumbBlock(thumb, fmtDur(duration));
   html += `<div class="meta"><h2>${esc(String(title).substring(0, 160))}</h2><div class="author">🎤 ${esc(artist)}${album ? ` · ${esc(album)}` : ''}</div></div>`;
   html += statBlock([
-    d.quality ? { n: esc(d.quality), l:'FORMAT' } : null,
-    duration  ? { n: fmtDur(duration), l:'DURATION' } : null,
-    d.bitrate ? { n: esc(d.bitrate), l:'BITRATE' } : null
+    d.quality ? { n: esc(d.quality), l:'Format' } : null,
+    duration  ? { n: fmtDur(duration), l:'Duration' } : null,
+    d.bitrate ? { n: esc(d.bitrate), l:'Bitrate' } : null
   ]);
   if (audioUrl) {
     html += `<div class="sec-title">Download Options</div>`;
-    html += dlRow(audioUrl, SVG_SPOTIFY, 'Spotify Audio', 'MP3 · High Quality');
+    html += dlRow(audioUrl, SVG_AUDIO, 'Spotify Audio', 'MP3 · High quality');
   } else {
-    html += `<div class="box err" style="margin-top:14px"><div>⚠️</div><div>Audio link එකක් හමු නොවුණා</div></div>`;
+    html += `<div class="status-box err" style="margin-top:14px"><div>⚠️</div><div>No audio link found</div></div>`;
   }
   showResult(html);
 }
 
-/* ============ API: TikTok ============ */
+/* =========================================================
+   API CALLS
+   ========================================================= */
+
+/* TikTok */
 async function callTikTokApi(url){
   const r = await fetch(`${TIKTOK_API_BASE}/api/download/tiktok`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ url })
   });
-  if (!r.ok) throw new Error('TikTok API එකට සම්බන්ධ වෙන්න බැරි වුණා');
+  if (!r.ok) throw new Error('TikTok API request failed');
   return await r.json();
 }
 
-/* ============ API: KCeY Social ============ */
+/* KCeY Social (FB / IG) */
 async function callKceySocial(type, url){
   const endpoints = [
     `/api/${type}`,
@@ -1215,13 +1467,14 @@ async function callKceySocial(type, url){
       }
     } catch(_) {}
   }
-  throw new Error(`${type} API එකට සම්බන්ධ වෙන්න බැරි වුණා`);
+  throw new Error(`${type} API request failed`);
 }
 
-/* ============ API: YT MP3 fallback ============ */
+/* YT MP3 fallback */
 async function callYtmp3WithFallback(url){
   const errors = [];
 
+  // Try 1: KCeY
   try {
     let data = null;
     try {
@@ -1241,14 +1494,14 @@ async function callYtmp3WithFallback(url){
           download: data.download || bk.downloadUrl || '',
           duration: bk.duration || 0,
           quality: bk.quality || 'M4A Audio',
-          bitrate: bk.bitrate || 0,
-          _source: 'KCeY'
+          bitrate: bk.bitrate || 0
         };
       }
       errors.push('KCeY: ' + (data.message || 'no data'));
     } else errors.push('KCeY: no response');
   } catch(e) { errors.push('KCeY: ' + e.message); }
 
+  // Try 2: Darkshan
   try {
     const r = await fetch(`${DARKSHAN_BASE}/download/ytmp3?url=${encodeURIComponent(url)}&api_key=${DARKSHAN_KEY}`);
     if (r.ok) {
@@ -1261,14 +1514,14 @@ async function callYtmp3WithFallback(url){
           download: d.download || d.downloadUrl || d.url,
           duration: d.duration || 0,
           quality: d.quality || 'M4A Audio',
-          bitrate: d.bitrate || 0,
-          _source: 'Darkshan'
+          bitrate: d.bitrate || 0
         };
       }
       errors.push('Darkshan: ' + (data?.message || 'no data'));
     } else errors.push('Darkshan: HTTP ' + r.status);
   } catch(e) { errors.push('Darkshan: ' + e.message); }
 
+  // Try 3: Zanta
   try {
     const r = await fetch(`${ZANTA_BASE}/api/ytmp3?apiKey=${ZANTA_KEY}&url=${encodeURIComponent(url)}`);
     if (r.ok) {
@@ -1281,14 +1534,14 @@ async function callYtmp3WithFallback(url){
           download: d.downloadUrl || d.download || d.url,
           duration: d.duration || 0,
           quality: d.quality || 'M4A Audio',
-          bitrate: d.bitrate || 0,
-          _source: 'Zanta'
+          bitrate: d.bitrate || 0
         };
       }
       errors.push('Zanta: ' + (data?.message || 'no data'));
     } else errors.push('Zanta: HTTP ' + r.status);
   } catch(e) { errors.push('Zanta: ' + e.message); }
 
+  // Try 4: Sasa
   try {
     const r = await fetch(`${SASA_BASE}/api/yt/mp3-dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}`);
     if (r.ok) {
@@ -1301,47 +1554,42 @@ async function callYtmp3WithFallback(url){
           download: d.download || d.url || d.downloadUrl,
           duration: d.duration || 0,
           quality: d.quality || 'M4A Audio',
-          bitrate: d.bitrate || 0,
-          _source: 'Sasa'
+          bitrate: d.bitrate || 0
         };
       }
       errors.push('Sasa: ' + (data?.message || 'no data'));
     } else errors.push('Sasa: HTTP ' + r.status);
   } catch(e) { errors.push('Sasa: ' + e.message); }
 
-  throw new Error('හැම YT MP3 API එකක්ම fail වුණා. (' + errors.join(' | ') + ')');
+  throw new Error('All YT MP3 APIs failed');
 }
 
-/* ============ API: YT MP4 ============ */
-async function callSasaYtmp4Api(url, quality){
+/* =========================================================
+   YT MP4 — NEW API (Supun OFC)
+   ========================================================= */
+async function callYtmp4New(url){
+  // Fetch YouTube info via oEmbed
+  let info = null;
   try {
-    let data = null;
-    try {
-      const r = await fetch(`/api/sasa-ytmp4?url=${encodeURIComponent(url)}&quality=${quality || '720'}`);
-      if (r.ok) data = await r.json();
-    } catch(_) {}
-    if (!data) {
-      const r = await fetch(`${SASA_BASE}/api/yt/mp4-dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}&quality=${quality || '720'}`);
-      if (r.ok) data = await r.json();
-    }
-    if (data && data.status !== false && (data.result?.download || data.result?.downloadUrl || data.result?.url || data.download || data.url)) {
-      data._source = 'Sasa';
-      return data;
-    }
-    if (data && /rate limit/i.test(data.message || '')) {
-      console.warn('Sasa rate limited, falling to Zanta...');
-    }
-  } catch(e) {}
+    const r = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`);
+    if (r.ok) info = await r.json();
+  } catch(_) {}
 
-  const r = await fetch(`${ZANTA_BASE}/api/ytmp4-v2?apiKey=${ZANTA_KEY}&url=${encodeURIComponent(url)}&quality=${quality || '720'}`);
-  if (!r.ok) throw new Error('YT MP4 API එකට සම්බන්ධ වෙන්න බැරි වුණා');
+  // Fetch download links
+  const r = await fetch(`${YTMP4_BASE}?url=${encodeURIComponent(url)}&apikey=${YTMP4_KEY}`);
+  if (!r.ok) throw new Error('YT MP4 API request failed');
   const data = await r.json();
-  data._source = 'Zanta';
+
+  if (!data.success || !Array.isArray(data.result) || !data.result.length) {
+    throw new Error(data.message || 'No download links found');
+  }
+
+  data._info = info;
   return data;
 }
 
-/* ============ API: Pinterest ============ */
-async function callSasaPinterestApi(url){
+/* Pinterest */
+async function callPinterestApi(url){
   let data = null;
   try {
     const r = await fetch(`/api/sasa-pinterest?url=${encodeURIComponent(url)}`);
@@ -1349,14 +1597,14 @@ async function callSasaPinterestApi(url){
   } catch(_) {}
   if (!data || data.status === false) {
     const r = await fetch(`${SASA_BASE}/api/pinterest/dl?apikey=${SASA_KEY}&url=${encodeURIComponent(url)}`);
-    if (!r.ok) throw new Error('Pinterest API එකට සම්බන්ධ වෙන්න බැරි වුණා');
+    if (!r.ok) throw new Error('Pinterest API request failed');
     data = await r.json();
   }
   return data;
 }
 
-/* ============ API: Spotify ============ */
-async function callDarkshanSpotify(url){
+/* Spotify */
+async function callSpotifyApi(url){
   let data = null;
   try {
     const r = await fetch(`/api/spotify?url=${encodeURIComponent(url)}`);
@@ -1364,53 +1612,40 @@ async function callDarkshanSpotify(url){
   } catch(_) {}
   if (!data || data.status === false) {
     const r = await fetch(`${DARKSHAN_BASE}/download/spotify?url=${encodeURIComponent(url)}&api_key=${DARKSHAN_KEY}`);
-    if (!r.ok) throw new Error('Spotify API එකට සම්බන්ධ වෙන්න බැරි වුණා');
+    if (!r.ok) throw new Error('Spotify API request failed');
     data = await r.json();
   }
   return data;
 }
 
-/* ============ MAIN CALL ============ */
+/* =========================================================
+   MAIN API DISPATCHER
+   ========================================================= */
 async function callApi(platformKey, url){
   const p = PLATFORMS[platformKey];
-  if (!p) throw new Error('මේ platform එක support කරන්නේ නෑ');
+  if (!p) throw new Error('Unsupported platform');
 
-  if (p.method === 'CUSTOM_TIKTOK')       return await callTikTokApi(url);
-  if (p.method === 'KCEY_SOCIAL')         return await callKceySocial(p.type, url);
-  if (p.method === 'YTMP3_FALLBACK')      return await callYtmp3WithFallback(url);
-  if (p.method === 'SASA_FALLBACK_YTMP4') return await callSasaYtmp4Api(url, currentQuality);
-  if (p.method === 'SASA')                return await callSasaPinterestApi(url);
-  if (p.method === 'DARKSHAN')            return await callDarkshanSpotify(url);
+  if (p.method === 'CUSTOM_TIKTOK')   return await callTikTokApi(url);
+  if (p.method === 'KCEY_SOCIAL')     return await callKceySocial(p.type, url);
+  if (p.method === 'YTMP3_FALLBACK')  return await callYtmp3WithFallback(url);
+  if (p.method === 'YTMP4_NEW')       return await callYtmp4New(url);
+  if (p.method === 'SASA')            return await callPinterestApi(url);
+  if (p.method === 'DARKSHAN')        return await callSpotifyApi(url);
 
   throw new Error('Unknown method: ' + p.method);
 }
 
-/* ============ AUTO-DETECT ============ */
-function autoDetect(url){
-  if (/(youtube\.com|youtu\.be)/i.test(url)) {
-    if (currentPlatform !== 'ytmp3' && currentPlatform !== 'ytmp4') setPlatform('ytmp3');
-    return;
-  }
-  for (const [key, p] of Object.entries(PLATFORMS)) {
-    if (key === 'ytmp3' || key === 'ytmp4') continue;
-    if (p.pattern.test(url)) { setPlatform(key); return; }
-  }
-}
-input.addEventListener('input', () => {
+/* =========================================================
+   MAIN HANDLER
+   ========================================================= */
+async function handleDownload(){
   const url = input.value.trim();
-  if (url.length > 8) autoDetect(url);
-});
+  if (!url) { showStatus('error', 'Please paste a link first'); input.focus(); return; }
+  if (!/^https?:\/\//i.test(url)) { showStatus('error', 'Link must start with http:// or https://'); return; }
 
-/* ============ MAIN HANDLER ============ */
-async function handleFetch(){
-  const url = input.value.trim();
-  if (!url) { showStatus('error', 'කරුණාකර link එකක් ඇතුළත් කරන්න'); input.focus(); return; }
-  if (!/^https?:\/\//i.test(url)) { showStatus('error', 'Link එක https:// වලින් පටන් ගන්න ඕනේ'); return; }
-
-  autoDetect(url);
   resultEl.className = '';
   resultEl.innerHTML = '';
-  showStatus('loading', `${PLATFORMS[currentPlatform].label} එක සොයමින්... ටිකක් ඉන්න`);
+  showStatus('loading', `Fetching ${PLATFORMS[currentPlatform].label} details...`);
   setLoading(true);
 
   try {
@@ -1418,29 +1653,38 @@ async function handleFetch(){
     showStatus('none');
     PLATFORMS[currentPlatform].render(data);
   } catch (err) {
-    showStatus('error', err.message || 'මොකක්හරි වැරැද්දක් වුණා. ආයෙ උත්සාහ කරන්න');
+    showStatus('error', err.message || 'Something went wrong. Please try again.');
   } finally {
     setLoading(false);
   }
 }
 
-/* ============ EVENTS ============ */
-fetchBtn.addEventListener('click', handleFetch);
-input.addEventListener('keydown', e => { if (e.key === 'Enter') handleFetch(); });
+/* =========================================================
+   EVENTS
+   ========================================================= */
+downloadBtn.addEventListener('click', handleDownload);
+input.addEventListener('keydown', e => { if (e.key === 'Enter') handleDownload(); });
+
 pasteBtn.addEventListener('click', async () => {
   try {
     const text = await navigator.clipboard.readText();
-    if (text) { input.value = text.trim(); autoDetect(input.value); input.focus(); }
-  } catch { input.focus(); showStatus('error', 'Clipboard කියවන්න බෑ — අතින් paste කරන්න'); }
-});
-clearBtn.addEventListener('click', () => {
-  input.value = ''; input.focus();
-  resultEl.className = ''; resultEl.innerHTML = '';
-  showStatus('none');
+    if (text) {
+      input.value = text.trim();
+      platformUrls[currentPlatform] = input.value;
+      input.focus();
+    }
+  } catch {
+    input.focus();
+    showStatus('error', 'Cannot access clipboard — paste manually');
+  }
 });
 
-/* ============ INIT ============ */
-setPlatform('facebook');
+/* =========================================================
+   INIT
+   ========================================================= */
+initTheme();
+setPlatform('facebook', true);
+input.focus();
 </script>
 </body>
 </html>
